@@ -97,7 +97,9 @@ Usage
 +-----
 
   You can put supplemental configuration files, header files, native libraries,
-  man pages into the appropriate directories.
+  man pages into the appropriate directories. Furthermore you can add java source
+  files etc. into this module and they will be compiled and later added to the resulting
+  jmod file.
   An example source tree looks like this:
   
 +----

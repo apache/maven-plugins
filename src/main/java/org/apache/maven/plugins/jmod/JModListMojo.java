@@ -41,9 +41,6 @@ public class JModListMojo
     extends AbstractJModMojo
 {
 
-    /**
-     * Do not change this. (TODO!)
-     */
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File outputDirectory;
 
@@ -75,8 +72,10 @@ public class JModListMojo
         File modsFolder = new File( outputDirectory, "jmods" );
         File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
 
-        // create the jmods folder...
-        modsFolder.mkdirs();
+        if ( !resultingJModFile.exists() || !resultingJModFile.isFile() )
+        {
+            throw new MojoFailureException( "Unable to find " + resultingJModFile.getAbsolutePath() );
+        }
 
         Commandline cmd;
         try

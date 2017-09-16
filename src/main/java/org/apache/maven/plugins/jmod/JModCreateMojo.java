@@ -23,14 +23,31 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.utils.StringUtils;
+import org.apache.maven.shared.utils.logging.MessageUtils;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.java.DefaultJavaToolChain;
+import org.codehaus.plexus.languages.java.jpms.JavaModuleDescriptor;
+import org.codehaus.plexus.languages.java.jpms.LocationManager;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsRequest;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsResult;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsResult.ModuleNameSource;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -47,6 +64,19 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JModCreateMojo
     extends AbstractJModMojo
 {
+    private static final String JMODS = "jmods";
+
+    private List<String> classpathElements;
+
+    private List<String> modulepathElements;
+
+    private Map<String, JavaModuleDescriptor> pathElements;
+
+    @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
+    private List<String> compilePath;
+
+    @Component
+    private LocationManager locationManager;
 
     /**
      * <code>--class-path &lt;path&gt;</code> Application jar files/directory containing classes. Specifies a class path
@@ -154,12 +184,6 @@ public class JModCreateMojo
     private String moduleVersion;
 
     /**
-     * Define the modulepath for the <code>jmod</code> call. <code>--module-path &lt;path&gt;</code>
-     */
-    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
-    private File modulePath;
-
-    /**
      * <code>--do-not-resolve-by-default</code> Exclude from the default root set of modules
      */
     @Parameter( defaultValue = "false" )
@@ -182,7 +206,7 @@ public class JModCreateMojo
      * All files from those directories will be copied into the resulting directory <code>includes</code> within the
      * jmod file.
      * </p>
-     * jmod command line equivalent <code>--header-files &lt;path&gt;</code> TODO: Define default location.
+     * jmod command line equivalent <code>--header-files &lt;path&gt;</code>
      */
     @Parameter
     private List<String> headerFiles;
@@ -205,7 +229,7 @@ public class JModCreateMojo
      * All files from those directories will be copied into the resulting directory <code>man</code> within the jmod
      * file.
      * </p>
-     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code> TODO: Define default location.
+     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code>
      */
     @Parameter
     private List<String> manPages;
@@ -213,10 +237,10 @@ public class JModCreateMojo
     private static final String DEFAULT_MAN_PAGES_DIRECTORY = "src/main/manpages";
 
     /**
-     * The moduleName. The default is to use the <code>artifactId</code>.
+     * This is only the name of the jmod file in the target directory.
      */
-    @Parameter( defaultValue = "${project.artifactId}", required = true )
-    private String moduleName;
+    @Parameter( defaultValue = "${project.artifactId}", required = true, readonly = true )
+    private String outputFileName;
 
     /**
      * Define the location of legal notices. The default location is <code>src/main/legalnotices</code>. The given man
@@ -234,7 +258,7 @@ public class JModCreateMojo
      * All files from those directories will be copied into the resulting directory <code>legal</code> within the jmod
      * file.
      * </p>
-     * jmod command line equivalent <code>--legal-notices &lt;path&gt;</code> TODO: Define default location.
+     * jmod command line equivalent <code>--legal-notices &lt;path&gt;</code>
      */
     @Parameter
     private List<String> legalNotices;
@@ -258,23 +282,17 @@ public class JModCreateMojo
     @Parameter
     private String warnIfResolved;
 
-    /**
-     * Do not change this. (TODO!)
-     */
+    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true, readonly = true )
+    private File targetClassesDirectory;
+
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File outputDirectory;
+
+    private List<String> modulePaths;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-
-        // Make sure module path exists.
-        if ( !modulePath.exists() )
-        {
-            modulePath.mkdirs();
-        }
-
-        failIfParametersAreNotInTheirValidValueRanges();
 
         String jModExecutable;
         try
@@ -286,18 +304,51 @@ public class JModCreateMojo
             throw new MojoFailureException( "Unable to find jmod command: " + e.getMessage(), e );
         }
 
+        File jModExecuteableFile = new File( jModExecutable );
+        File jModExecutableParent = jModExecuteableFile.getParentFile().getParentFile();
+        File jmodsFolderJDK = new File( jModExecutableParent, JMODS );
+        getLog().debug( "Parent: " + jModExecutableParent.getAbsolutePath() );
+        getLog().debug( "jmodsFolder: " + jmodsFolderJDK.getAbsolutePath() );
+
+        /*
+         * this.moduleName = extract module name from module-info.java if not defined extract the package name as
+         * default
+         */
+        preparePaths();
+
+        failIfParametersAreNotInTheirValidValueRanges();
+
         getLog().info( "Toolchain in maven-jmod-plugin: jmod [ " + jModExecutable + " ]" );
 
         // We need to put the resulting x.jmod files into jmods folder otherwise is
         // seemed to be not working.
         // Check why?
         File modsFolder = new File( outputDirectory, "jmods" );
-        File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
+        File resultingJModFile = new File( modsFolder, outputFileName + ".jmod" );
 
         deleteOutputIfAlreadyExists( resultingJModFile );
 
         // create the jmods folder...
         modsFolder.mkdirs();
+
+        this.modulePaths = new ArrayList<>();
+        for ( Entry<String, JavaModuleDescriptor> item : pathElements.entrySet() )
+        {
+            // Isn't there a better solution?
+            if ( item.getValue() == null )
+            {
+                String message = "The given dependency " + item.getKey()
+                    + " does not have a module-info.java file. So it can't be linked.";
+                getLog().error( message );
+                throw new MojoFailureException( message );
+            }
+            getLog().debug( "pathElements Item:" + item.getKey() + " v:" + item.getValue().name() );
+            getLog().info( " -> module: " + item.getValue().name() + " ( " + item.getKey() + " )" );
+            // We use the real module name and not the artifact Id...
+            this.modulePaths.add( item.getKey() );
+        }
+        // The jmods directory of the JDK
+        this.modulePaths.add( jmodsFolderJDK.getAbsolutePath() );
 
         Commandline cmd;
         try
@@ -343,19 +394,12 @@ public class JModCreateMojo
     private void failIfParametersAreNotInTheirValidValueRanges()
         throws MojoFailureException
     {
-        if ( modulePath != null && !modulePath.isDirectory() )
-        {
-            String message = "The given module-path parameter " + modulePath.getAbsolutePath() + " is not a directory.";
-            getLog().error( message );
-            throw new MojoFailureException( message );
-        }
-
-        if ( moduleName != null && moduleName.trim().isEmpty() )
-        {
-            String message = "A moduleName must be given.";
-            getLog().error( message );
-            throw new MojoFailureException( message );
-        }
+        // if ( moduleName == null || ( moduleName != null && moduleName.trim().isEmpty() ) )
+        // {
+        // String message = "A moduleName must be given.";
+        // getLog().error( message );
+        // throw new MojoFailureException( message );
+        // }
 
         if ( warnIfResolved != null )
         {
@@ -404,6 +448,110 @@ public class JModCreateMojo
         }
     }
 
+    private List<File> getCompileClasspathElements( MavenProject project )
+    {
+        List<File> list = new ArrayList<File>( project.getArtifacts().size() + 1 );
+
+        list.add( new File( project.getBuild().getOutputDirectory() ) );
+
+        for ( Artifact a : project.getArtifacts() )
+        {
+            list.add( a.getFile() );
+        }
+        return list;
+    }
+
+    private void preparePaths()
+    {
+        assert compilePath != null;
+
+        boolean hasModuleDescriptor = false;
+        // Assuming that the module-info.java is already compiled by compiler plugin so only
+        // check if the module-info.class file exists.
+        File moduleInfo = new File( targetClassesDirectory, "module-info.class" );
+
+        if ( moduleInfo.exists() && moduleInfo.isFile() )
+        {
+            getLog().debug( "We have found a module-info.class file." );
+            hasModuleDescriptor = true;
+        }
+
+        if ( hasModuleDescriptor )
+        {
+            // For now only allow named modules. Once we can create a graph with ASM we can specify exactly the modules
+            // and we can detect if auto modules are used. In that case, MavenProject.setFile() should not be used, so
+            // you cannot depend on this project and so it won't be distributed.
+
+            modulepathElements = new ArrayList<String>();
+            classpathElements = new ArrayList<String>();
+            pathElements = new LinkedHashMap<String, JavaModuleDescriptor>();
+
+            ResolvePathsResult<File> resolvePathsResult;
+            try
+            {
+                Collection<File> dependencyArtifacts = getCompileClasspathElements( getProject() );
+
+                ResolvePathsRequest<File> request = ResolvePathsRequest.withFiles( dependencyArtifacts );
+
+                Toolchain toolchain = getToolchain();
+                if ( toolchain != null && toolchain instanceof DefaultJavaToolChain )
+                {
+                    request.setJdkHome( new File( ( (DefaultJavaToolChain) toolchain ).getJavaHome() ) );
+                }
+
+                resolvePathsResult = locationManager.resolvePaths( request );
+
+                JavaModuleDescriptor moduleDescriptor = resolvePathsResult.getMainModuleDescriptor();
+
+                for ( Map.Entry<File, ModuleNameSource> entry : resolvePathsResult.getModulepathElements().entrySet() )
+                {
+                    if ( ModuleNameSource.FILENAME.equals( entry.getValue() ) )
+                    {
+                        final String message = "Required filename-based automodules detected. "
+                            + "Please don't publish this project to a public artifact repository!";
+
+                        if ( moduleDescriptor.exports().isEmpty() )
+                        {
+                            // application
+                            getLog().info( message );
+                        }
+                        else
+                        {
+                            // library
+                            writeBoxedWarning( message );
+                        }
+                        break;
+                    }
+                }
+
+                for ( Map.Entry<File, JavaModuleDescriptor> entry : resolvePathsResult.getPathElements().entrySet() )
+                {
+                    pathElements.put( entry.getKey().getPath(), entry.getValue() );
+                }
+
+                for ( File file : resolvePathsResult.getClasspathElements() )
+                {
+                    classpathElements.add( file.getPath() );
+                }
+
+                for ( File file : resolvePathsResult.getModulepathElements().keySet() )
+                {
+                    modulepathElements.add( file.getPath() );
+                }
+            }
+            catch ( IOException e )
+            {
+                getLog().warn( e.getMessage() );
+            }
+
+        }
+        else
+        {
+            classpathElements = compilePath;
+            modulepathElements = Collections.emptyList();
+        }
+    }
+
     private Commandline createJModCreateCommandLine( File resultingJModFile )
         throws IOException
     {
@@ -428,8 +576,7 @@ public class JModCreateMojo
         if ( classPath != null )
         {
             argsFile.println( "--class-path" );
-            StringBuilder sb = getPlatformSeparatedList( classPath );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( classPath ) );
         }
 
         if ( excludes != null && !excludes.isEmpty() )
@@ -443,25 +590,22 @@ public class JModCreateMojo
         if ( !configList.isEmpty() )
         {
             argsFile.println( "--config" );
-            StringBuilder sb = getPlatformSeparatedList( configList );
             // Should we quote the paths?
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( configList ) );
         }
 
         List<String> cmdsList = handleConfigurationListWithDefault( cmds, DEFAULT_CMD_DIRECTORY );
         if ( !cmdsList.isEmpty() )
         {
             argsFile.println( "--cmds" );
-            StringBuilder sb = getPlatformSeparatedList( cmdsList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( cmdsList ) );
         }
 
         List<String> libsList = handleConfigurationListWithDefault( libs, DEFAULT_LIB_DIRECTORY );
         if ( !libsList.isEmpty() )
         {
             argsFile.println( "--libs" );
-            StringBuilder sb = getPlatformSeparatedList( libsList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( libsList ) );
         }
 
         List<String> headerFilesList =
@@ -469,8 +613,7 @@ public class JModCreateMojo
         if ( !headerFilesList.isEmpty() )
         {
             argsFile.println( "--header-files" );
-            StringBuilder sb = getPlatformSeparatedList( headerFilesList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( headerFilesList ) );
         }
 
         List<String> legalNoticesList =
@@ -478,16 +621,25 @@ public class JModCreateMojo
         if ( !legalNoticesList.isEmpty() )
         {
             argsFile.println( "--legal-notices" );
-            StringBuilder sb = getPlatformSeparatedList( legalNoticesList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( legalNoticesList ) );
         }
 
         List<String> manPagesList = handleConfigurationListWithDefault( manPages, DEFAULT_MAN_PAGES_DIRECTORY );
         if ( !manPagesList.isEmpty() )
         {
             argsFile.println( "--man-pages" );
-            StringBuilder sb = getPlatformSeparatedList( manPagesList );
-            argsFile.println( sb.toString() );
+            argsFile.println( getPlatformSeparatedList( manPagesList ) );
+        }
+
+        if ( modulePaths != null )
+        {
+            //@formatter:off
+            argsFile.println( "--module-path" );
+            argsFile
+              .append( '"' )
+              .append( getPlatformSeparatedList( modulePaths ).replace( "\\", "\\\\" ) ) 
+              .println( '"' );
+            //@formatter:off
         }
 
         if ( targetPlatform != null )
@@ -516,7 +668,7 @@ public class JModCreateMojo
         return cmd;
     }
 
-    private boolean havingConfigurationDefinedInPOM( List<String> configuration )
+    private boolean isConfigurationDefinedInPOM( List<String> configuration )
     {
         return configuration != null && !configuration.isEmpty();
     }
@@ -524,7 +676,7 @@ public class JModCreateMojo
     private List<String> handleConfigurationListWithDefault( List<String> configuration, String defaultLocation )
     {
         List<String> commands = new ArrayList<String>();
-        if ( havingConfigurationDefinedInPOM( configuration ) )
+        if ( isConfigurationDefinedInPOM( configuration ) )
         {
             commands.addAll( configuration );
         }
@@ -563,7 +715,7 @@ public class JModCreateMojo
         return result;
     }
 
-    private StringBuilder getPlatformSeparatedList( List<String> paths )
+    private String getPlatformSeparatedList( List<String> paths )
     {
         StringBuilder sb = new StringBuilder();
         for ( String module : paths )
@@ -574,7 +726,15 @@ public class JModCreateMojo
             }
             sb.append( module );
         }
-        return sb;
+        return sb.toString();
+    }
+
+    private void writeBoxedWarning( String message )
+    {
+        String line = StringUtils.repeat( "*", message.length() + 4 );
+        getLog().warn( line );
+        getLog().warn( "* " + MessageUtils.buffer().strong( message )  + " *" );
+        getLog().warn( line );
     }
 
 }

@@ -41,9 +41,6 @@ public class JModDescribeMojo
     extends AbstractJModMojo
 {
 
-    /**
-     * Do not change this. (TODO!)
-     */
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File outputDirectory;
 
@@ -69,13 +66,15 @@ public class JModDescribeMojo
 
         getLog().info( "Toolchain in maven-jmod-plugin: jmod [ " + jModExecutable + " ]" );
 
-        //TODO: Need to think about if we really require to have the jmod
+        // TODO: Need to think about if we really require to have the jmod
         // file being located in the target directory?
         File modsFolder = new File( outputDirectory, "jmods" );
         File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
 
-        // create the jmods folder...
-        modsFolder.mkdirs();
+        if ( !resultingJModFile.exists() || !resultingJModFile.isFile() )
+        {
+            throw new MojoFailureException( "Unable to find " + resultingJModFile.getAbsolutePath() );
+        }
 
         Commandline cmd;
         try
