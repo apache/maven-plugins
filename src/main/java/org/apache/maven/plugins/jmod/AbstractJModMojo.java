@@ -21,7 +21,10 @@ package org.apache.maven.plugins.jmod;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -58,6 +61,16 @@ public abstract class AbstractJModMojo
     @Component
     private ToolchainManager toolchainManager;
 
+    /**
+     * <p>
+     * Specify the requirements for this jdk toolchain. This overrules the toolchain selected by the
+     * maven-toolchain-plugin.
+     * </p>
+     * <strong>note:</strong> requires at least Maven 3.3.1
+     */
+    @Parameter
+    private Map<String, String> jdkToolchain;
+    
     // TODO: Check how to prevent code duplication in maven-jlink, maven-jmod and maven-jdeps plugin?
     protected String getJModExecutable()
         throws IOException
@@ -217,17 +230,57 @@ public abstract class AbstractJModMojo
         return sb.toString();
     }
 
-    private Toolchain getToolchain()
+    protected Toolchain getToolchain()
     {
         Toolchain tc = null;
-        if ( toolchainManager != null )
+
+        if ( jdkToolchain != null )
         {
+            // Maven 3.3.1 has plugin execution scoped Toolchain Support
+            try
+            {
+                Method getToolchainsMethod = toolchainManager.getClass().getMethod( "getToolchains", MavenSession.class,
+                                                                                    String.class, Map.class );
+
+                @SuppressWarnings( "unchecked" )
+                List<Toolchain> tcs =
+                    (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk", jdkToolchain );
+
+                if ( tcs != null && tcs.size() > 0 )
+                {
+                    tc = tcs.get( 0 );
+                }
+            }
+            catch ( NoSuchMethodException e )
+            {
+                // ignore
+            }
+            catch ( SecurityException e )
+            {
+                // ignore
+            }
+            catch ( IllegalAccessException e )
+            {
+                // ignore
+            }
+            catch ( IllegalArgumentException e )
+            {
+                // ignore
+            }
+            catch ( InvocationTargetException e )
+            {
+                // ignore
+            }
+        }
+
+        if ( tc == null )
+        {
+            // TODO: Check if we should make the type configurable?
             tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
         }
 
         return tc;
     }
-
     public MavenProject getProject()
     {
         return project;

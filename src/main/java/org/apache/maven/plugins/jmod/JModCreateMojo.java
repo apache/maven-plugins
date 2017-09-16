@@ -23,14 +23,31 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.utils.StringUtils;
+import org.apache.maven.shared.utils.logging.MessageUtils;
+import org.apache.maven.toolchain.Toolchain;
+import org.apache.maven.toolchain.java.DefaultJavaToolChain;
+import org.codehaus.plexus.languages.java.jpms.JavaModuleDescriptor;
+import org.codehaus.plexus.languages.java.jpms.LocationManager;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsRequest;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsResult;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsResult.ModuleNameSource;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -47,6 +64,19 @@ import org.codehaus.plexus.util.cli.Commandline;
 public class JModCreateMojo
     extends AbstractJModMojo
 {
+    private static final String JMODS = "jmods";
+
+    private List<String> classpathElements;
+
+    private List<String> modulepathElements;
+
+    private Map<String, JavaModuleDescriptor> pathElements;
+
+    @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
+    private List<String> compilePath;
+
+    @Component
+    private LocationManager locationManager;
 
     /**
      * <code>--class-path &lt;path&gt;</code> Application jar files/directory containing classes. Specifies a class path
@@ -154,12 +184,6 @@ public class JModCreateMojo
     private String moduleVersion;
 
     /**
-     * Define the modulepath for the <code>jmod</code> call. <code>--module-path &lt;path&gt;</code>
-     */
-    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true )
-    private File modulePath;
-
-    /**
      * <code>--do-not-resolve-by-default</code> Exclude from the default root set of modules
      */
     @Parameter( defaultValue = "false" )
@@ -205,7 +229,7 @@ public class JModCreateMojo
      * All files from those directories will be copied into the resulting directory <code>man</code> within the jmod
      * file.
      * </p>
-     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code> 
+     * jmod command line equivalent <code>--man-pages &lt;path&gt;</code>
      */
     @Parameter
     private List<String> manPages;
@@ -213,9 +237,9 @@ public class JModCreateMojo
     private static final String DEFAULT_MAN_PAGES_DIRECTORY = "src/main/manpages";
 
     /**
-     * The moduleName. The default is to use the <code>artifactId</code>.
+     * The moduleName. The default is to use the package name as name space.
      */
-    @Parameter( defaultValue = "${project.artifactId}", required = true )
+    @Parameter
     private String moduleName;
 
     /**
@@ -258,20 +282,17 @@ public class JModCreateMojo
     @Parameter
     private String warnIfResolved;
 
+    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true, readonly = true )
+    private File targetClassesDirectory;
+
     @Parameter( defaultValue = "${project.build.directory}", required = true, readonly = true )
     private File outputDirectory;
+
+    private List<String> modulePaths;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-
-        // Make sure module path exists.
-        if ( !modulePath.exists() )
-        {
-            modulePath.mkdirs();
-        }
-
-        failIfParametersAreNotInTheirValidValueRanges();
 
         String jModExecutable;
         try
@@ -282,6 +303,20 @@ public class JModCreateMojo
         {
             throw new MojoFailureException( "Unable to find jmod command: " + e.getMessage(), e );
         }
+
+        File jModExecuteableFile = new File( jModExecutable );
+        File jModExecutableParent = jModExecuteableFile.getParentFile().getParentFile();
+        File jmodsFolderJDK = new File( jModExecutableParent, JMODS );
+        getLog().debug( "Parent: " + jModExecutableParent.getAbsolutePath() );
+        getLog().debug( "jmodsFolder: " + jmodsFolderJDK.getAbsolutePath() );
+
+        /*
+         * this.moduleName = extract module name from module-info.java if not defined extract the package name as
+         * default
+         */
+        preparePaths();
+
+        failIfParametersAreNotInTheirValidValueRanges();
 
         getLog().info( "Toolchain in maven-jmod-plugin: jmod [ " + jModExecutable + " ]" );
 
@@ -295,6 +330,25 @@ public class JModCreateMojo
 
         // create the jmods folder...
         modsFolder.mkdirs();
+
+        this.modulePaths = new ArrayList<>();
+        for ( Entry<String, JavaModuleDescriptor> item : pathElements.entrySet() )
+        {
+            // Isn't there a better solution?
+            if ( item.getValue() == null )
+            {
+                String message = "The given dependency " + item.getKey()
+                    + " does not have a module-info.java file. So it can't be linked.";
+                getLog().error( message );
+                throw new MojoFailureException( message );
+            }
+            getLog().debug( "pathElements Item:" + item.getKey() + " v:" + item.getValue().name() );
+            getLog().info( " -> module: " + item.getValue().name() + " ( " + item.getKey() + " )" );
+            // We use the real module name and not the artifact Id...
+            this.modulePaths.add( item.getKey() );
+        }
+        // The jmods directory of the JDK
+        this.modulePaths.add( jmodsFolderJDK.getAbsolutePath() );
 
         Commandline cmd;
         try
@@ -340,19 +394,12 @@ public class JModCreateMojo
     private void failIfParametersAreNotInTheirValidValueRanges()
         throws MojoFailureException
     {
-        if ( modulePath != null && !modulePath.isDirectory() )
-        {
-            String message = "The given module-path parameter " + modulePath.getAbsolutePath() + " is not a directory.";
-            getLog().error( message );
-            throw new MojoFailureException( message );
-        }
-
-        if ( moduleName != null && moduleName.trim().isEmpty() )
-        {
-            String message = "A moduleName must be given.";
-            getLog().error( message );
-            throw new MojoFailureException( message );
-        }
+        // if ( moduleName == null || ( moduleName != null && moduleName.trim().isEmpty() ) )
+        // {
+        // String message = "A moduleName must be given.";
+        // getLog().error( message );
+        // throw new MojoFailureException( message );
+        // }
 
         if ( warnIfResolved != null )
         {
@@ -398,6 +445,110 @@ public class JModCreateMojo
                 getLog().error( message );
                 throw new MojoFailureException( message );
             }
+        }
+    }
+
+    private List<File> getCompileClasspathElements( MavenProject project )
+    {
+        List<File> list = new ArrayList<File>( project.getArtifacts().size() + 1 );
+
+        list.add( new File( project.getBuild().getOutputDirectory() ) );
+
+        for ( Artifact a : project.getArtifacts() )
+        {
+            list.add( a.getFile() );
+        }
+        return list;
+    }
+
+    private void preparePaths()
+    {
+        assert compilePath != null;
+
+        boolean hasModuleDescriptor = false;
+        // Assuming that the module-info.java is already compiled by compiler plugin so only
+        // check if the module-info.class file exists.
+        File moduleInfo = new File( targetClassesDirectory, "module-info.class" );
+
+        if ( moduleInfo.exists() && moduleInfo.isFile() )
+        {
+            getLog().debug( "We have found a module-info.class file." );
+            hasModuleDescriptor = true;
+        }
+
+        if ( hasModuleDescriptor )
+        {
+            // For now only allow named modules. Once we can create a graph with ASM we can specify exactly the modules
+            // and we can detect if auto modules are used. In that case, MavenProject.setFile() should not be used, so
+            // you cannot depend on this project and so it won't be distributed.
+
+            modulepathElements = new ArrayList<String>();
+            classpathElements = new ArrayList<String>();
+            pathElements = new LinkedHashMap<String, JavaModuleDescriptor>();
+
+            ResolvePathsResult<File> resolvePathsResult;
+            try
+            {
+                Collection<File> dependencyArtifacts = getCompileClasspathElements( getProject() );
+
+                ResolvePathsRequest<File> request = ResolvePathsRequest.withFiles( dependencyArtifacts );
+
+                Toolchain toolchain = getToolchain();
+                if ( toolchain != null && toolchain instanceof DefaultJavaToolChain )
+                {
+                    request.setJdkHome( new File( ( (DefaultJavaToolChain) toolchain ).getJavaHome() ) );
+                }
+
+                resolvePathsResult = locationManager.resolvePaths( request );
+
+                JavaModuleDescriptor moduleDescriptor = resolvePathsResult.getMainModuleDescriptor();
+
+                for ( Map.Entry<File, ModuleNameSource> entry : resolvePathsResult.getModulepathElements().entrySet() )
+                {
+                    if ( ModuleNameSource.FILENAME.equals( entry.getValue() ) )
+                    {
+                        final String message = "Required filename-based automodules detected. "
+                            + "Please don't publish this project to a public artifact repository!";
+
+                        if ( moduleDescriptor.exports().isEmpty() )
+                        {
+                            // application
+                            getLog().info( message );
+                        }
+                        else
+                        {
+                            // library
+                            writeBoxedWarning( message );
+                        }
+                        break;
+                    }
+                }
+
+                for ( Map.Entry<File, JavaModuleDescriptor> entry : resolvePathsResult.getPathElements().entrySet() )
+                {
+                    pathElements.put( entry.getKey().getPath(), entry.getValue() );
+                }
+
+                for ( File file : resolvePathsResult.getClasspathElements() )
+                {
+                    classpathElements.add( file.getPath() );
+                }
+
+                for ( File file : resolvePathsResult.getModulepathElements().keySet() )
+                {
+                    modulepathElements.add( file.getPath() );
+                }
+            }
+            catch ( IOException e )
+            {
+                getLog().warn( e.getMessage() );
+            }
+
+        }
+        else
+        {
+            classpathElements = compilePath;
+            modulepathElements = Collections.emptyList();
         }
     }
 
@@ -487,6 +638,16 @@ public class JModCreateMojo
             argsFile.println( sb.toString() );
         }
 
+        if ( modulePaths != null )
+        {
+            //@formatter:off
+            argsFile.println( "--module-path" );
+            argsFile
+              .append( '"' )
+              .append( getPlatformSeparatedList( modulePaths ) ).println( '"' );
+            //@formatter:off
+        }
+
         if ( targetPlatform != null )
         {
             argsFile.println( "--target-platform" );
@@ -572,6 +733,14 @@ public class JModCreateMojo
             sb.append( module );
         }
         return sb;
+    }
+
+    private void writeBoxedWarning( String message )
+    {
+        String line = StringUtils.repeat( "*", message.length() + 4 );
+        getLog().warn( line );
+        getLog().warn( "* " + MessageUtils.buffer().strong( message )  + " *" );
+        getLog().warn( line );
     }
 
 }
