@@ -45,10 +45,16 @@ public class JModDescribeMojo
     private File outputDirectory;
 
     /**
-     * The moduleName. The default is to use the <code>artifactId</code>.
+     * The name of the jmod file which is used to be examined via <code>jmod describe jmodFile</code>
      */
-    @Parameter( defaultValue = "${project.artifactId}", required = true )
-    private String moduleName;
+    //@formatter:off
+    @Parameter( 
+        defaultValue = "${project.build.directory}/jmods/${project.artifactId}.jmod", 
+        property = "jmodfile", 
+        required = true 
+    )
+    //@formatter:on
+    private File jmodFile;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -66,20 +72,15 @@ public class JModDescribeMojo
 
         getLog().info( "Toolchain in maven-jmod-plugin: jmod [ " + jModExecutable + " ]" );
 
-        // TODO: Need to think about if we really require to have the jmod
-        // file being located in the target directory?
-        File modsFolder = new File( outputDirectory, "jmods" );
-        File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
-
-        if ( !resultingJModFile.exists() || !resultingJModFile.isFile() )
+        if ( !jmodFile.exists() || !jmodFile.isFile() )
         {
-            throw new MojoFailureException( "Unable to find " + resultingJModFile.getAbsolutePath() );
+            throw new MojoFailureException( "Unable to find " + jmodFile.getAbsolutePath() );
         }
 
         Commandline cmd;
         try
         {
-            cmd = createJModDescribeCommandLine( resultingJModFile );
+            cmd = createJModDescribeCommandLine( jmodFile );
         }
         catch ( IOException e )
         {
@@ -87,8 +88,7 @@ public class JModDescribeMojo
         }
         cmd.setExecutable( jModExecutable );
 
-        getLog().info( "The following information is contained in the module file "
-            + resultingJModFile.getAbsolutePath() );
+        getLog().info( "The following information is contained in the module file " + jmodFile.getAbsolutePath() );
         executeCommand( cmd, outputDirectory );
 
     }

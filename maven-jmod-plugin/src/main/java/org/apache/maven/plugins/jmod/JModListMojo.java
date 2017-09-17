@@ -45,10 +45,16 @@ public class JModListMojo
     private File outputDirectory;
 
     /**
-     * The moduleName. The default is to use the <code>artifactId</code>.
+     * The name of the jmod file which is used to be examined via <code>jmod list jmodFile</code>
      */
-    @Parameter( defaultValue = "${project.artifactId}", required = true )
-    private String moduleName;
+    //@formatter:off
+    @Parameter( 
+        defaultValue = "${project.build.directory}/jmods/${project.artifactId}.jmod", 
+        property = "jmodfile", 
+        required = true 
+    )
+    //@formatter:on
+    private File jmodFile;
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -66,21 +72,15 @@ public class JModListMojo
 
         getLog().info( "Toolchain in maven-jmod-plugin: jmod [ " + jModExecutable + " ]" );
 
-        // We need to put the resulting x.jmod files into jmods folder otherwise is
-        // seemed to be not working.
-        // Check why?
-        File modsFolder = new File( outputDirectory, "jmods" );
-        File resultingJModFile = new File( modsFolder, moduleName + ".jmod" );
-
-        if ( !resultingJModFile.exists() || !resultingJModFile.isFile() )
+        if ( !jmodFile.exists() || !jmodFile.isFile() )
         {
-            throw new MojoFailureException( "Unable to find " + resultingJModFile.getAbsolutePath() );
+            throw new MojoFailureException( "Unable to find " + jmodFile.getAbsolutePath() );
         }
 
         Commandline cmd;
         try
         {
-            cmd = createJModListCommandLine( resultingJModFile );
+            cmd = createJModListCommandLine( jmodFile );
         }
         catch ( IOException e )
         {
@@ -88,7 +88,7 @@ public class JModListMojo
         }
         cmd.setExecutable( jModExecutable );
 
-        getLog().info( "The following files are contained in the module file " + resultingJModFile.getAbsolutePath() );
+        getLog().info( "The following files are contained in the module file " + jmodFile.getAbsolutePath() );
         executeCommand( cmd, outputDirectory );
 
     }
