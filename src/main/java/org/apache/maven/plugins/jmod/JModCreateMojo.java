@@ -79,13 +79,6 @@ public class JModCreateMojo
     private LocationManager locationManager;
 
     /**
-     * <code>--class-path &lt;path&gt;</code> Application jar files/directory containing classes. Specifies a class path
-     * whose content will be copied into the resulting <code>jmod</code> file.
-     */
-    @Parameter( defaultValue = "${project.build.outputDirectory}" )
-    private List<String> classPath;
-
-    /**
      * Specifies one or more directories containing native commands to be copied. The given directories are relative to
      * the current base directory. If no entry is defined the default is <code>src/main/cmds</code> used.
      * 
@@ -310,10 +303,6 @@ public class JModCreateMojo
         getLog().debug( "Parent: " + jModExecutableParent.getAbsolutePath() );
         getLog().debug( "jmodsFolder: " + jmodsFolderJDK.getAbsolutePath() );
 
-        /*
-         * this.moduleName = extract module name from module-info.java if not defined extract the package name as
-         * default
-         */
         preparePaths();
 
         failIfParametersAreNotInTheirValidValueRanges();
@@ -394,13 +383,6 @@ public class JModCreateMojo
     private void failIfParametersAreNotInTheirValidValueRanges()
         throws MojoFailureException
     {
-        // if ( moduleName == null || ( moduleName != null && moduleName.trim().isEmpty() ) )
-        // {
-        // String message = "A moduleName must be given.";
-        // getLog().error( message );
-        // throw new MojoFailureException( message );
-        // }
-
         if ( warnIfResolved != null )
         {
             String x = warnIfResolved.toLowerCase().trim();
@@ -505,6 +487,7 @@ public class JModCreateMojo
 
                 for ( Map.Entry<File, ModuleNameSource> entry : resolvePathsResult.getModulepathElements().entrySet() )
                 {
+                    getLog().debug( "File: " + entry.getKey().getAbsolutePath() + " " + entry.getValue().name() );
                     if ( ModuleNameSource.FILENAME.equals( entry.getValue() ) )
                     {
                         final String message = "Required filename-based automodules detected. "
@@ -526,16 +509,19 @@ public class JModCreateMojo
 
                 for ( Map.Entry<File, JavaModuleDescriptor> entry : resolvePathsResult.getPathElements().entrySet() )
                 {
+                    getLog().debug( "pathElements: " + entry.getKey().getPath() + " " + entry.getValue().name() );
                     pathElements.put( entry.getKey().getPath(), entry.getValue() );
                 }
 
                 for ( File file : resolvePathsResult.getClasspathElements() )
                 {
+                    getLog().debug( "classpathElements: File: " + file.getPath() );
                     classpathElements.add( file.getPath() );
                 }
 
                 for ( File file : resolvePathsResult.getModulepathElements().keySet() )
                 {
+                    getLog().debug( "modulepathElements: File: " + file.getPath() );
                     modulepathElements.add( file.getPath() );
                 }
             }
@@ -573,10 +559,17 @@ public class JModCreateMojo
             argsFile.println( moduleVersion );
         }
 
-        if ( classPath != null )
+        if ( !pathElements.isEmpty() )
         {
             argsFile.println( "--class-path" );
-            argsFile.println( getPlatformSeparatedList( classPath ) );
+            //TODO: Can't this be achieved in a more elegant way?
+            // the classpathElements do not contain the needed information?
+            ArrayList<String> x = new ArrayList<>();
+            for ( String string : pathElements.keySet() )
+            {
+                x.add( string );
+            }
+            argsFile.println( getPlatformSeparatedList( x ) );
         }
 
         if ( excludes != null && !excludes.isEmpty() )
