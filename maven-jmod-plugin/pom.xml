@@ -30,7 +30,7 @@
   </parent>
 
   <artifactId>maven-jmod-plugin</artifactId>
-  <version>3.0.0-alpha-2-SNAPSHOT</version>
+  <version>3.0.0-alpha-1-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>Apache Maven JMod Plugin</name>
