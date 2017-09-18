@@ -99,7 +99,7 @@ public class JLinkMojo
      * <code>-c, --compress=level&gt;</code>. The valid values for the level are: <code>0, 1, 2</code>.
      */
     @Parameter
-    private Integer compression;
+    private Integer compress;
 
     /**
      * Limit the universe of observable modules. The following gives an example of the configuration which can be used
@@ -447,10 +447,10 @@ public class JLinkMojo
     private void failIfParametersAreNotInTheirValidValueRanges()
         throws MojoFailureException
     {
-        if ( compression != null && ( compression < 0 || compression > 2 ) )
+        if ( compress != null && ( compress < 0 || compress > 2 ) )
         {
             String message =
-                "The given compression parameters " + compression + " is not in the valid value range from 0..2";
+                "The given compress parameters " + compress + " is not in the valid value range from 0..2";
             getLog().error( message );
             throw new MojoFailureException( message );
         }
@@ -517,10 +517,10 @@ public class JLinkMojo
         {
             argsFile.println( "--ignore-signing-information" );
         }
-        if ( compression != null )
+        if ( compress != null )
         {
-            argsFile.println( "--compression" );
-            argsFile.println( compression );
+            argsFile.println( "--compress" );
+            argsFile.println( compress );
         }
 
         if ( disablePlugin != null )
