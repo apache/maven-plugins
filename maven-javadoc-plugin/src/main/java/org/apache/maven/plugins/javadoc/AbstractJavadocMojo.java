@@ -4594,8 +4594,6 @@ public abstract class AbstractJavadocMojo
         }
         addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( getEncoding() ) );
 
-        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
-
         addArgIfNotEmpty( arguments, "-extdirs",
                           JavadocUtil.quotedPathArgument( JavadocUtil.unifyPathSeparator( extdirs ) ) );
 
@@ -4619,6 +4617,9 @@ public abstract class AbstractJavadocMojo
             sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
         }
         addArgIfNotEmpty( arguments, "-sourcepath", JavadocUtil.quotedPathArgument( getSourcePath( sourcePaths ) ) );
+
+        // [MJAVADOC-497] must be after sourcepath is recalculated, since getExcludedPackages() depends on it
+        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
 
         if ( StringUtils.isNotEmpty( sourcepath ) && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
         {
