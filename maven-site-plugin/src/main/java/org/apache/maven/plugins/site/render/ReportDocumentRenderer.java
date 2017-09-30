@@ -240,13 +240,13 @@ public class ReportDocumentRenderer
         }
         catch ( MavenReportException e )
         {
-            String report = ( reportMojoInfo == null ) ? ( '"' + localReportName + "\" report" ) : reportMojoInfo;
-            throw new RendererException( "Error generating " + report + ": " + e.getMessage(), e );
+            String report = ( reportMojoInfo == null ) ? ( '"' + localReportName + '"' ) : reportMojoInfo;
+            throw new RendererException( "Error generating " + report + " report", e );
         }
         catch ( LinkageError e )
         {
-            String report = ( reportMojoInfo == null ) ? ( '"' + localReportName + "\" report" ) : reportMojoInfo;
-            log.warn( "An issue has occurred with " + report + ", skipping LinkageError "
+            String report = ( reportMojoInfo == null ) ? ( '"' + localReportName + '"' ) : reportMojoInfo;
+            log.warn( "An issue has occurred with " + report + " report, skipping LinkageError "
                           + e.getMessage() + ", please report an issue to Maven dev team.", e );
         }
         finally
@@ -268,6 +268,7 @@ public class ReportDocumentRenderer
         renderer.generateDocument( writer, mainSink, siteRenderingContext );
 
         // render sub-sinks, eventually created by multi-page reports
+        String outputName = "";
         try
         {
             List<MultiPageSubSink> sinks = multiPageSinkFactory.sinks();
@@ -278,9 +279,10 @@ public class ReportDocumentRenderer
             {
                 mySink.enableLogging( new MojoLogWrapper( log ) );
 
-                log.debug( "  Rendering " + mySink.getOutputName() );
+                outputName = mySink.getOutputName();
+                log.debug( "  Rendering " + outputName );
 
-                File outputFile = new File( mySink.getOutputDir(), mySink.getOutputName() );
+                File outputFile = new File( mySink.getOutputDir(), outputName );
 
                 Writer out = null;
                 try
@@ -305,7 +307,7 @@ public class ReportDocumentRenderer
         }
         catch ( IOException e )
         {
-            throw new RendererException( "Cannot create writer", e );
+            throw new RendererException( "Cannot create writer to " + outputName, e );
         }
     }
 
@@ -338,15 +340,15 @@ public class ReportDocumentRenderer
         }
         catch ( IllegalArgumentException iae )
         {
-            throw new MavenReportException( "error while invoking generate", iae );
+            throw new MavenReportException( "error while invoking generate on " + report.getClass(), iae );
         }
         catch ( IllegalAccessException iae )
         {
-            throw new MavenReportException( "error while invoking generate", iae );
+            throw new MavenReportException( "error while invoking generate on " + report.getClass(), iae );
         }
         catch ( InvocationTargetException ite )
         {
-            throw new MavenReportException( "error while invoking generate", ite );
+            throw new MavenReportException( "error while invoking generate on " + report.getClass(), ite );
         }
     }
 

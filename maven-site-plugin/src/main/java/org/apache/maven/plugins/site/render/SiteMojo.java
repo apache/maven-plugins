@@ -40,6 +40,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.MavenReport;
+import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.reporting.exec.MavenReportExecution;
 
 /**
@@ -134,6 +135,11 @@ public class SiteMojo
         }
         catch ( RendererException e )
         {
+            if ( e.getCause() instanceof MavenReportException )
+            {
+                // issue caused by report, not really by Doxia Site Renderer
+                throw new MojoExecutionException( e.getMessage(), e.getCause() );
+            }
             throw new MojoExecutionException( e.getMessage(), e );
         }
         catch ( IOException e )
