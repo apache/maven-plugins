@@ -96,7 +96,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-exec</artifactId>
-      <version>1.2</version>
+      <version>1.4-SNAPSHOT</version>
     </dependency>
   
     <!-- Maven -->
@@ -256,7 +256,7 @@ under the License.
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-pdf-plugin</artifactId>
-          <version>1.2</version>
+          <version>1.3</version>
         </plugin>
       </plugins>
     </pluginManagement>
