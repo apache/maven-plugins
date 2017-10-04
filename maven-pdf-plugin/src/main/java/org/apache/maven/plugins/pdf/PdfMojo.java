@@ -19,30 +19,9 @@ package org.apache.maven.plugins.pdf;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.swing.text.AttributeSet;
-
 import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -75,21 +54,10 @@ import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.MailingList;
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.model.ReportSet;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.InvalidPluginException;
-import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.PluginConfigurationException;
 import org.apache.maven.plugin.PluginManager;
-import org.apache.maven.plugin.PluginManagerException;
-import org.apache.maven.plugin.PluginNotFoundException;
-import org.apache.maven.plugin.descriptor.MojoDescriptor;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugin.version.PluginVersionNotFoundException;
-import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -118,6 +86,24 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import javax.swing.text.AttributeSet;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * Generates a PDF document for a project.
  *
@@ -126,8 +112,16 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 @Mojo( name = "pdf", threadSafe = true )
 public class PdfMojo
-    extends AbstractMojo implements Contextualizable
+        extends AbstractMojo implements Contextualizable
 {
+
+    /**
+     * Workaround for reporters that fail report generation
+     * @see MavenReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
+     */
+    private final String[] failReportClassName =
+            { "DependenciesReport", "TeamListReport", "DependencyConvergenceReport" };
+
     /**
      * The vm line separator
      */
@@ -322,6 +316,7 @@ public class PdfMojo
     
     /**
      * Reports (Maven 2).
+     *
      * @since 1.3
      */
     @Parameter( defaultValue = "${reports}", required = true, readonly = true )
@@ -333,13 +328,13 @@ public class PdfMojo
      * <a href="http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats" target="_blank">
      * http://maven.apache.org/plugins/maven-site-plugin/maven-3.html#Configuration_formats</a>
      * </p>
-     * <p><b>Note:</b> using this field is not mandatory with Maven 3 as Maven core injects usual
-     * <code>&lt;reporting&gt;</code> section into this field.</p>
+     * <p><b>Note:</b>
+     * Replaces previous reportPlugins parameter, that was injected by Maven core from reporting section.
      *
      * @since 1.3
      */
-    @Parameter( readonly = true )
-    private org.apache.maven.reporting.exec.ReportPlugin[] reportPlugins;
+    @Parameter( defaultValue = "${project.reporting.plugins}", readonly = true )
+    private org.apache.maven.model.ReportPlugin[] reportingPlugins;
 
     // ----------------------------------------------------------------------
     // Instance fields
@@ -507,11 +502,11 @@ public class PdfMojo
      * Generate the PDF.
      *
      * @throws MojoExecutionException if any
-     * @throws IOException if any
+     * @throws IOException            if any
      * @since 1.1
      */
     private void generatePdf()
-        throws MojoExecutionException, IOException
+            throws MojoExecutionException, IOException
     {
         Locale.setDefault( getDefaultLocale() );
 
@@ -561,7 +556,7 @@ public class PdfMojo
      * @since 1.1
      */
     private File getSiteDirectoryTmp()
-        throws IOException
+            throws IOException
     {
         if ( this.siteDirectoryTmp == null )
         {
@@ -599,7 +594,7 @@ public class PdfMojo
      * @since 1.1
      */
     private void prepareTempSiteDirectory( final File tmpSiteDir )
-        throws IOException
+            throws IOException
     {
         // safety
         tmpSiteDir.mkdirs();
@@ -635,12 +630,12 @@ public class PdfMojo
      * Copy the from site dir to the to dir.
      *
      * @param from not null
-     * @param to not null
+     * @param to   not null
      * @throws IOException if any
      * @since 1.1
      */
     private void copySiteDir( final File from, final File to )
-        throws IOException
+            throws IOException
     {
         if ( from == null || !from.exists() )
         {
@@ -705,7 +700,7 @@ public class PdfMojo
      * @see #appendGeneratedReports(DocumentModel, Locale)
      */
     private DocumentModel getDocumentModel( Locale locale )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         if ( docDescriptor.exists() )
         {
@@ -739,7 +734,7 @@ public class PdfMojo
      * @throws org.apache.maven.plugin.MojoExecutionException if the model could not be read.
      */
     private DocumentModel getDocumentModelFromDescriptor( Locale locale )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         DocumentModel model;
 
@@ -779,7 +774,7 @@ public class PdfMojo
      * Return the directory for a given Locale and the current default Locale.
      *
      * @param basedir the base directory
-     * @param locale a Locale.
+     * @param locale  a Locale.
      * @return File.
      */
     private File getLocaleDirectory( File basedir, Locale locale )
@@ -808,7 +803,6 @@ public class PdfMojo
 
     /**
      * @return the available locales from <code>siteTool</code>.
-     * @see SiteTool#getAvailableLocales(String)
      */
     private List<Locale> getAvailableLocales()
     {
@@ -825,7 +819,7 @@ public class PdfMojo
      * @throws MojoExecutionException if any
      */
     private DecorationModel getDefaultDecorationModel()
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         if ( this.defaultDecorationModel == null )
         {
@@ -884,7 +878,7 @@ public class PdfMojo
      * @see #getDefaultDecorationModel()
      */
     private void copyResources( Locale locale )
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
         final DecorationModel decorationModel = getDefaultDecorationModel();
         if ( decorationModel == null )
@@ -989,74 +983,27 @@ public class PdfMojo
      *
      * @param locale not null
      * @throws MojoExecutionException if any
-     * @throws IOException if any
+     * @throws IOException            if any
      * @since 1.1
      */
     private void generateMavenReports( Locale locale )
-        throws MojoExecutionException, IOException
+            throws MojoExecutionException, IOException
     {
         if ( !includeReports )
         {
             getLog().info( "Skipped report generation." );
             return;
         }
-
         if ( project.getReporting() == null )
         {
             getLog().info( "No report was specified." );
             return;
         }
-        
-        for ( final ReportPlugin reportPlugin : project.getReporting().getPlugins() )
+
+        List<MavenReportExecution> reports = getReports();
+        for ( MavenReportExecution report : reports )
         {
-            final PluginDescriptor pluginDescriptor = getPluginDescriptor( reportPlugin );
-
-            if ( pluginDescriptor != null )
-            {
-                List<String> goals = new ArrayList<String>( 8 );
-                for ( final ReportSet reportSet : reportPlugin.getReportSets() )
-                {
-                    for ( String goal : reportSet.getReports() )
-                    {
-                        goals.add( goal );
-                    }
-                }
-    
-                List mojoDescriptors = pluginDescriptor.getMojos();
-                for ( Object mojoDescriptor1 : mojoDescriptors )
-                {
-                    final MojoDescriptor mojoDescriptor = (MojoDescriptor) mojoDescriptor1;
-
-                    if ( goals.isEmpty() || ( !goals.isEmpty() && goals.contains( mojoDescriptor.getGoal() ) ) )
-                    {
-                        MavenReport report = getMavenReport( mojoDescriptor );
-
-                        generateMavenReport( report, mojoDescriptor.getPluginDescriptor().getPluginArtifact(),
-                                             locale );
-                    }
-                }
-            }
-        }
-
-        // generate project-info report
-        if ( !getGeneratedMavenReports( locale ).isEmpty() )
-        {
-            File outDir = new File( getGeneratedSiteDirectoryTmp(), "xdoc" );
-            if ( !locale.getLanguage().equals( defaultLocale.getLanguage() ) )
-            {
-                outDir = new File( new File( getGeneratedSiteDirectoryTmp(), locale.getLanguage() ), "xdoc" );
-            }
-            outDir.mkdirs();
-
-            File piReport = new File( outDir, "project-info.xml" );
-
-            StringWriter sw = new StringWriter();
-
-            PdfSink sink = new PdfSink( sw );
-            ProjectInfoRenderer r = new ProjectInfoRenderer( sink, getGeneratedMavenReports( locale ), i18n, locale );
-            r.render();
-
-            writeGeneratedReport( sw.toString(), piReport );
+            generateMavenReport( report.getMavenReport(), locale );
         }
 
         // copy generated site
@@ -1065,113 +1012,16 @@ public class PdfMojo
     }
 
     /**
-     * TODO olamy : remove when maven 3 will be the de facto standard :-)
-     * @param reportPlugin not null
-     * @return the PluginDescriptor instance for the given reportPlugin.
-     * @throws MojoExecutionException if any
-     * @since 1.1
-     */
-    private PluginDescriptor getPluginDescriptor( ReportPlugin reportPlugin )
-        throws MojoExecutionException
-    {
-        try
-        {
-            return pluginManager.verifyReportPlugin( reportPlugin, project, session );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "ArtifactResolutionException: " + e.getMessage(), e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "ArtifactNotFoundException: " + e.getMessage(), e );
-        }
-        catch ( PluginNotFoundException e )
-        {
-            throw new MojoExecutionException( "PluginNotFoundException: " + e.getMessage(), e );
-        }
-        catch ( PluginVersionResolutionException e )
-        {
-            throw new MojoExecutionException( "PluginVersionResolutionException: " + e.getMessage(), e );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new MojoExecutionException( "InvalidVersionSpecificationException: " + e.getMessage(), e );
-        }
-        catch ( InvalidPluginException e )
-        {
-            throw new MojoExecutionException( "InvalidPluginException: " + e.getMessage(), e );
-        }
-        catch ( PluginManagerException e )
-        {
-            throw new MojoExecutionException( "PluginManagerException: " + e.getMessage(), e );
-        }
-        catch ( PluginVersionNotFoundException e )
-        {
-            throw new MojoExecutionException( "PluginVersionNotFoundException: " + e.getMessage(), e );
-        }
-        catch ( NoSuchMethodError e )
-        {
-            getLog().info( "Ignoring api call removed in maven 3, no reports are generated!" );
-            getLog().debug( e );
-            return null;
-        }
-    }
-
-    /**
-     * @param mojoDescriptor not null
-     * @return the MavenReport instance for the given mojoDescriptor.
-     * @throws MojoExecutionException if any
-     * @since 1.1
-     */
-    private MavenReport getMavenReport( MojoDescriptor mojoDescriptor )
-        throws MojoExecutionException
-    {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        try
-        {
-            Thread.currentThread()
-                  .setContextClassLoader( mojoDescriptor.getPluginDescriptor().getClassRealm().getClassLoader() );
-
-            MojoExecution mojoExecution = new MojoExecution( mojoDescriptor );
-
-            return pluginManager.getReport( project, mojoExecution, session );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "ArtifactNotFoundException: " + e.getMessage(), e );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "ArtifactResolutionException: " + e.getMessage(), e );
-        }
-        catch ( PluginConfigurationException e )
-        {
-            throw new MojoExecutionException( "PluginConfigurationException: " + e.getMessage(), e );
-        }
-        catch ( PluginManagerException e )
-        {
-            throw new MojoExecutionException( "PluginManagerException: " + e.getMessage(), e );
-        }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( oldClassLoader );
-        }
-    }
-
-    /**
      * Generate the given Maven report only if it is not an external report and the report could be generated.
      *
-     * @param mojoDescriptor not null, to catch linkage error
      * @param report could be null
      * @param locale not null
-     * @throws IOException if any
+     * @throws IOException            if any
      * @throws MojoExecutionException if any
-     * @see #isValidGeneratedReport(MojoDescriptor, File, String)
      * @since 1.1
      */
-    private void generateMavenReport( MavenReport report, Artifact pluginArtifact, Locale locale )
-        throws IOException, MojoExecutionException
+    private void generateMavenReport( MavenReport report, Locale locale )
+            throws IOException, MojoExecutionException
     {
         if ( report == null )
         {
@@ -1179,9 +1029,19 @@ public class PdfMojo
         }
 
         String localReportName = report.getName( locale );
+
+        // Workaround for reporters that fail report generation
+        if ( !canGenerateReport( report ) )
+        {
+            getLog().info( "Skipped \"" + localReportName + "\" report. (not supported by plugin)" );
+            getLog().debug( "Skipped report simple class name: " + report.getClass().getSimpleName() );
+
+            return;
+        }
+
         if ( !report.canGenerateReport() )
         {
-            getLog().info( "Skipped \"" + localReportName + "\" report." );
+            getLog().info( "Skipped \"" + localReportName + "\" report. (not supported by reporter)" );
             getLog().debug( "canGenerateReport() was false." );
 
             return;
@@ -1270,18 +1130,24 @@ public class PdfMojo
         }
 
         writeGeneratedReport( sw.toString(), generatedReport );
+        getGeneratedMavenReports( locale ).add( report );
+    }
 
-        if ( isValidGeneratedReport( pluginArtifact, generatedReport, localReportName ) )
+    private boolean canGenerateReport( MavenReport report )
+    {
+        for ( String className : failReportClassName )
         {
-            getGeneratedMavenReports( locale ).add( report );
+            if ( className.equals( report.getClass().getSimpleName() ) )
+            {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * @param locale not null
      * @return the generated reports
-     * @see #generateMavenReport(MojoDescriptor, MavenReport, Locale)
-     * @see #isValidGeneratedReport(MojoDescriptor, File, String)
      * @since 1.1
      */
     private List<MavenReport> getGeneratedMavenReports( Locale locale )
@@ -1310,7 +1176,7 @@ public class PdfMojo
      * &lt;/item&gt;
      * </pre>
      *
-     * @param model not null
+     * @param model  not null
      * @param locale not null
      * @see #generateMavenReports(Locale)
      * @since 1.1
@@ -1408,7 +1274,7 @@ public class PdfMojo
      * @since 1.1
      */
     private String getGeneratedDocumentTitle( final File f )
-        throws IOException
+            throws IOException
     {
         final IndexEntry entry = new IndexEntry( "index" );
         final IndexingSink titleSink = new IndexingSink( entry );
@@ -1446,7 +1312,7 @@ public class PdfMojo
     /**
      * Parsing the generated report to see if it is correct or not. Log the error for the user.
      *
-     * @param mojoDescriptor not null
+     * @param pluginArtifact  not null
      * @param generatedReport not null
      * @param localReportName not null
      * @return <code>true</code> if Doxia is able to parse the generated report, <code>false</code> otherwise.
@@ -1564,7 +1430,7 @@ public class PdfMojo
     }
 
     /**
-     * @param pluginDescriptor not null
+     * @param pluginArtifact not null
      * @return the MavenProject for the current plugin descriptor or null if an error occurred.
      * @since 1.1
      */
@@ -1584,39 +1450,31 @@ public class PdfMojo
     }
     
     protected List<MavenReportExecution> getReports()
-        throws MojoExecutionException
+            throws MojoExecutionException
     {
-        if ( isMaven3OrMore() )
+        if ( !isMaven3OrMore() )
         {
-            MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
-            mavenReportExecutorRequest.setLocalRepository( localRepository );
-            mavenReportExecutorRequest.setMavenSession( session );
-            mavenReportExecutorRequest.setProject( project );
-            mavenReportExecutorRequest.setReportPlugins( reportPlugins );
-
-            MavenReportExecutor mavenReportExecutor;
-            try
-            {
-                mavenReportExecutor = (MavenReportExecutor) container.lookup( MavenReportExecutor.class.getName() );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
-            }
-            return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
+            getLog().error( "Report generation is not supported with Maven <= 2.x" );
         }
 
-        List<MavenReportExecution> reportExecutions = new ArrayList<MavenReportExecution>( reports.length );
-        for ( MavenReport report : reports )
+        MavenReportExecutorRequest mavenReportExecutorRequest = new MavenReportExecutorRequest();
+        mavenReportExecutorRequest.setLocalRepository( localRepository );
+        mavenReportExecutorRequest.setMavenSession( session );
+        mavenReportExecutorRequest.setProject( project );
+        mavenReportExecutorRequest.setReportPlugins( reportingPlugins );
+
+        MavenReportExecutor mavenReportExecutor;
+        try
         {
-            if ( report.canGenerateReport() )
-            {
-                reportExecutions.add( new MavenReportExecution( report ) );
-            }
+            mavenReportExecutor = (MavenReportExecutor) container.lookup( MavenReportExecutor.class.getName() );
         }
-        return reportExecutions;
+        catch ( ComponentLookupException e )
+        {
+            throw new MojoExecutionException( "could not get MavenReportExecutor component", e );
+        }
+        return mavenReportExecutor.buildMavenReports( mavenReportExecutorRequest );
     }
-    
+
     /**
      * Check the current Maven version to see if it's Maven 3.0 or newer.
      */
@@ -1734,7 +1592,7 @@ public class PdfMojo
      * @since 1.1
      */
     private static class PdfSink
-        extends XdocSink
+            extends XdocSink
     {
         protected PdfSink( Writer writer )
         {
@@ -1755,7 +1613,7 @@ public class PdfMojo
      * @since 1.1
      */
     private static class ProjectInfoRenderer
-        extends AbstractMavenReportRenderer
+            extends AbstractMavenReportRenderer
     {
         private final List<MavenReport> generatedReports;
 
@@ -1856,7 +1714,7 @@ public class PdfMojo
      * @author Benjamin Bentmann
      */
     private static class SinkDelegate
-        implements InvocationHandler
+            implements InvocationHandler
     {
         private final Sink sink;
 
@@ -1867,7 +1725,7 @@ public class PdfMojo
 
         /** {@inheritDoc} */
         public Object invoke( Object proxy, Method method, Object[] args )
-            throws Throwable
+                throws Throwable
         {
             Class<?>[] parameterTypes = method.getParameterTypes();
 
