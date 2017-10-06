@@ -46,9 +46,10 @@ for ( String included : includedEntries )
 
 Manifest manifest = jar.getManifest();
 String manifestClassPath = manifest.getMainAttributes().getValue("Class-Path");
-if ( !manifestClassPath.equals("commons-lang-2.5.jar jar-sample-one-1.0-SNAPSHOT.jar") )
+System.out.println( "manifestClassPath: " + manifestClassPath );
+if ( !manifestClassPath.equals("commons-lang-commons-lang-2.5.jar eartest-jar-sample-one-1.0-20150825.210557-91.jar") )
 {
-    throw new IllegalStateException( "Missing entry in war MANIFEST.MF: commons-lang-2.5.jar jar-sample-one-1.0-SNAPSHOT.jar");
+    throw new IllegalStateException( "Missing entry in war MANIFEST.MF: commons-lang-commons-lang-2.5.jar eartest-jar-sample-one-1.0-20150825.210557-91.jar");
 }
 
 String[] excludedEntries = {

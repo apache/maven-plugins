@@ -252,8 +252,6 @@
             <configuration>
               <!-- NOTE: Must be synced with the repo path used by AbstractEarPluginIT -->
               <localRepositoryPath>${localRepositoryPath}</localRepositoryPath>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <goals>
                 <goal>clean</goal>
                 <goal>package</goal>
