@@ -121,7 +121,8 @@ public class PdfMojo
      * @see MavenReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
      */
     private final String[] failingReportClassName =
-            { "DependenciesReport", "TeamListReport", "DependencyConvergenceReport" };
+            { "DependenciesReport", "TeamListReport", "DependencyConvergenceReport", "CheckstyleReport",
+                    "ChangeLogReport", "DeveloperActivityReport", "FileActivityReport" };
 
     /**
      * The vm line separator
