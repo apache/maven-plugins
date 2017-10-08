@@ -31,12 +31,8 @@ under the License.
   <body>
     <section name="Configuring Reports">
       <p>
-        <strong>Note for Maven 3 users</strong>: due to the changes in the reporting API,
-        report inclusion does <strong>not</strong> work with Maven 3.
-        See <a href="https://issues.apache.org/jira/browse/MPDF-41">MPDF-41</a>.
-      </p>
-      <p>
-        Since version 1.1, all Maven reports will be included by default in the generated PDF.
+        All Maven reports will be included by default in the generated PDF, with some exceptions.
+        See <a href="#MavenReportingPluginsIssues">Maven Reporting Plugins Issues</a>.
         You should configure the &lt;reporting/&gt; section of your POM similar than the
         <a href="http://maven.apache.org/plugins/maven-site-plugin/examples/configuring-reports.html">site plugin</a>
       </p>
@@ -52,7 +48,7 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.1.2</version>
+        <version>2.9</version>
         <reportSets>
           <reportSet>
             <reports>
@@ -93,7 +89,7 @@ under the License.
         <plugins>
           <plugin>
             <artifactId>maven-project-info-reports-plugin</artifactId>
-            <version>2.1.2</version>
+            <version>2.9</version>
             <reportSets>
               <reportSet>
                 <reports>
@@ -137,7 +133,7 @@ under the License.
 
       </subsection>
 
-      <subsection name="Maven Reporting Plugins Issues">
+      <subsection name="Maven Reporting Plugins Issues" id="MavenReportingPluginsIssues">
         <p>
           The Maven Project supports several <a href="http://maven.apache.org/plugins/">reporting plugins</a>.
           Unfortunately, some releases reporting plugins have known issues with the PDF plugin, mainly due to
@@ -161,26 +157,22 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.1)</th>
-            <th>Snapshot (2.2-SNAPSHOT)</th>
+            <th>Release (2.3)</th>
           </tr>
 
           <tr>
             <td>changelog:changelog</td>
             <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>changelog:dev-activity</td>
             <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>changelog:file-activity</td>
             <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>
 
@@ -188,25 +180,21 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.1)</th>
-            <th>Snapshot (2.2-SNAPSHOT)</th>
+            <th>Release (2.12.1)</th>
           </tr>
 
           <tr>
             <td>changes:changes-report</td>
-            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>changes:jira-report</td>
-            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>changes:trac-report</td>
-            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>
@@ -218,14 +206,12 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.3)</th>
-            <th>Snapshot (2.4-SNAPSHOT)</th>
+            <th>Release (2.17)</th>
           </tr>
 
           <tr>
             <td>checkstyle:checkstyle</td>
             <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>
 
@@ -233,13 +219,11 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.1)</th>
-            <th>Snapshot (2.2-SNAPSHOT)</th>
+            <th>Release (3.0.2)</th>
           </tr>
 
           <tr>
             <td>dependency:analyze-report</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>
@@ -248,13 +232,11 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.5)</th>
-            <th>Snapshot (2.5.1-SNAPSHOT)</th>
+            <th>Release (3.5)</th>
           </tr>
 
           <tr>
             <td>plugin:report</td>
-            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>
@@ -263,19 +245,16 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.4)</th>
-            <th>Snapshot (2.5-SNAPSHOT)</th>
+            <th>Release (3.8)</th>
           </tr>
 
           <tr>
             <td>pmd:cpd</td>
-            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>pmd:pmd</td>
-            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>
@@ -287,85 +266,71 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.1.2)</th>
-            <th>Snapshot (2.2-SNAPSHOT)</th>
+            <th>Release (2.9)</th>
           </tr>
 
           <tr>
             <td>project-info-reports:cim</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:dependencies</td>
             <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:dependency-convergence</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:dependency-management</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:index</td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:issue-tracking</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:license</td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:mailing-list</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:plugin-management</td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:plugins</td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:project-team</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
+            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:scm</td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
 
           <tr>
             <td>project-info-reports:summary</td>
-            <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>
@@ -374,13 +339,11 @@ under the License.
         <table border="0">
           <tr>
             <th>Reports</th>
-            <th>Release (2.4.3)</th>
-            <th>Snapshot (2.5-SNAPSHOT)</th>
+            <th>Release (2.20.1)</th>
           </tr>
 
           <tr>
             <td>surefire-report:report</td>
-            <td><img src="../images/icon_error_sml.gif" alt="No"/></td>
             <td><img src="../images/icon_success_sml.gif" alt="Yes"/></td>
           </tr>
         </table>

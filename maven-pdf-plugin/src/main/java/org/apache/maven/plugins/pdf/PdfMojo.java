@@ -122,7 +122,8 @@ public class PdfMojo
      * @since 1.4
      */
     private final String[] failingReportClassName =
-            { "DependenciesReport", "TeamListReport", "DependencyConvergenceReport" };
+            { "DependenciesReport", "TeamListReport", "DependencyConvergenceReport", "CheckstyleReport",
+                    "ChangeLogReport", "DeveloperActivityReport", "FileActivityReport" };
 
     /**
      * Skip known failing reports (waiting to find the root cause and fix it).
