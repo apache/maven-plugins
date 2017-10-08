@@ -73,9 +73,6 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pdf-plugin</artifactId>
         <version>@project.version@</version>
-        <configuration>
-          <!--skipKnownFailingReports>false</skipKnownFailingReports-->
-        </configuration>
       </plugin>
     </plugins>
   </build>

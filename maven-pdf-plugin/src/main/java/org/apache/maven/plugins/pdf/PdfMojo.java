@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.input.XmlStreamReader;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -66,7 +65,6 @@ import org.apache.maven.doxia.siterenderer.SiteRenderingContext;
 import org.apache.maven.doxia.tools.SiteTool;
 import org.apache.maven.doxia.tools.SiteToolException;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.MailingList;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -76,7 +74,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.reporting.AbstractMavenReportRenderer;
 import org.apache.maven.reporting.MavenReport;
 import org.apache.maven.reporting.MavenReportException;
@@ -109,21 +106,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class PdfMojo
     extends AbstractMojo implements Contextualizable
 {
-
-    /**
-     * Workaround for reports that fail report generation
-     * @see MavenReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
-     * @since 1.4
-     */
-    private final String[] failingReportClassName =
-            { "DependenciesReport", "TeamListReport", "DependencyConvergenceReport" };
-
-    /**
-     * Skip known failing reports (waiting to find the root cause and fix it).
-     * @since 1.4
-     */
-    @Parameter( defaultValue = "true" )
-    private boolean skipKnownFailingReports = true;
 
     /**
      * The vm line separator
@@ -1025,23 +1007,6 @@ public class PdfMojo
 
         String localReportName = report.getName( locale );
 
-        // Workaround for reporters that fail report generation
-        if ( skipFailingReport( report ) )
-        {
-            if ( skipKnownFailingReports )
-            {
-                getLog().info( "Skipped \"" + localReportName + "\" report (not supported by pdf plugin)." );
-                getLog().debug( "Skipped report simple class name: " + report.getClass().getSimpleName() );
-    
-                return;
-            }
-            else
-            {
-                getLog().warn( "Keeping \"" + localReportName
-                    + "\" report even if marked 'not supported by pdf plugin'" );
-            }
-        }
-
         if ( !reportExecution.canGenerateReport() )
         {
             getLog().info( "Skipped \"" + localReportName + "\" report." );
@@ -1136,9 +1101,13 @@ public class PdfMojo
             getLog().debug( "Writing generated xdoc to " + generatedReport );
         }
         writeGeneratedReport( sw.toString(), generatedReport );
-        // TODO check that generated xdoc is valid XML, since it seems there are issues...
 
-        getGeneratedMavenReports( locale ).add( report );
+        // keep generated report xdoc only if it is valid
+        if ( isValidGeneratedReportXdoc( reportExecution.getPlugin().getId() + ':' + reportExecution.getGoal(),
+                                         generatedReport, localReportName ) )
+        {
+            getGeneratedMavenReports( locale ).add( report );
+        }
     }
 
     /**
@@ -1184,18 +1153,6 @@ public class PdfMojo
                 Thread.currentThread().setContextClassLoader( originalClassLoader );
             }
         }
-    }
-
-    private boolean skipFailingReport( MavenReport report )
-    {
-        for ( String className : failingReportClassName )
-        {
-            if ( className.equals( report.getClass().getSimpleName() ) )
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -1365,14 +1322,13 @@ public class PdfMojo
     /**
      * Parsing the generated report to see if it is correct or not. Log the error for the user.
      *
-     * @param pluginArtifact not null
+     * @param fullGoal not null
      * @param generatedReport not null
      * @param localReportName not null
      * @return <code>true</code> if Doxia is able to parse the generated report, <code>false</code> otherwise.
      * @since 1.1
      */
-    private boolean isValidGeneratedReport( Artifact pluginArtifact, File generatedReport,
-                                            String localReportName )
+    private boolean isValidGeneratedReportXdoc( String fullGoal, File generatedReport, String localReportName )
     {
         SinkAdapter sinkAdapter = new SinkAdapter();
         Reader reader = null;
@@ -1389,68 +1345,18 @@ public class PdfMojo
         {
             StringBuilder sb = new StringBuilder( 1024 );
 
-            sb.append( EOL ).append( EOL );
-            sb.append( "Error when parsing the generated report: " ).append( generatedReport.getAbsolutePath() );
+            sb.append( EOL );
+            sb.append( "Error when parsing the generated report xdoc file: " ).append( generatedReport.getAbsolutePath() );
             sb.append( EOL );
             sb.append( e.getMessage() );
-            sb.append( EOL ).append( EOL );
+            sb.append( EOL );
 
             sb.append( "You could:" ).append( EOL );
             sb.append( "  * exclude all reports using -DincludeReports=false" ).append( EOL );
             sb.append( "  * remove the " );
-            sb.append( pluginArtifact.getGroupId() );
-            sb.append( ":" );
-            sb.append( pluginArtifact.getArtifactId() );
-            sb.append( ":" );
-            sb.append( pluginArtifact.getVersion() );
+            sb.append( fullGoal );
             sb.append( " from the <reporting/> part. To not affect the site generation, " );
-            sb.append( "you could create a PDF profile." ).append( EOL );
-            sb.append( EOL );
-
-            MavenProject pluginProject = getReportPluginProject( pluginArtifact );
-
-            if ( pluginProject == null )
-            {
-                sb.append( "You could also contact the Plugin team." ).append( EOL );
-            }
-            else
-            {
-                sb.append( "You could also contact the Plugin team:" ).append( EOL );
-                if ( pluginProject.getMailingLists() != null && !pluginProject.getMailingLists().isEmpty() )
-                {
-                    boolean appended = false;
-                    for ( Object o : pluginProject.getMailingLists() )
-                    {
-                        MailingList mailingList = (MailingList) o;
-
-                        if ( StringUtils.isNotEmpty( mailingList.getName() )
-                            && StringUtils.isNotEmpty( mailingList.getPost() ) )
-                        {
-                            if ( !appended )
-                            {
-                                sb.append( "  Mailing Lists:" ).append( EOL );
-                                appended = true;
-                            }
-                            sb.append( "    " ).append( mailingList.getName() );
-                            sb.append( ": " ).append( mailingList.getPost() );
-                            sb.append( EOL );
-                        }
-                    }
-                }
-                if ( StringUtils.isNotEmpty( pluginProject.getUrl() ) )
-                {
-                    sb.append( "  Web Site:" ).append( EOL );
-                    sb.append( "    " ).append( pluginProject.getUrl() );
-                    sb.append( EOL );
-                }
-                if ( pluginProject.getIssueManagement() != null
-                    && StringUtils.isNotEmpty( pluginProject.getIssueManagement().getUrl() ) )
-                {
-                    sb.append( "  Issue Tracking:" ).append( EOL );
-                    sb.append( "    " ).append( pluginProject.getIssueManagement().getUrl() );
-                    sb.append( EOL );
-                }
-            }
+            sb.append( "you could create a PDF profile." );
 
             sb.append( EOL ).append( "Ignoring the \"" ).append( localReportName )
                     .append( "\" report in the PDF." ).append( EOL );
@@ -1482,26 +1388,6 @@ public class PdfMojo
         return true;
     }
 
-    /**
-     * @param pluginArtifact not null
-     * @return the MavenProject for the current plugin descriptor or null if an error occurred.
-     * @since 1.1
-     */
-    private MavenProject getReportPluginProject( Artifact pluginArtifact )
-    {
-        try
-        {
-            return mavenProjectBuilder.buildFromRepository( pluginArtifact, remoteRepositories, localRepository );
-        }
-        catch ( ProjectBuildingException e )
-        {
-            getLog().error( "ProjectBuildingException: " + e.getMessage() );
-            getLog().debug( e );
-        }
-
-        return null;
-    }
-    
     protected List<MavenReportExecution> getReports()
         throws MojoExecutionException
     {
