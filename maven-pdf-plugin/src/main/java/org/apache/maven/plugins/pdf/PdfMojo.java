@@ -1124,7 +1124,7 @@ public class PdfMojo
             org.codehaus.doxia.sink.Sink proxy = (org.codehaus.doxia.sink.Sink) Proxy.newProxyInstance(
                 org.codehaus.doxia.sink.Sink.class.getClassLoader(),
                 new Class[] { org.codehaus.doxia.sink.Sink.class }, new SinkDelegate( sink ) );
-            report.generate( proxy, locale );
+            renderReportToSink( reportExec, locale, proxy );
         }
         catch ( MavenReportException e )
         {
@@ -1138,8 +1138,51 @@ public class PdfMojo
             }
         }
 
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Writing generated xdoc to " + generatedReport );
+        }
         writeGeneratedReport( sw.toString(), generatedReport );
+        // TODO check that generated xdoc is valid XML, since it seems there are issues...
+
         getGeneratedMavenReports( locale ).add( report );
+    }
+
+    private void renderReportToSink( MavenReportExecution reportExec, Locale locale, org.codehaus.doxia.sink.Sink sink )
+        throws MavenReportException
+    {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try
+        {
+            if ( reportExec.getClassLoader() != null )
+            {
+                Thread.currentThread().setContextClassLoader( reportExec.getClassLoader() );
+            }
+    
+            MavenReport report = reportExec.getMavenReport();
+    
+            /*if ( report instanceof MavenMultiPageReport )
+            {
+                // extended multi-page API
+                ( (MavenMultiPageReport) report ).generate( mainSink, multiPageSinkFactory, locale );
+            }
+            else if ( generateMultiPage( locale, multiPageSinkFactory, mainSink ) )
+            {
+                // extended multi-page API for Maven 2.2, only accessible by reflection API
+            }
+            else
+            {*/
+            // old single-page-only API
+            report.generate( sink, locale );
+            //}
+        }
+        finally
+        {
+            if ( reportExec.getClassLoader() != null )
+            {
+                Thread.currentThread().setContextClassLoader( originalClassLoader );
+            }
+        }
     }
 
     private boolean skipFailingReport( MavenReport report )

@@ -94,7 +94,8 @@ under the License.
           <reportSet>
             <reports>
               <report>cim</report>
-              <report>dependencies</report>
+              <report>dependencies</report><!-- generated xdoc is not valid XML: missing <table> -->
+              <report>dependency-convergence</report><!-- generated xdoc is not valid XML: missing <table> -->
               <report>dependency-info</report>
               <report>dependency-management</report>
               <report>issue-tracking</report>
