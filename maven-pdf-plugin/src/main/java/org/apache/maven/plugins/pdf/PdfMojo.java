@@ -1346,7 +1346,8 @@ public class PdfMojo
             StringBuilder sb = new StringBuilder( 1024 );
 
             sb.append( EOL );
-            sb.append( "Error when parsing the generated report xdoc file: " ).append( generatedReport.getAbsolutePath() );
+            sb.append( "Error when parsing the generated report xdoc file: " );
+            sb.append( generatedReport.getAbsolutePath() );
             sb.append( EOL );
             sb.append( e.getMessage() );
             sb.append( EOL );
