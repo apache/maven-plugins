@@ -1004,10 +1004,10 @@ public class PdfMojo
             return;
         }
 
-        List<MavenReportExecution> reports = getReports();
-        for ( MavenReportExecution report : reports )
+        List<MavenReportExecution> reportExecutions = getReports();
+        for ( MavenReportExecution reportExecution : reportExecutions )
         {
-            generateMavenReport( report, locale );
+            generateMavenReport( reportExecution, locale );
         }
 
         // copy generated site
@@ -1018,16 +1018,16 @@ public class PdfMojo
     /**
      * Generate the given Maven report only if it is not an external report and the report could be generated.
      *
-     * @param reportExec not null
+     * @param reportExecution not null
      * @param locale not null
      * @throws IOException if any
      * @throws MojoExecutionException if any
      * @since 1.1
      */
-    private void generateMavenReport( MavenReportExecution reportExec, Locale locale )
+    private void generateMavenReport( MavenReportExecution reportExecution, Locale locale )
         throws IOException, MojoExecutionException
     {
-        MavenReport report = reportExec.getMavenReport();
+        MavenReport report = reportExecution.getMavenReport();
 
         String localReportName = report.getName( locale );
 
@@ -1048,7 +1048,7 @@ public class PdfMojo
             }
         }
 
-        if ( !reportExec.canGenerateReport() )
+        if ( !reportExecution.canGenerateReport() )
         {
             getLog().info( "Skipped \"" + localReportName + "\" report." );
             getLog().debug( "canGenerateReport() was false." );
@@ -1124,11 +1124,13 @@ public class PdfMojo
             org.codehaus.doxia.sink.Sink proxy = (org.codehaus.doxia.sink.Sink) Proxy.newProxyInstance(
                 org.codehaus.doxia.sink.Sink.class.getClassLoader(),
                 new Class[] { org.codehaus.doxia.sink.Sink.class }, new SinkDelegate( sink ) );
-            renderReportToSink( reportExec, locale, proxy );
+            renderReportToSink( reportExecution, locale, proxy );
         }
         catch ( MavenReportException e )
         {
-            throw new MojoExecutionException( "MavenReportException: " + e.getMessage(), e );
+            String goal = reportExecution.getPlugin().getArtifactId() + ':' + reportExecution.getPlugin().getVersion()
+                + ':' + reportExecution.getGoal();
+            throw new MojoExecutionException( "Error generating " + goal + " report", e );
         }
         finally
         {
@@ -1148,6 +1150,14 @@ public class PdfMojo
         getGeneratedMavenReports( locale ).add( report );
     }
 
+    /**
+     * see org.apache.maven.plugins.site.render.ReportDocumentRenderer#renderDocument(...)
+     *
+     * @param reportExec
+     * @param locale
+     * @param sink
+     * @throws MavenReportException
+     */
     private void renderReportToSink( MavenReportExecution reportExec, Locale locale, org.codehaus.doxia.sink.Sink sink )
         throws MavenReportException
     {
