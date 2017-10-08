@@ -106,7 +106,7 @@ import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * Generates a PDF document for a project.
+ * Generates a PDF document for a project documentation usually published as web site (with maven-site-plugin).
  *
  * @author ltheussl
  * @version $Id$
@@ -119,9 +119,17 @@ public class PdfMojo
     /**
      * Workaround for reports that fail report generation
      * @see MavenReport#generate(org.codehaus.doxia.sink.Sink, java.util.Locale)
+     * @since 1.4
      */
     private final String[] failingReportClassName =
             { "DependenciesReport", "TeamListReport", "DependencyConvergenceReport" };
+
+    /**
+     * Skip known failing reports (waiting to find the root cause and fix it).
+     * @since 1.4
+     */
+    @Parameter( defaultValue = "true" )
+    private boolean skipKnownFailingReports = true;
 
     /**
      * The vm line separator
@@ -1029,10 +1037,18 @@ public class PdfMojo
         // Workaround for reporters that fail report generation
         if ( skipFailingReport( report ) )
         {
-            getLog().info( "Skipped \"" + localReportName + "\" report (not supported by pdf plugin)." );
-            getLog().debug( "Skipped report simple class name: " + report.getClass().getSimpleName() );
-
-            return;
+            if ( skipKnownFailingReports )
+            {
+                getLog().info( "Skipped \"" + localReportName + "\" report (not supported by pdf plugin)." );
+                getLog().debug( "Skipped report simple class name: " + report.getClass().getSimpleName() );
+    
+                return;
+            }
+            else
+            {
+                getLog().warn( "Keeping \"" + localReportName
+                    + "\" report even if marked 'not supported by pdf plugin'" );
+            }
         }
 
         if ( !report.canGenerateReport() )
@@ -1045,7 +1061,7 @@ public class PdfMojo
 
         if ( report.isExternalReport() )
         {
-            getLog().info( "Skipped external \"" + localReportName + "\" report." );
+            getLog().info( "Skipped external \"" + localReportName + "\" report (not supported by pdf plugin)." );
             getLog().debug( "isExternalReport() was false." );
 
             return;
