@@ -26,17 +26,12 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.swing.text.AttributeSet;
 
 import org.apache.commons.io.input.XmlStreamReader;
 import org.apache.maven.artifact.Artifact;
@@ -61,7 +56,6 @@ import org.apache.maven.doxia.module.xdoc.XdocSink;
 import org.apache.maven.doxia.parser.ParseException;
 import org.apache.maven.doxia.parser.manager.ParserNotFoundException;
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.sink.SinkEventAttributes;
 import org.apache.maven.doxia.sink.impl.SinkAdapter;
 import org.apache.maven.doxia.sink.impl.SinkEventAttributeSet;
 import org.apache.maven.doxia.site.decoration.DecorationModel;
@@ -1117,14 +1111,11 @@ public class PdfMojo
 
         StringWriter sw = new StringWriter();
 
-        PdfSink sink = null;
+        PdfXdocSink sink = null;
         try
         {
-            sink = new PdfSink( sw );
-            org.codehaus.doxia.sink.Sink proxy = (org.codehaus.doxia.sink.Sink) Proxy.newProxyInstance(
-                org.codehaus.doxia.sink.Sink.class.getClassLoader(),
-                new Class[] { org.codehaus.doxia.sink.Sink.class }, new SinkDelegate( sink ) );
-            renderReportToSink( reportExecution, locale, proxy );
+            sink = new PdfXdocSink( sw );
+            renderReportToSink( reportExecution, locale, sink );
         }
         catch ( MavenReportException e )
         {
@@ -1158,7 +1149,7 @@ public class PdfMojo
      * @param sink
      * @throws MavenReportException
      */
-    private void renderReportToSink( MavenReportExecution reportExec, Locale locale, org.codehaus.doxia.sink.Sink sink )
+    private void renderReportToSink( MavenReportExecution reportExec, Locale locale, PdfXdocSink sink )
         throws MavenReportException
     {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -1653,10 +1644,11 @@ public class PdfMojo
      *
      * @since 1.1
      */
-    private static class PdfSink
+    private static class PdfXdocSink
         extends XdocSink
+        implements org.codehaus.doxia.sink.Sink
     {
-        protected PdfSink( Writer writer )
+        protected PdfXdocSink( Writer writer )
         {
             super( writer );
         }
@@ -1766,53 +1758,6 @@ public class PdfMojo
             sink.section2_();
 
             sink.section1_();
-        }
-    }
-
-    /**
-     * Delegates the method invocations on <code>org.codehaus.doxia.sink.Sink@maven-core-realm</code> to
-     * <code>org.apache.maven.doxia.sink.Sink@pdf-plugin-realm</code>.
-     *
-     * @author Benjamin Bentmann
-     */
-    private static class SinkDelegate
-        implements InvocationHandler
-    {
-        private final Sink sink;
-
-        SinkDelegate( Sink sink )
-        {
-            this.sink = sink;
-        }
-
-        /** {@inheritDoc} */
-        public Object invoke( Object proxy, Method method, Object[] args )
-            throws Throwable
-        {
-            Class<?>[] parameterTypes = method.getParameterTypes();
-
-            for ( int i = parameterTypes.length - 1; i >= 0; i-- )
-            {
-                if ( AttributeSet.class.isAssignableFrom( parameterTypes[i] ) )
-                {
-                    parameterTypes[i] = SinkEventAttributes.class;
-                }
-            }
-
-            if ( args != null )
-            {
-                for ( int i = args.length - 1; i >= 0; i-- )
-                {
-                    if ( AttributeSet.class.isInstance( args[i] ) )
-                    {
-                        args[i] = new SinkEventAttributeSet( (AttributeSet) args[i] );
-                    }
-                }
-            }
-
-            Method target = Sink.class.getMethod( method.getName(), parameterTypes );
-
-            return target.invoke( sink, args );
         }
     }
 }
