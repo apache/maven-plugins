@@ -1007,7 +1007,7 @@ public class PdfMojo
         List<MavenReportExecution> reports = getReports();
         for ( MavenReportExecution report : reports )
         {
-            generateMavenReport( report.getMavenReport(), locale );
+            generateMavenReport( report, locale );
         }
 
         // copy generated site
@@ -1018,19 +1018,16 @@ public class PdfMojo
     /**
      * Generate the given Maven report only if it is not an external report and the report could be generated.
      *
-     * @param report could be null
+     * @param reportExec not null
      * @param locale not null
      * @throws IOException if any
      * @throws MojoExecutionException if any
      * @since 1.1
      */
-    private void generateMavenReport( MavenReport report, Locale locale )
+    private void generateMavenReport( MavenReportExecution reportExec, Locale locale )
         throws IOException, MojoExecutionException
     {
-        if ( report == null )
-        {
-            return;
-        }
+        MavenReport report = reportExec.getMavenReport();
 
         String localReportName = report.getName( locale );
 
@@ -1051,7 +1048,7 @@ public class PdfMojo
             }
         }
 
-        if ( !report.canGenerateReport() )
+        if ( !reportExec.canGenerateReport() )
         {
             getLog().info( "Skipped \"" + localReportName + "\" report." );
             getLog().debug( "canGenerateReport() was false." );
