@@ -1546,6 +1546,16 @@ public class PdfMojo
             // workaround to fix quotes introduced with MPIR-59 (then removed in MPIR-136)
             super.text( StringUtils.replace( text, "\u0092", "'" ) );
         }
+
+        public void tableRow()
+        {
+            // To be backward compatible: TODO add to XdocSink
+            if ( !this.tableRows )
+            {
+                tableRows( null, false );
+            }
+            super.tableRow( null );
+        }
     }
 
     /**
