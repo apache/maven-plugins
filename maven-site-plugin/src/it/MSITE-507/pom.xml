@@ -349,8 +349,6 @@ under the License.
           <artifactId>maven-compiler-plugin</artifactId> 
           <version>2.3.2</version> 
           <configuration> 
-            <source>1.5</source> 
-            <target>1.5</target> 
             <encoding>utf-8</encoding> 
           </configuration> 
         </plugin> 
@@ -643,7 +641,7 @@ under the License.
       <plugin> 
         <groupId>org.apache.maven.plugins</groupId> 
         <artifactId>maven-javadoc-plugin</artifactId> 
-        <version>2.7</version> 
+        <version>3.0.0-M1</version> 
         <configuration> 
           <encoding>utf-8</encoding> 
           <stylesheetfile>javadoc/cedarsoft.css</stylesheetfile> 
@@ -740,12 +738,6 @@ under the License.
       </plugin> 
  
       <plugin> 
-        <groupId>org.codehaus.mojo</groupId> 
-        <artifactId>cobertura-maven-plugin</artifactId> 
-        <version>2.4</version> 
-      </plugin> 
- 
-      <plugin> 
         <groupId>org.apache.maven.plugins</groupId> 
         <artifactId>maven-surefire-report-plugin</artifactId> 
         <version>2.6</version> 
@@ -759,5 +751,24 @@ under the License.
     </plugins> 
 
   </reporting>
+  
+  <profiles>
+    <profile>
+      <id>pre-jdk9</id>
+      <activation>
+        <jdk>(,9)</jdk>
+      </activation>
+      <reporting>
+        <plugins>
+          <!-- no Java9-ready version available yet -->
+          <plugin> 
+            <groupId>org.codehaus.mojo</groupId> 
+            <artifactId>cobertura-maven-plugin</artifactId> 
+            <version>2.4</version> 
+          </plugin> 
+        </plugins>
+      </reporting>
+    </profile>
+  </profiles>
 
 </project>
