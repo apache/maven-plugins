@@ -52,12 +52,19 @@ import org.codehaus.plexus.languages.java.jpms.ResolvePathsResult;
 import org.codehaus.plexus.languages.java.jpms.ResolvePathsResult.ModuleNameSource;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
 
 /**
  * The JLink goal is intended to create a Java Run Time Image file based on
  * <a href="http://openjdk.java.net/jeps/282">http://openjdk.java.net/jeps/282</a>,
  * <a href="http://openjdk.java.net/jeps/220">http://openjdk.java.net/jeps/220</a>.
- * 
+ *
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
 // CHECKSTYLE_OFF: LineLength
@@ -104,7 +111,7 @@ public class JLinkMojo
     /**
      * Limit the universe of observable modules. The following gives an example of the configuration which can be used
      * in the <code>pom.xml</code> file.
-     * 
+     *
      * <pre>
      *   &lt;limitModules&gt;
      *     &lt;limitModule&gt;mod1&lt;/limitModule&gt;
@@ -113,7 +120,7 @@ public class JLinkMojo
      *     .
      *   &lt;/limitModules&gt;
      * </pre>
-     * 
+     *
      * This configuration is the equivalent of the command line option:
      * <code>--limit-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>
      */
@@ -128,7 +135,7 @@ public class JLinkMojo
      * By using the --add-modules you can define the root modules to be resolved. The configuration in
      * <code>pom.xml</code> file can look like this:
      * </p>
-     * 
+     *
      * <pre>
      * &lt;addModules&gt;
      *   &lt;addModule&gt;mod1&lt;/addModule&gt;
@@ -137,7 +144,7 @@ public class JLinkMojo
      *   .
      * &lt;/addModules&gt;
      * </pre>
-     * 
+     *
      * The command line equivalent for jlink is: <code>--add-modules &lt;mod&gt;[,&lt;mod&gt;...]</code>.
      */
     @Parameter
@@ -205,7 +212,7 @@ public class JLinkMojo
 
     /**
      * Suggest providers that implement the given service types from the module path.
-     * 
+     *
      * <pre>
      * &lt;suggestProviders&gt;
      *   &lt;suggestProvider&gt;name-a&lt;/suggestProvider&gt;
@@ -214,7 +221,7 @@ public class JLinkMojo
      *   .
      * &lt;/suggestProviders&gt;
      * </pre>
-     * 
+     *
      * The jlink command linke equivalent: <code>--suggest-providers [&lt;name&gt;,...]</code>
      */
     @Parameter
@@ -233,7 +240,24 @@ public class JLinkMojo
     private ZipArchiver zipArchiver;
 
     /**
-     * Name of the generated ZIP file in the <code>target</code> directory. 
+     * The repository system.
+     */
+    @Component
+    private RepositorySystem repoSystem;
+
+    /**
+     * The repository system session.
+     */
+    @Parameter( defaultValue = "${repositorySystemSession}", readonly = true, required = true )
+    private RepositorySystemSession repoSession;
+    /**
+     * The available repositories.
+     */
+    @Parameter( defaultValue = "${project.remoteProjectRepositories}", readonly = true, required = true )
+    private List<RemoteRepository> repositories;
+
+    /**
+     * Name of the generated ZIP file in the <code>target</code> directory.
      * This will not change the name of the installed/deployed file.
      */
     @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
@@ -310,13 +334,50 @@ public class JLinkMojo
         getProject().getArtifact().setFile( createZipArchiveFromImage );
     }
 
-    private List<File> getCompileClasspathElements( MavenProject project )
+    private List<File> getCompileClasspathElements( MavenProject project ) throws MojoExecutionException
     {
         List<File> list = new ArrayList<File>( project.getArtifacts().size() + 1 );
-
-        for ( Artifact a : project.getArtifacts() )
+        for ( Artifact unresolvedArtifact : project.getArtifacts() )
         {
-            list.add( a.getFile() );
+
+            // Here, it becomes messy. We ask Maven to resolve the artifact's location.
+            // It may imply downloading it from a remote repository,
+            // searching the local repository or looking into the reactor's cache.
+
+            // To achieve this, we must use Aether
+            // (the dependency mechanism behind Maven).
+            String artifactId = unresolvedArtifact.getArtifactId();
+            org.eclipse.aether.artifact.Artifact aetherArtifact =
+                new DefaultArtifact( unresolvedArtifact.getGroupId(), unresolvedArtifact.getArtifactId(),
+                                     unresolvedArtifact.getClassifier(), unresolvedArtifact.getType(),
+                                     unresolvedArtifact.getVersion() );
+
+            ArtifactRequest req =
+                new ArtifactRequest().setRepositories( this.repositories ).setArtifact( aetherArtifact );
+            ArtifactResult resolutionResult;
+            try
+            {
+                resolutionResult = this.repoSystem.resolveArtifact( this.repoSession, req );
+
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                throw new MojoExecutionException( "Artifact " + artifactId + " could not be resolved.", e );
+            }
+
+            // The file should exists, but we never know.
+            File file = resolutionResult.getArtifact().getFile();
+            if ( file == null || !file.exists() )
+            {
+                getLog().warn( "Artifact " + artifactId
+                    + " has no attached file. Its content will not be copied in the target model directory." );
+            }
+            else
+            {
+                list.add( file );
+            }
+
+            // Do whatever you want with the file...
         }
         return list;
     }
@@ -384,7 +445,7 @@ public class JLinkMojo
                 modulepathElements.add( file.getPath() );
             }
         }
-        catch ( IOException e )
+        catch ( IOException | MojoExecutionException e )
         {
             getLog().warn( e.getMessage() );
         }
@@ -536,7 +597,7 @@ public class JLinkMojo
             argsFile
               .append( '"' )
               .append( getPlatformDependSeparateList( modulePaths )
-                         .replace( "\\", "\\\\" ) 
+                         .replace( "\\", "\\\\" )
                      ).println( '"' );
             //@formatter:off
         }
@@ -613,7 +674,7 @@ public class JLinkMojo
     {
         return addModules != null && !addModules.isEmpty();
     }
-    
+
     private void writeBoxedWarning( String message )
     {
         String line = StringUtils.repeat( "*", message.length() + 4 );
@@ -621,5 +682,5 @@ public class JLinkMojo
         getLog().warn( "* " + MessageUtils.buffer().strong( message )  + " *" );
         getLog().warn( line );
     }
-    
+
 }
