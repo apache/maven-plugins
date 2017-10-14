@@ -244,8 +244,6 @@ Using maven-site-plugin with Maven 3
 <project>
 ...
   <reporting>
-    <excludeDefaults>true</excludeDefaults>
-    <outputDirectory>\${project.build.directory}/site</outputDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -284,9 +282,15 @@ Using maven-site-plugin with Maven 3
 
   As a consequence, with <<<maven-site-plugin>>> 3.7, the <<<\<reportPlugins\>>>> configuration has simply been removed
   (and marked marked private/internal since 3.3), and
-  {{{https://issues.apache.org/jira/browse/MNG-6189}Maven 3.5.0 prints a warning if it is used}}.
-  This documentation is kept public only to help people who used it in previous versions
-  understand why they need to migrate back to classic configuration.
+  {{{https://issues.apache.org/jira/browse/MNG-6189}Maven 3.5.0 prints following warning if <<<\<reportPlugins\>>>> is used}}:
+
++-----+
+[WARNING] Reporting configuration should be done in <reporting> section, not in maven-site-plugin <configuration> as reportPlugins parameter.
++-----+
+
+  This documentation is kept public only to help people who used <<<\<reportPlugins\>>>> in previous versions
+  understand why they need to migrate back to classic configuration and how to switch back to
+  {{{Classic_configuration_Maven_2__3}<<<\<reports\><plugins\>>>> classic configuration}}.
 
   <Explanation:> The (former) new format did not support report plugins configuration inheritance, which is crucial for
   usability: see {{{https://issues.apache.org/jira/browse/MSITE-484}MSITE-484}}. This field is technically necessary to remove
@@ -305,7 +309,7 @@ Using maven-site-plugin with Maven 3
         <version>3.2</version><!-- last maven-site-plugin version supporting this reportPlugins configuration -->
         <configuration>
           ...
-          <reportPlugins><!-- not supported any more... (removed in 3.7, kept internal in 3.3) -->
+          <reportPlugins><!-- not supported any more, causes WARNING in Maven 3.5.0: move to <project><reporting><plugins> instead -->
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-project-info-reports-plugin</artifactId>
