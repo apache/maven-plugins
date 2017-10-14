@@ -289,7 +289,7 @@ Using maven-site-plugin with Maven 3
 +-----+
 
   This documentation is kept public only to help people who used <<<\<reportPlugins\>>>> in previous versions
-  understand why they need to migrate back to classic configuration and how to switch back to
+  understand why they need to migrate back to classic configuration, and learn how to switch back to
   {{{Classic_configuration_Maven_2__3}<<<\<reports\><plugins\>>>> classic configuration}}.
 
   <Explanation:> The (former) new format did not support report plugins configuration inheritance, which is crucial for
@@ -301,6 +301,8 @@ Using maven-site-plugin with Maven 3
   Here is how this feature looked like:
 
 +-----+
+<project>
+...
   <build>
     <plugins>
       <plugin>
@@ -334,6 +336,8 @@ Using maven-site-plugin with Maven 3
       </plugin>
     </plugins>
   </build>
+...
+</project>
 +-----+
 
 * Inheritance of reports for Maven 3 before 3.0.4
