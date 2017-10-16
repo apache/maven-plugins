@@ -68,7 +68,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
  */
 // CHECKSTYLE_OFF: LineLength
-@Mojo( name = "jlink", requiresDependencyCollection = ResolutionScope.RUNTIME, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
+@Mojo( name = "jlink", requiresDependencyResolution = ResolutionScope.RUNTIME, defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true )
 // CHECKSTYLE_ON: LineLength
 public class JLinkMojo
     extends AbstractJLinkMojo
