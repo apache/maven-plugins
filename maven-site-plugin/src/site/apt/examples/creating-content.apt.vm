@@ -165,8 +165,11 @@ Creating Content
   property set in the
   {{{http://svn.apache.org/repos/asf/maven/site/trunk/pom.xml}POM}}.
 
-  <<Note:>> {{{http://velocity.apache.org/}Apache Velocity}} is used to apply the
-  filtering. Because Velocity uses a dot-notation to traverse beans you <<cannot>>
+  Since version 3.5, you can save processed markup by setting <<<saveProcessedContent>>> to <<<true>>>: see
+  {{{./site-mojo.html#saveProcessedContent}corresponding documentation}} for more details.
+
+  <<Note:>> {{{http://velocity.apache.org/}Apache Velocity}} is used to apply the filtering.
+  As Velocity uses a dot-notation to traverse beans, you <<cannot>>
   use dotted properties defined in <<<\<properties\>>>> directly. It is generally
   advised to access properties by using the <<<${esc.d}context>>> tool.
   E.g., with <<<${esc.d}context.get("my.property")>>>.
@@ -174,6 +177,15 @@ Creating Content
   Some properties are defined by default: see
   {{{/doxia/doxia-sitetools/doxia-site-renderer/#Velocity_processing} Doxia Site Renderer's Velocity processing reference}}
   for more information. For a complete usage overview, see Velocity's {{{http://velocity.apache.org/engine/devel/user-guide.html}user guide}}.
+
+  Another classical issue with Velocity happens when using Markdown headers:
+  as <<<${esc.h}${esc.h}>>> denotes a
+  {{{http://velocity.apache.org/engine/1.7/vtl-reference.html#single-line-comments}single line comment}} in Velocity,
+  Markdown headers using this syntax are suppressed from generated content.
+  You can use {{{http://velocity.apache.org/engine/1.7/vtl-reference.html#unparsed-content}unparsed content syntax}}
+  <<<${esc.h}[[#[[##]]#]]${esc.h}>>> or
+  {{{http://velocity.apache.org/tools/2.0/apidocs/org/apache/velocity/tools/generic/EscapeTool.html}escape tool}}
+  like <<<${esc.d}\{esc.h\}${esc.d}\{esc.h\}>>>.
 
 * Internationalization
 
