@@ -21,8 +21,8 @@ package org.apache.maven.plugins.jlink;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -210,7 +210,7 @@ public abstract class AbstractJLinkMojo
                     tc = tcs.get( 0 );
                 }
             }
-            catch ( NoSuchMethodException e )
+            catch ( ReflectiveOperationException e )
             {
                 // ignore
             }
@@ -218,15 +218,7 @@ public abstract class AbstractJLinkMojo
             {
                 // ignore
             }
-            catch ( IllegalAccessException e )
-            {
-                // ignore
-            }
             catch ( IllegalArgumentException e )
-            {
-                // ignore
-            }
-            catch ( InvocationTargetException e )
             {
                 // ignore
             }
@@ -338,7 +330,7 @@ public abstract class AbstractJLinkMojo
      * @param modulePaths The list of elements.
      * @return The string which contains the elements separated by {@link File#pathSeparatorChar}.
      */
-    protected String getPlatformDependSeparateList( List<String> modulePaths )
+    protected String getPlatformDependSeparateList( Collection<String> modulePaths )
     {
         StringBuilder sb = new StringBuilder();
         for ( String module : modulePaths )
@@ -357,7 +349,7 @@ public abstract class AbstractJLinkMojo
      * @param modules The list of modules.
      * @return The string with the module list which is separated by {@code ,}.
      */
-    protected String getCommaSeparatedList( List<String> modules )
+    protected String getCommaSeparatedList( Collection<String> modules )
     {
         StringBuilder sb = new StringBuilder();
         for ( String module : modules )
