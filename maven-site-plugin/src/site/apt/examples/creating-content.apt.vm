@@ -169,7 +169,7 @@ Creating Content
   for more information. For a complete usage overview, see Velocity's {{{http://velocity.apache.org/engine/devel/user-guide.html}user guide}}.
 
   Since version 3.5, you can save processed markup by setting <<<saveProcessedContent>>> to <<<true>>>: see
-  {{{./site-mojo.html#saveProcessedContent}corresponding documentation}} for more details.
+  {{{../site-mojo.html#saveProcessedContent}corresponding documentation}} for more details.
 
 ** Common Issues and Workarounds
 
