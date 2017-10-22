@@ -35,7 +35,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.jdeprscan.consumers.JDeprScanConsumer;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
 import org.codehaus.plexus.util.StringUtils;
@@ -55,9 +54,6 @@ public abstract class AbstractJDeprScanMojo
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     private MavenSession session;
     
-    
-    @Parameter()
-
     @Component
     private ToolchainManager toolchainManager;
 
@@ -82,7 +78,18 @@ public abstract class AbstractJDeprScanMojo
 
         addJDeprScanOptions( cmd );
 
-        executeJDeprScanCommandLine( cmd, new JDeprScanConsumer() );
+        executeJDeprScanCommandLine( cmd, getConsumer() );
+        
+        verify();
+    }
+    
+    protected CommandLineUtils.StringStreamConsumer getConsumer()
+    {
+      return null;    
+    }
+    
+    protected void verify() throws MojoExecutionException
+    {
     }
     
     protected abstract boolean isForRemoval();
@@ -192,13 +199,13 @@ public abstract class AbstractJDeprScanMojo
 
             String output = ( StringUtils.isEmpty( out.getOutput() ) ? null : '\n' + out.getOutput().trim() );
 
+            if ( StringUtils.isNotEmpty( output ) )
+            {
+                getLog().info( output );
+            }
+
             if ( exitCode != 0 )
             {
-                if ( StringUtils.isNotEmpty( output ) )
-                {
-                    getLog().info( output );
-                }
-
                 StringBuilder msg = new StringBuilder( "\nExit code: " );
                 msg.append( exitCode );
                 if ( StringUtils.isNotEmpty( err.getOutput() ) )
@@ -211,10 +218,6 @@ public abstract class AbstractJDeprScanMojo
                 throw new MojoExecutionException( msg.toString() );
             }
 
-            if ( StringUtils.isNotEmpty( output ) )
-            {
-                getLog().info( output );
-            }
         }
         catch ( CommandLineException e )
         {

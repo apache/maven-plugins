@@ -19,6 +19,13 @@ package org.apache.maven.plugins.jdeprscan.consumers;
  * under the License.
  */
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
@@ -33,4 +40,55 @@ public class JDeprScanConsumer
     implements StreamConsumer
 {
 
+    private Map<String, Set<String>> deprecatedClasses = new HashMap<>();
+
+    private Map<String, Set<String>> deprecatedMethods = new HashMap<>();
+
+    public static final Pattern DEPRECATED_CLASS = Pattern.compile( "^class (\\S+) uses deprecated class (\\S+)" );
+
+    public static final Pattern DEPRECATED_METHOD = Pattern.compile( "^class (\\S+) uses deprecated method (\\S+)" );
+
+    public Map<String, Set<String>> getDeprecatedClasses()
+    {
+        return deprecatedClasses;
+    }
+    
+    public Map<String, Set<String>> getDeprecatedMethods()
+    {
+        return deprecatedMethods;
+    }
+    
+    @Override
+    public void consumeLine( String line )
+    {
+        super.consumeLine( line );
+
+        Matcher matcher;
+        
+        matcher = DEPRECATED_CLASS.matcher( line );
+        if ( matcher.find() )
+        {
+            Set<String> dc = deprecatedClasses.get( matcher.group( 1 ) );
+            if ( dc == null )
+            {
+                dc = new HashSet<>();
+                deprecatedClasses.put( matcher.group( 1 ), dc );
+            }
+            dc.add( matcher.group( 2 ) );
+            return;
+        }
+        
+        matcher = DEPRECATED_METHOD.matcher( line );
+        if ( matcher.find() )
+        {
+            Set<String> dm = deprecatedMethods.get( matcher.group( 1 ) );
+            if ( dm == null )
+            {
+                dm = new HashSet<>();
+                deprecatedMethods.put( matcher.group( 1 ), dm );
+            }
+            dm.add( matcher.group( 2 ) );
+            return;
+        }
+    }
 }
