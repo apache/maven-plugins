@@ -23,15 +23,19 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.jdeprscan.consumers.JDeprScanConsumer;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
 
 /**
  * Base class for all explicit jdeprscan mojos
@@ -63,13 +67,15 @@ public abstract class BaseJDeprScanMojo extends AbstractJDeprScanMojo
     @Parameter
     private String release;
     
+    private JDeprScanConsumer consumer = new JDeprScanConsumer();
+    
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         if ( !Files.exists( getClassesDirectory() ) )
         {
-            getLog().debug( "No classes to analyze" );
+            getLog().debug( "No classes to scan" );
             return;
         }
         super.execute();
@@ -84,6 +90,12 @@ public abstract class BaseJDeprScanMojo extends AbstractJDeprScanMojo
     protected boolean isForRemoval()
     {
         return forRemoval;
+    }
+    
+    @Override
+    protected StringStreamConsumer getConsumer()
+    {
+        return consumer;
     }
     
     @Override
@@ -117,7 +129,46 @@ public abstract class BaseJDeprScanMojo extends AbstractJDeprScanMojo
         
         cmd.createArg().setFile( getClassesDirectory().toFile() );
     }
-    
+
+    @Override
+    protected void verify() throws MojoExecutionException
+    {
+        if ( !( consumer.getDeprecatedClasses().isEmpty() && consumer.getDeprecatedMethods().isEmpty() ) )
+        {
+            if ( !consumer.getDeprecatedClasses().isEmpty() )
+            {
+                getLog().warn( "Found usage of deprecated classes:" );
+                
+                for ( Map.Entry<String, Set<String>> classes : consumer.getDeprecatedClasses().entrySet() )
+                {
+                    getLog().warn( "class " + classes.getKey() + " uses deprecated class(es)" );
+                    for ( String deprClass : classes.getValue() )
+                    {
+                        getLog().warn( "  * " + deprClass );
+                    }
+                }
+            }
+            
+            if ( !consumer.getDeprecatedMethods().isEmpty() )
+            {
+                getLog().warn( "Found usage of deprecated methods:" );
+                
+                for ( Map.Entry<String, Set<String>> classes : consumer.getDeprecatedMethods().entrySet() )
+                {
+                    getLog().warn( "class " + classes.getKey() + " uses deprecated method(s)" );
+                    for ( String deprMethod : classes.getValue() )
+                    {
+                        getLog().warn( "  * " + deprMethod );
+                    }
+                }
+            }
+            
+            if ( failOnWarning )
+            {
+                throw new MojoExecutionException( "JDeprScan detected usage of deprecated classes/methods" );
+            }
+        }
+    }
 
     protected abstract Path getClassesDirectory();
     
