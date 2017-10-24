@@ -345,6 +345,33 @@ public class PmdReportTest
     }
 
     /**
+     * verify the pmd.xml file is included in the site when requested. 
+     * @throws Exception
+     */
+    public void testIncludeXmlInSite()
+            throws Exception
+        {
+            File testPom = new File( getBasedir(), "src/test/resources/unit/default-configuration/pmd-report-include-xml-in-site-plugin-config.xml" );
+            PmdReport mojo = (PmdReport) lookupMojo( "pmd", testPom );
+            mojo.execute();
+
+            File generatedFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.html" );
+            assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+            // verify the pmd file is included in site
+            File generatedXmlFile = new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.xml" );
+            assertTrue( FileUtils.fileExists( generatedXmlFile.getAbsolutePath() ) );
+
+            String pmdXmlTarget = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/pmd.xml" ) );
+            assertTrue( pmdXmlTarget.contains( "</pmd>" ) );
+
+            // check that pmd.xml file has the closing element
+            String pmdXml = readFile( new File( getBasedir(), "target/test/unit/default-configuration/target/site/pmd.xml" ) );
+            assertTrue( pmdXml.contains( "</pmd>" ) );
+
+            
+        }
+    
+    /**
      * Read the contents of the specified file object into a string
      *
      * @param file the file to be read
@@ -368,7 +395,7 @@ public class PmdReportTest
     }
 
     /**
-     * Verify the correct working of the localtionTemp method
+     * Verify the correct working of the locationTemp method
      *
      * @throws Exception
      */
