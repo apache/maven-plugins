@@ -81,7 +81,7 @@ under the License.
 
   <properties>
     <mavenVersion>3.0</mavenVersion>
-    <doxiaVersion>1.4</doxiaVersion>
+    <doxiaVersion>1.7</doxiaVersion>
     <!-- Because PMD 5.4+ requires Java 7 -->
     <javaVersion>1.7</javaVersion>
     <maven.compiler.source>${javaVersion}</maven.compiler.source>
@@ -119,57 +119,6 @@ under the License.
       <scope>provided</scope>
     </dependency>
 
-    <!-- doxia -->
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-sink-api</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-decoration-model</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaVersion}</version>
-      <!--
-        doxia-site-renderer requires transitively dom4j 1.1 which provides a very old version of jaxen (same jar).
-        PMD requires a newer version of jaxen, which is not compatible.
-      -->
-      <exclusions>
-        <exclusion>
-          <artifactId>dom4j</artifactId>
-          <groupId>dom4j</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- shared -->
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.3</version>
-    </dependency>
-
-    <!-- plexus -->
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-resources</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0.24</version>
-    </dependency>
-
     <!-- pmd -->
     <dependency>
       <groupId>net.sourceforge.pmd</groupId>
@@ -190,6 +139,52 @@ under the License.
       <groupId>net.sourceforge.pmd</groupId>
       <artifactId>pmd-jsp</artifactId>
       <version>${pmdVersion}</version>
+    </dependency>
+
+    <!-- doxia -->
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-sink-api</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-decoration-model</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-site-renderer</artifactId>
+      <version>${doxiaVersion}</version>
+      <!--
+        Note: doxia-site-renderer needs to be defined AFTER pmd:
+        doxia-site-renderer requires transitively dom4j 1.1 which provides a very old version of jaxen (same jar).
+        PMD requires a newer version of jaxen, which is not compatible.
+      -->
+    </dependency>
+
+    <!-- shared -->
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-api</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.reporting</groupId>
+      <artifactId>maven-reporting-impl</artifactId>
+      <version>3.0.0</version>
+    </dependency>
+
+    <!-- plexus -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-resources</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>3.0.24</version>
     </dependency>
 
     <!-- test -->
