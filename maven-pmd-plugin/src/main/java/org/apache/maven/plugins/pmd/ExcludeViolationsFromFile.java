@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.pmd;
+package org.apache.maven.plugins.pmd;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.pmd.model.Violation;
+import org.apache.maven.plugins.pmd.model.Violation;
 
 import net.sourceforge.pmd.RuleViolation;
 

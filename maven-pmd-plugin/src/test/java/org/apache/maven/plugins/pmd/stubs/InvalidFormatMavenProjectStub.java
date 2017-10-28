@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.pmd.stubs;
+package org.apache.maven.plugins.pmd.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,6 @@ import java.util.List;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -36,22 +35,21 @@ import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  * @version $Id$
  */
-public class DefaultConfigurationMavenProjectStub
+public class InvalidFormatMavenProjectStub
     extends MavenProjectStub
 {
-    private List<ReportPlugin> reportPlugins = new ArrayList<>();
-
     private Build build;
 
-    public DefaultConfigurationMavenProjectStub()
+    public InvalidFormatMavenProjectStub()
     {
         MavenXpp3Reader pomReader = new MavenXpp3Reader();
         Model model = null;
 
-        try ( FileReader reader = new FileReader( new File( getBasedir()
-            + "/src/test/resources/unit/default-configuration/default-configuration-plugin-config.xml" ) ) )
+        try
         {
-            model = pomReader.read( reader );
+            model =
+                pomReader.read( new FileReader( new File( getBasedir()
+                    + "/src/test/resources/unit/invalid-format/invalid-format-plugin-config.xml" ) ) );
             setModel( model );
         }
         catch ( Exception e )
@@ -71,39 +69,22 @@ public class DefaultConfigurationMavenProjectStub
         setScm( scm );
 
         Build build = new Build();
-        build.setFinalName( model.getBuild()
-                                 .getFinalName() );
-        build.setDirectory( getBasedir() + "/target/test/unit/default-configuration/target" );
-        build.setSourceDirectory( getBasedir() + "/src/test/resources/unit/default-configuration" );
+        build.setFinalName( model.getBuild().getFinalName() );
+        build.setDirectory( getBasedir() + "/target/test/unit/invalid-format/target" );
+        build.setSourceDirectory( getBasedir() + "/src/test/resources/unit/invalid-format" );
         setBuild( build );
-
-        setReportPlugins( model.getReporting()
-                               .getPlugins() );
 
         String basedir = getBasedir().getAbsolutePath();
         List<String> compileSourceRoots = new ArrayList<>();
-        compileSourceRoots.add( basedir + "/src/test/resources/unit/default-configuration/def/configuration" );
+        compileSourceRoots.add( basedir + "/src/test/resources/unit/invalid-format/invalid/format" );
         setCompileSourceRoots( compileSourceRoots );
-
-        File file = new File( getBasedir().getAbsolutePath() + "/pom.xml" );
-        setFile( file );
 
         Artifact artifact = new PmdPluginArtifactStub( getGroupId(), getArtifactId(), getVersion(), getPackaging() );
         artifact.setArtifactHandler( new DefaultArtifactHandlerStub() );
         setArtifact( artifact );
 
-    }
+        setFile( new File( getBasedir().getAbsolutePath() + "/pom.xml" ) );
 
-    public void setReportPlugins( List<ReportPlugin> plugins )
-    {
-        this.reportPlugins = plugins;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<ReportPlugin> getReportPlugins()
-    {
-        return reportPlugins;
     }
 
     /** {@inheritDoc} */
@@ -119,4 +100,5 @@ public class DefaultConfigurationMavenProjectStub
     {
         return build;
     }
+
 }

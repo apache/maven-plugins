@@ -33,7 +33,7 @@ under the License.
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <configuration>
-          <project implementation="org.apache.maven.plugin.pmd.stubs.CustomConfigurationMavenProjectStub"/>
+          <project implementation="org.apache.maven.plugins.pmd.stubs.CustomConfigurationMavenProjectStub"/>
           <outputDirectory>${basedir}/target/test/unit/skip-configuration/target/site</outputDirectory>
           <targetDirectory>${basedir}/target/test/unit/skip-configuration/target</targetDirectory>
           <format>csv</format>

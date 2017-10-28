@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.pmd;
+package org.apache.maven.plugins.pmd;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,8 +29,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.pmd.model.CpdFile;
-import org.apache.maven.plugin.pmd.model.Duplication;
+import org.apache.maven.plugins.pmd.model.CpdFile;
+import org.apache.maven.plugins.pmd.model.Duplication;
 
 import net.sourceforge.pmd.cpd.Mark;
 import net.sourceforge.pmd.cpd.Match;

@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.pmd;
+package org.apache.maven.plugins.pmd;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

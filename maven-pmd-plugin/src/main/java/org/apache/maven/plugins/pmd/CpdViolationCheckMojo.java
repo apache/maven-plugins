@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.pmd;
+package org.apache.maven.plugins.pmd;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,10 +26,10 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.pmd.model.CpdErrorDetail;
-import org.apache.maven.plugin.pmd.model.CpdFile;
-import org.apache.maven.plugin.pmd.model.Duplication;
-import org.apache.maven.plugin.pmd.model.io.xpp3.CpdXpp3Reader;
+import org.apache.maven.plugins.pmd.model.CpdErrorDetail;
+import org.apache.maven.plugins.pmd.model.CpdFile;
+import org.apache.maven.plugins.pmd.model.Duplication;
+import org.apache.maven.plugins.pmd.model.io.xpp3.CpdXpp3Reader;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;

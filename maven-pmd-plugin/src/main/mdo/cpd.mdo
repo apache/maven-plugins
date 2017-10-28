@@ -26,7 +26,7 @@ under the License.
   <defaults>
     <default>
       <key>package</key>
-      <value>org.apache.maven.plugin.pmd.model</value>
+      <value>org.apache.maven.plugins.pmd.model</value>
     </default>
   </defaults>
   <versionDefinition>

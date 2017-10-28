@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.pmd.stubs;
+package org.apache.maven.plugins.pmd.stubs;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

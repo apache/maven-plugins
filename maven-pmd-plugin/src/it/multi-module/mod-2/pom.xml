@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.maven.its.pmd.mm</groupId>
+    <groupId>org.apache.maven.plugins.pmd.it.multimodule</groupId>
     <artifactId>parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>

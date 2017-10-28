@@ -22,7 +22,7 @@ under the License.
 <project>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.maven.plugin.pmd.it</groupId>
+  <groupId>org.apache.maven.plugins.pmd.it</groupId>
   <artifactId>MPMD-219-pmd-processing-error</artifactId>
   <version>1.0-SNAPSHOT</version>
 
