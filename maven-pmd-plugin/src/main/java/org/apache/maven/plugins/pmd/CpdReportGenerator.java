@@ -149,9 +149,8 @@ public class CpdReportGenerator
     /**
      * Method that generates the contents of the CPD report
      *
-     * @param matches
+     * @param matches the found duplications
      */
-    @SuppressWarnings( "deprecation" )
     public void generate( Iterator<Match> matches )
     {
         beginDocument();
@@ -203,7 +202,7 @@ public class CpdReportGenerator
             }
             // TODO Cleaner way to do this?
             sink.rawText( "<td colspan='" + colspan + "'>" );
-            sink.verbatim( false );
+            sink.verbatim( null );
             sink.text( code );
             sink.verbatim_();
             sink.rawText( "</td>" );

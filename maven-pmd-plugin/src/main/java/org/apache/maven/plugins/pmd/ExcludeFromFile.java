@@ -22,7 +22,8 @@ package org.apache.maven.plugins.pmd;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * @param <D> type of violation to exclude, e.g. {@link Violation} or {@link Duplication}.
+ * @param <D> type of violation to exclude, e.g. {@link org.apache.maven.plugins.pmd.model.Violation}
+ * or {@link org.apache.maven.plugins.pmd.model.Duplication}.
  * @author Andreas Dangel
  */
 public interface ExcludeFromFile<D>

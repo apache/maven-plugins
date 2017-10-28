@@ -283,7 +283,8 @@ public abstract class AbstractPmdReport
      * Convenience method to get the list of files where the PMD tool will be executed
      *
      * @return a List of the files where the PMD tool will be executed
-     * @throws java.io.IOException
+     * @throws IOException If an I/O error occurs during construction of the
+     *                     canonical pathnames of the files
      */
     protected Map<File, PmdFileInfo> getFilesToProcess()
         throws IOException

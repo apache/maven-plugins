@@ -25,7 +25,8 @@ import java.util.List;
 /**
  * Collector of warnings and failures.
  *
- * @param <D>
+ * @param <D> type of the check, e.g. {@link org.apache.maven.plugins.pmd.model.Violation}
+ * or {@link org.apache.maven.plugins.pmd.model.Duplication}.
  * @author Robert Scholte
  * @since 2.7
  */

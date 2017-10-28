@@ -34,7 +34,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Base class for mojos that check if there were any PMD violations.
  *
- * @param <D> type of the check, e.g. {@link Violation} or {@link Duplication}.
+ * @param <D> type of the check, e.g. {@link org.apache.maven.plugins.pmd.model.Violation}
+ * or {@link org.apache.maven.plugins.pmd.model.Duplication}.
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
@@ -272,18 +273,22 @@ public abstract class AbstractPmdViolationCheckMojo<D>
     /**
      * Formats the failure details and prints them as an INFO message
      *
-     * @param item
+     * @param item either a {@link org.apache.maven.plugins.pmd.model.Violation} from PMD
+     * or a {@link org.apache.maven.plugins.pmd.model.Duplication} from CPD
+     * @param severity the found issue is prefixed with the given severity, usually "Warning" or "Failure".
      */
     protected abstract void printError( D item, String severity );
 
     /**
      * Gets the attributes and text for the violation tag and puts them in a HashMap
      *
-     * @param analisysFile
-     * @throws XmlPullParserException
-     * @throws IOException
+     * @param analysisFile the xml output from PMD or CPD
+     * @return all PMD {@link org.apache.maven.plugins.pmd.model.Violation}s
+     * or CPD {@link org.apache.maven.plugins.pmd.model.Duplication}s.
+     * @throws XmlPullParserException if the analysis file contains invalid XML
+     * @throws IOException if the analysis file could be read
      */
-    protected abstract List<D> getErrorDetails( File analisysFile )
+    protected abstract List<D> getErrorDetails( File analysisFile )
         throws XmlPullParserException, IOException;
 
     public boolean isFailOnViolation()
