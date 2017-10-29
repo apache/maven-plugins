@@ -74,6 +74,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.javadoc.options.BootclasspathArtifact;
 import org.apache.maven.plugins.javadoc.options.DocletArtifact;
 import org.apache.maven.plugins.javadoc.options.Group;
@@ -85,8 +87,6 @@ import org.apache.maven.plugins.javadoc.options.Tag;
 import org.apache.maven.plugins.javadoc.options.Taglet;
 import org.apache.maven.plugins.javadoc.options.TagletArtifact;
 import org.apache.maven.plugins.javadoc.options.io.xpp3.JavadocOptionsXpp3Writer;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.javadoc.resolver.JavadocBundle;
 import org.apache.maven.plugins.javadoc.resolver.ResourceResolver;
 import org.apache.maven.plugins.javadoc.resolver.SourceResolverConfig;
@@ -117,6 +117,9 @@ import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
+import org.codehaus.plexus.languages.java.jpms.LocationManager;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsRequest;
+import org.codehaus.plexus.languages.java.jpms.ResolvePathsResult;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
@@ -4577,8 +4580,35 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_5 );
         }
 
-        String classpath = StringUtils.join( getPathElements().iterator(), File.pathSeparator );
-        addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( classpath ) );
+        File mainDescriptor = new File( "src/main/java/module-info.java" );
+        
+        if ( mainDescriptor.exists() && !isTest() )
+        {
+            LocationManager locationManager = new LocationManager();
+            ResolvePathsRequest<File> request =
+                ResolvePathsRequest.withFiles( getPathElements() ).setMainModuleDescriptor( mainDescriptor );
+            try
+            {
+                ResolvePathsResult<File> result = locationManager.resolvePaths( request );
+
+                String classpath = StringUtils.join( result.getClasspathElements().iterator(), File.pathSeparator );
+                addArgIfNotEmpty( arguments, "--class-path", JavadocUtil.quotedPathArgument( classpath ) );
+
+                String modulepath =
+                    StringUtils.join( result.getModulepathElements().keySet().iterator(), File.pathSeparator );
+                getLog().info( "modulepath: " + modulepath );
+                addArgIfNotEmpty( arguments, "--module-path", JavadocUtil.quotedPathArgument( modulepath ) );
+            }
+            catch ( IOException e )
+            {
+                throw new MavenReportException( e.getMessage(), e );
+            }
+        }
+        else
+        {
+            String classpath = StringUtils.join( getPathElements().iterator(), File.pathSeparator );
+            addArgIfNotEmpty( arguments, "-classpath", JavadocUtil.quotedPathArgument( classpath ) );
+        }
 
         if ( StringUtils.isNotEmpty( doclet ) )
         {
