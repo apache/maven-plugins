@@ -780,12 +780,22 @@ public class JavadocUtil
         }
         else
         {
-            cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL() }, null );
+            cl = new URLClassLoader( new URL[] { jarFile.toURI().toURL() }, ClassLoader.getSystemClassLoader() );
         }
 
         List<String> tagletClasses = new ArrayList<>();
 
-        Class<?> tagletClass = cl.loadClass( "com.sun.tools.doclets.Taglet" );
+        Class<?> tagletClass;
+        
+        try 
+        {
+            tagletClass = cl.loadClass( "com.sun.tools.doclets.Taglet" );
+        }
+        catch ( ClassNotFoundException e )
+        {
+            tagletClass = cl.loadClass( "jdk.javadoc.doclet.Taglet" );
+        }
+        
         for ( String s : classes )
         {
             Class<?> c = cl.loadClass( s );

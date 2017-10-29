@@ -26,7 +26,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
@@ -639,7 +641,18 @@ public class FixJavadocMojoTest
         File invokerDir = new File( getBasedir(), "target/invoker" );
         invokerDir.mkdirs();
         File invokerLogFile = FileUtils.createTempFile( "FixJavadocMojoTest", ".txt", invokerDir );
-        JavadocUtil.invokeMaven( log, new File( getBasedir(), "target/local-repo" ), testPom, goals, null,
+        
+        JavadocVersion JAVA_9 = JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION );
+        
+        Properties properties = new Properties();
+        
+        if( JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION ).compareTo( JAVA_9 ) >= 0 )
+        {
+            properties.put( "maven.compiler.source", "1.6" );
+            properties.put( "maven.compiler.target", "1.6" );
+        }
+        
+        JavadocUtil.invokeMaven( log, new File( getBasedir(), "target/local-repo" ), testPom, goals, properties,
                                  invokerLogFile );
     }
 
