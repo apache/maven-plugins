@@ -93,6 +93,7 @@ import org.apache.maven.plugins.javadoc.resolver.SourceResolverConfig;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.reporting.MavenReportException;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
@@ -1885,6 +1886,7 @@ public abstract class AbstractJavadocMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().debug( "verify removed parameter" );
         verifyRemovedParameter( "aggregator" );
         verifyRemovedParameter( "proxyHost" );
         verifyRemovedParameter( "proxyPort" );
@@ -2577,8 +2579,12 @@ public abstract class AbstractJavadocMojo
                             sb.append( subProject.getArtifactId() ).append( ":" );
                             sb.append( subProject.getVersion() ).append( '\n' );
 
+                            ProjectBuildingRequest buildingRequest = session.getProjectBuildingRequest();
+                            buildingRequest =
+                                buildingRequest.setRemoteRepositories( subProject.getRemoteArtifactRepositories() );
+                            
                             for ( ArtifactResult artifactResult
-                                        : dependencyResolver.resolveDependencies( session.getProjectBuildingRequest(),
+                                        : dependencyResolver.resolveDependencies( buildingRequest,
                                                                                   subProject.getDependencies(),
                                                                                   null,
                                                                                   dependencyFilter ) )

@@ -411,6 +411,9 @@ under the License.
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <projectsDirectory>src/it/projects</projectsDirectory>
+              <settingsFile>src/it/mrm/settings.xml</settingsFile>
               <pomExcludes>
                 <pomExclude>MJAVADOC-181/pom.xml</pomExclude> <!-- seems to be wrong, see comment in Jira issue  -->
                 <pomExclude>output-encoding/pom.xml</pomExclude>
@@ -419,7 +422,47 @@ under the License.
                 <maven.compiler.source>${maven.compiler.source}</maven.compiler.source>
                 <maven.compiler.target>${maven.compiler.target}</maven.compiler.target>
               </properties>
+              <filterProperties>
+                <mrm.3rdparty.url>${mrm.3rdparty.url}</mrm.3rdparty.url>
+              </filterProperties>
             </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>mrm-maven-plugin</artifactId>
+            <version>1.1.0</version>
+            <executions>
+              <execution>
+                <id>repository</id>
+                <goals>
+                  <goal>start</goal>
+                  <goal>stop</goal>
+                </goals>
+                <configuration>
+                  <repositories>
+                    <mockRepo>
+                      <source>src/it/mrm/repository</source>
+                    </mockRepo>
+                    <proxyRepo/>
+                  </repositories>
+                </configuration>
+              </execution>
+              <execution>
+                <id>3rdparty</id>
+                <goals>
+                  <goal>start</goal>
+                  <goal>stop</goal>
+                </goals>
+                <configuration>
+                  <repositories>
+                    <mockRepo>
+                      <source>src/it/mrm/3rdparty</source>
+                    </mockRepo>
+                  </repositories>
+                  <propertyName>mrm.3rdparty.url</propertyName>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
