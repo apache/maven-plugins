@@ -31,7 +31,7 @@ import org.apache.maven.doxia.document.io.xpp3.DocumentXpp3Reader;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-
+import org.apache.maven.shared.utils.io.FileUtils;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.Interpolator;
@@ -42,6 +42,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import java.util.Locale;
 
 /**
  * Read and filter a DocumentModel from a document descriptor file.
@@ -57,12 +58,14 @@ public class DocumentDescriptorReader
     /** Used to log the interpolated document descriptor. */
     private final Log log;
 
+    private final Locale locale;
+
     /**
      * Constructor.
      */
     public DocumentDescriptorReader()
     {
-        this( null, null );
+        this( null, null, null );
     }
 
     /**
@@ -72,7 +75,7 @@ public class DocumentDescriptorReader
      */
     public DocumentDescriptorReader( final MavenProject project )
     {
-        this( project, null );
+        this( project, null, null );
     }
 
     /**
@@ -81,23 +84,37 @@ public class DocumentDescriptorReader
      * @param project may be null.
      * @param log may be null.
      */
-    public DocumentDescriptorReader( final MavenProject project, final Log log )
+    public DocumentDescriptorReader( final MavenProject project, final Log log, final Locale locale )
     {
         this.project = project;
         this.log = log;
+        this.locale = locale;
     }
 
     /**
      * Read and filter the <code>docDescriptor</code> file.
      *
-     * @param docDescriptor not null.
+     * @param docDescriptor not null, corresponding to non-localized descriptor file.
      * @return a DocumentModel instance.
      * @throws XmlPullParserException if an error occurs during parsing.
      * @throws IOException if an error occurs during reading.
      */
-    public DocumentModel readAndFilterDocumentDescriptor( final File docDescriptor )
+    public DocumentModel readAndFilterDocumentDescriptor( File docDescriptor )
         throws XmlPullParserException, IOException
     {
+        if ( locale != null )
+        {
+            String descriptorFilename = docDescriptor.getName();
+            String localized = FileUtils.removeExtension( descriptorFilename ) + '_' + locale.getLanguage() + '.'
+                + FileUtils.getExtension( descriptorFilename );
+            File localizedDocDescriptor = new File( docDescriptor.getParentFile(), localized );
+
+            if ( localizedDocDescriptor.exists() )
+            {
+                docDescriptor = localizedDocDescriptor;
+            }
+        }
+
         Reader reader = null;
         try
         {

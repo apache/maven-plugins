@@ -719,8 +719,8 @@ public class PdfMojo
 
         try
         {
-            model =
-                new DocumentDescriptorReader( project, getLog() ).readAndFilterDocumentDescriptor( docDescriptor );
+            model = new DocumentDescriptorReader( project, getLog(),
+                                                  locale ).readAndFilterDocumentDescriptor( docDescriptor );
         }
         catch ( XmlPullParserException ex )
         {
