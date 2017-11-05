@@ -72,7 +72,7 @@ under the License.
   </distributionManagement>
 
   <properties>
-    <doxiaVersion>1.7</doxiaVersion>
+    <doxiaVersion>1.8-SNAPSHOT</doxiaVersion>
     <doxiaSitetoolsVersion>1.7.1</doxiaSitetoolsVersion>
     <mavenVersion>2.2.1</mavenVersion>
   </properties>
@@ -145,6 +145,11 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
       <artifactId>doxia-module-xdoc</artifactId>
+      <version>${doxiaVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.doxia</groupId>
+      <artifactId>doxia-module-fo</artifactId>
       <version>${doxiaVersion}</version>
     </dependency>
     <dependency>
