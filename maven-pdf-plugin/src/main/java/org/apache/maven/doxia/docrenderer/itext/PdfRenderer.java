@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+package org.apache.maven.doxia.docrenderer.itext;
 
-<!--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,23 +18,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- -->
 
-<project name="Doc Renderer" xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+import org.apache.maven.doxia.docrenderer.DocRenderer;
 
-  <body>
-
-    <menu ref="parent"/>
-
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="JavaDocs" href="apidocs/index.html"/>
-      <item name="Source Xref" href="xref/index.html"/>
-      <!--item name="FAQ" href="faq.html"/-->
-    </menu>
-
-    <menu ref="reports"/>
-
-  </body>
-
-</project>
+/**
+ * PDF renderer interface for the <code>iText</code> framework
+ *
+ * @author <a href="mailto:vincent.siveton@gmail.com">Vincent Siveton</a>
+ * @version $Id: PdfRenderer.java 1670514 2015-03-31 23:10:01Z hboutemy $
+ * @deprecated since 1.1, use an implementation of {@link org.apache.maven.doxia.docrenderer.DocumentRenderer}.
+ */
+@SuppressWarnings( "checkstyle:interfaceistype" )
+public interface PdfRenderer
+    extends DocRenderer
+{
+    String ROLE = PdfRenderer.class.getName();
+}

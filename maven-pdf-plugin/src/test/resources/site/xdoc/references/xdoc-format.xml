@@ -1,0 +1,279 @@
+<?xml version="1.0"?>
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 file:../../../../../../../../doxia/doxia-modules/doxia-module-xdoc/src/main/resources/xdoc-2.0.xsd">
+  <properties>
+    <title>The Xdoc format</title>
+    <author email="ltheussl_AT_apache_DOT_org">Lukas Theussl</author>
+  </properties>
+
+  <body>
+
+    <section name="The XDoc format">
+
+      <subsection name="Overview">
+
+        <p>
+          An 'xdoc' is an XML document conforming to a small and simple set of tags.
+          Xdoc was the primary documentation format in <a href="http://maven.apache.org/maven-1.x/">Maven 1</a>,
+          Maven 2 largely replaced this by <a href="apt-format.html">Apt</a>, but xdoc is still supported.
+        </p>
+
+        <p>
+          Historically, the xdoc format can be traced back to the
+          <a href="http://jakarta.apache.org/site/jakarta-site2.html">Anakia</a> format, as once used by the
+          <a href="http://jakarta.apache.org/">Apache Jakarta</a> project.
+        </p>
+
+        <p>
+          The Maven 1 Xdoc plugin introduced a few additions to the Anakia format, they are highlighted in the
+          <a href="http://maven.apache.org/maven-1.x/plugins/xdoc/reference/xdocs.html">plugin</a> documentation.
+        </p>
+
+      </subsection>
+
+      <subsection name="The XDoc format2">
+
+        <p>
+          The following is a sample XDoc document:
+        </p>
+        <source><![CDATA[
+<document>
+
+  <properties>
+    <title>Page Title</title>
+    <author email="user@company.com">John Doe</author>
+  </properties>
+
+  <!-- Optional HEAD element, which is copied as is into the XHTML <head> element -->
+  <head>
+    <meta ... />
+  </head>
+
+  <body>
+
+    <!-- The body of the document contains a number of sections -->
+    <section name="section 1">
+
+      <!-- Within sections, any XHTML can be used -->
+      <p>Hi!</p>
+
+      <!-- in addition to XHTML, any number of subsections can be within a section -->
+      <subsection name="subsection 1">
+        <p>Subsection!</p>
+      </subsection>
+
+    </section>
+
+    <section name="other section">
+
+      <!-- You can also include preformatted source blocks in the document -->
+      <source>
+code line 1
+code line 2
+      </source>
+
+    </section>
+
+  </body>
+
+</document>]]></source>
+
+      </subsection>
+
+      <subsection name="Additional sectioning">
+
+        <p>
+          Doxia will produce <code>&lt;h2&gt;</code> and
+          <code>&lt;h3&gt;</code> headings for <code>&lt;section&gt;</code>
+          and <code>&lt;subsection&gt;</code> elements, respectively.
+          It is therefore perfectly valid to put some sub-headings
+          (<code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code>,
+          <code>&lt;h6&gt;</code>) inside a subsection. For instance,
+        </p>
+
+        <source><![CDATA[<h4>A subsubsection</h4>]]></source>
+
+        <p>
+          will produce:
+        </p>
+
+      </subsection>
+
+      <subsection name="Referencing sections and subsections">
+
+        <p>
+          The core doxia modules do <b>not</b> construct anchors from
+          section/subsection names. If you want to reference a section,
+          you have to provide an explicit anchor:
+        </p>
+
+        <source><![CDATA[<a name="Section1"/>
+<section name="Section">
+
+  <a name="SubSection1"/>
+  <subsection name="SubSection">
+  </subsection>
+
+</section>]]></source>
+
+        <p>
+          <b>Note</b> that this differs from previous behavior, where anchors
+          were constructed from section/subsection names, replacing special
+          characters by underscores. This behavior presents two shortcomings:
+        </p>
+
+        <ul>
+
+          <li>
+            If two sections or subsections have identical names
+            (within one source document), you will get an ambiguity when
+            referencing them. Also the resulting html document will not be
+            valid XHTML. For other output formats (eg pdf), it might even be impossible
+            to generate the target document.
+          </li>
+
+          <li>
+            For long section titles, this leads to rather cumbersome anchor names.
+          </li>
+
+        </ul>
+
+        <p>
+          If automatic anchor generation is desired for a particular output format,
+          it should be implemented / overridden by the corresponding low-level Sink.
+        </p>
+
+      </subsection>
+
+    </section>
+
+    <section name="Validation">
+
+      <p>
+        Doxia is currently not able to validate your xdoc files as no schema or DTD
+        exists yet (however this is planned before the 1.0 release).
+        It is therefore necessary to check manually whether your source files are valid xdocs,
+        this should ensure that the generated html files are valid
+        <a href="http://www.w3.org/TR/xhtml1/">XHTML1-transitional</a>.
+      </p>
+
+      <p>
+        Here is a list of common mistakes to be aware of:
+      </p>
+
+      <subsection name="Don't nest block level elements">
+
+        <p>Wrong:</p>
+
+        <source><![CDATA[<p>
+  Here's a list:
+  <ul>
+    <li>item 1</li>
+    <li>item 2</li>
+  </ul>
+  of things to do.
+</p>]]></source>
+
+        <p>Correct:</p>
+
+        <source><![CDATA[<p>
+  Here's a list:
+</p>
+<ul>
+  <li>item 1</li>
+  <li>item 2</li>
+</ul>
+<p>
+  of things to do.
+</p>]]></source>
+
+        <p>
+          Typical block level elements are list elements,
+          <code>&lt;table&gt;</code>, <code>&lt;source&gt;</code>,
+          <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code> and
+          <code>&lt;pre&gt;</code>.
+        </p>
+
+      </subsection>
+
+      <subsection name="Put inline elements inside block level elements">
+
+        <p>Wrong:</p>
+
+        <source><![CDATA[<section name="Downloads">
+  <a href="downloads.html">Downloads</a>
+</section>]]></source>
+
+        <p>Correct:</p>
+
+        <source><![CDATA[<section name="Downloads">
+  <p>
+    <a href="downloads.html">Downloads</a>
+  </p>
+</section>]]></source>
+
+        <p>
+          Typical inline elements are
+          <code>&lt;a&gt;</code>, <code>&lt;strong&gt;</code>,
+          <code>&lt;code&gt;</code>, <code>&lt;font&gt;</code>,
+          <code>&lt;br&gt;</code> and <code>&lt;img&gt;</code>.
+        </p>
+
+      </subsection>
+
+      <subsection name="Right order of elements in &lt;properties&gt;">
+
+        <p>
+          The <code>&lt;title&gt;</code> element has to come before
+          <code>&lt;author&gt;</code>.
+        </p>
+
+      </subsection>
+
+      <subsection name="Dont put &lt;source&gt; inside paragraphs">
+
+        <p>Wrong:</p>
+
+        <source><![CDATA[<p>
+  The following command executes the program:
+  <source>java -jar CoolApp.jar</source>
+</p>]]></source>
+
+        <p>Correct:</p>
+
+        <source><![CDATA[<p>
+  The following command executes the program:
+</p>
+<source>java -jar CoolApp.jar</source>]]></source>
+
+        <p>
+          However, you may put <code>&lt;source&gt;</code> elements inside
+          list items or table rows.
+        </p>
+
+      </subsection>
+
+    </section>
+
+  </body>
+
+</document>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 file:../../../../../../../doxia/doxia-modules/doxia-module-fml/src/main/resources/fml-1.0.1.xsd"
+  title="Frequently Asked Questions">
+  <part id="General">
+    <faq id="How_to_handle_style_in_the_APT_markup_language">
+      <question>How to handle style in the APT markup language?</question>
+      <answer>
+        <p>
+          APT doesn't currently support style. It is in the roadmap.
+        </p>
+      </answer>
+    </faq>
+    <faq id="How_to_export_in_PDF">
+      <question>How to export in PDF?</question>
+      <answer>
+        <p>
+          An <a href="http://www.lowagie.com/iText/">iText</a> module exists using the iText XML document.
+          Unfortunately, the iText team discontinued the XML to PDF functionalities.
+        </p>
+        <p>
+          A <a href="http://xmlgraphics.apache.org/fop/">FOP</a> module is currently in development in the
+          Doxia sandbox. You can get the source
+          <a href="http://svn.apache.org/repos/asf/maven/sandbox/trunk/doxia/doxia-module-fo/">here</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq id="Is_it_possible_to_create_a_book">
+      <question>Is it possible to create a book?</question>
+      <answer>
+        <p>
+          Doxia also has a fairly simple tool for writing books. It comes complete with a Maven plugin
+          to produce PDFs, LaTeX documents and Xdoc for direct integration in your Maven site.
+        </p>
+        <p>
+          The Doxia Book code is still in the
+          <a href="http://svn.apache.org/repos/asf/maven/sandbox/trunk/doxia/doxia-book/">Doxia sandbox</a>,
+          but it is fully functional allthough limited.
+        </p>
+        <p>
+          See <a href="./book/index.html">Writing Books in Doxia</a> for more information.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>

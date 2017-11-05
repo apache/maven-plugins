@@ -100,7 +100,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Generates a PDF document for a project documentation usually published as web site (with maven-site-plugin).
  *
  * @author ltheussl
- * @version $Id$
+ * @version $Id: PdfMojo.java 1744016 2016-05-16 10:28:23Z hboutemy $
  */
 @Mojo( name = "pdf", threadSafe = true )
 public class PdfMojo
@@ -865,12 +865,12 @@ public class PdfMojo
             return;
         }
 
-        File skinFile;
+        Artifact skinFile;
         try
         {
             skinFile =
                 siteTool.getSkinArtifactFromRepository( localRepository, project.getRemoteArtifactRepositories(),
-                                                        decorationModel ).getFile();
+                                                        decorationModel );
         }
         catch ( SiteToolException e )
         {
@@ -890,7 +890,8 @@ public class PdfMojo
         try
         {
             final SiteRenderingContext context =
-                siteRenderer.createContextForSkin( skinFile, new HashMap<String, Object>( 2 ), decorationModel,
+                siteRenderer.createContextForSkin( skinFile, 
+                        new HashMap<String, Object>( 2 ), decorationModel,
                                                    project.getName(), locale );
             context.addSiteDirectory( new File( siteDirectory, locale.getLanguage() ) );
 

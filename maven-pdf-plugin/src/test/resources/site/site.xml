@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+ -->
+
+<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 file:../../../../../doxia-decoration-model/target/generated-site/xsd/decoration-1.0.0.xsd"
+  name="Doxia">
+  <bannerLeft>
+    <name>Doxia</name>
+    <src>images/apache-maven-project-2.png</src>
+  </bannerLeft>
+  <bannerRight>
+    <src>images/maven-logo-2.gif</src>
+  </bannerRight>
+  <publishDate format="dd MMM yyyy" position="right" />
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-stylus-skin</artifactId>
+    <version>1.0.1</version>
+  </skin>
+  <body>
+    <head>
+      <![CDATA[
+      <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+      </script>
+      <script type="text/javascript">
+        _uacct = "UA-140879-1";
+        urchinTracker();
+      </script>
+      ]]>
+    </head>
+
+    <links>
+      <item name="Apache" href="http://www.apache.org/"/>
+      <item name="Maven 1.x" href="http://maven.apache.org/maven-1.x"/>
+      <item name="Maven 2.x" href="http://maven.apache.org/"/>
+      <item name="SCM" href="http://maven.apache.org/scm"/>
+      <item name="Wagon" href="http://maven.apache.org/wagon"/>
+      <item name="JXR" href="http://maven.apache.org/jxr"/>
+      <item name="Doxia" href="http://maven.apache.org/doxia"/>
+    </links>
+
+    <menu name="About Doxia">
+      <item name="What is Doxia?" href="index.html"/>
+      <item name="Overview" href="overview.html"/>
+      <item name="FAQ" href="faq.html"/>
+    </menu>
+
+    <menu name="Documentation">
+      <item name="References" href="references/index.html">
+        <item name="Apt Format" href="references/apt-format.html"/>
+        <item name="FML Format" href="references/fml-format.html"/>
+        <item name="Xdoc Format" href="references/xdoc-format.html"/>
+      </item>
+      <item name="Doxia Modules Guide" href="modules/index.html"/>
+      <item name="Doxia Macros Guide" href="macros/index.html"/>
+      <item name="Writing Books" href="book/index.html"/>
+      <item name="Developer Centre" href="developers/index.html"/>
+      <item name="External Resources" href="resources.html"/>
+    </menu>
+
+    <menu ref="reports"/>
+  </body>
+</project>

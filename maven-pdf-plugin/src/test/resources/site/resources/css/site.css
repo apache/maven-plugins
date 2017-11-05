@@ -1,6 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,23 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- -->
 
-<project name="Doc Renderer" xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+a.externalLink, a.externalLink:link, a.externalLink:visited, a.externalLink:active, a.externalLink:hover {
+  background: none;
+  padding-right: 0;
+}
 
-  <body>
+body ul {
+  list-style-type: square;
+}
 
-    <menu ref="parent"/>
+#downloadbox {
+  float: right;
+  margin-left: 2em;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 1em;
+  border: 1px solid #999;
+  background-color: #eee;
+  width: 17.5em;
+}
 
-    <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
-      <item name="JavaDocs" href="apidocs/index.html"/>
-      <item name="Source Xref" href="xref/index.html"/>
-      <!--item name="FAQ" href="faq.html"/-->
-    </menu>
+#downloadbox h5 {
+  color: #000;
+  margin: 0;
+  border-bottom: 1px solid #aaaaaa;
+  font-size: smaller;
+  padding: 0;
+  margin-top: 1em;
+}
 
-    <menu ref="reports"/>
+#downloadbox p {
+  margin-top: 1em;
+  margin-bottom: 0;
+}
 
-  </body>
+#downloadbox li {
+  text-indent: inherit;
+}
 
-</project>
