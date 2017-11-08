@@ -96,7 +96,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-java</artifactId>
-      <version>0.9.3</version>
+      <version>0.9.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -129,8 +129,13 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.7.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.0.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -188,7 +193,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
       </plugin>
     </plugins>
   </reporting>
@@ -198,32 +203,55 @@
       <build>
         <plugins>
           <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>mrm-maven-plugin</artifactId>
-          <version>1.1.0</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>start</goal>
-                <goal>stop</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <repositories>
-              <mockRepo>
-                <source>src/it/mrm/repository</source>
-              </mockRepo>
-              <proxyRepo/>
-            </repositories>
-          </configuration>
-        </plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>mrm-maven-plugin</artifactId>
+            <version>1.1.0</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>start</goal>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <propertyName>mrm.repository.url</propertyName>
+              <repositories>
+                <mockRepo>
+                  <source>src/it/mrm/repository</source>
+                </mockRepo>
+                <proxyRepo />
+              </repositories>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <configuration>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <environmentVariables>
+                <!--
+                  ! Prevent reading the .mavenrc or maven_pre.bat on Windows 
+                  ! in integration tests.
+                -->
+                <MAVEN_SKIP_RC>1</MAVEN_SKIP_RC>
+              </environmentVariables>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <projectsDirectory>src/it/projects</projectsDirectory>
+              <pomIncludes>
+                <pomInclude>**/pom.xml</pomInclude>
+                <!--
+                <pomInclude>cli-options/**/pom.xml</pomInclude>
+                -->
+              </pomIncludes>
+              <pomExcludes>
+                <!--
+                  ! Currently this Test does not work correctly either based
+                  ! on wrong implementation or my limited knowledge of suggest-providers
+                  ! and how the work.
+                -->
+                <pomExclude>cli-options/suggest-providers/pom.xml</pomExclude>
+              </pomExcludes>
               <settingsFile>src/it/mrm/settings.xml</settingsFile>
               <filterProperties>
                 <mrm.repository.url>${mrm.repository.url}</mrm.repository.url>

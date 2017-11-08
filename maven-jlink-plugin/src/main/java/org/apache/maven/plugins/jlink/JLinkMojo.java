@@ -429,7 +429,7 @@ public class JLinkMojo
             throw new MojoFailureException( message );
         }
 
-        if ( endian != null && ( !"big".equals( endian ) || !"little".equals( endian ) ) )
+        if ( endian != null && ( !"big".equals( endian ) && !"little".equals( endian ) ) )
         {
             String message = "The given endian parameter " + endian
                 + " does not contain one of the following values: 'little' or 'big'.";
@@ -484,7 +484,7 @@ public class JLinkMojo
 
         if ( endian != null )
         {
-            argsFile.println( "--endians" );
+            argsFile.println( "--endian" );
             argsFile.println( endian );
         }
         if ( ignoreSigningInformation )
