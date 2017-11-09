@@ -682,6 +682,12 @@ public class DescribeMojo
             }
             append( buffer, parameter.getName() + defaultVal, 2 );
 
+            String alias = parameter.getAlias();
+            if ( !StringUtils.isEmpty( alias ) )
+            {
+                append ( buffer, "Alias", alias, 3 );
+            }
+
             if ( parameter.isRequired() )
             {
                 append( buffer, "Required", "true", 3 );
