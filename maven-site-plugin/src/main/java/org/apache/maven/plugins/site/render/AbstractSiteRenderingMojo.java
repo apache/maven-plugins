@@ -125,10 +125,14 @@ public abstract class AbstractSiteRenderingMojo
     private File xdocDirectory;
 
     /**
-     * Directory containing generated documentation.
-     * This is used to pick up other source docs that might have been generated at build time.
+     * Directory containing generated documentation in source format (Doxia supported markup).
+     * This is used to pick up other source docs that might have been generated at build time (by reports or any other
+     * build time mean).
+     * This directory is expected to have the same structure as <code>siteDirectory</code>
+     * (ie. one directory per Doxia-source-supported markup types).
      *
-     * @todo should we deprecate in favour of reports?
+     * @todo should we deprecate in favour of reports directly using Doxia Sink API, without this Doxia source
+     * intermediate step?
      */
     @Parameter( alias = "workingDirectory", defaultValue = "${project.build.directory}/generated-site" )
     protected File generatedSiteDirectory;

@@ -59,7 +59,7 @@ public class SiteMojo
     extends AbstractSiteRenderingMojo
 {
     /**
-     * Directory where the project sites and report distributions will be generated.
+     * Directory where the project sites and report distributions will be generated (as html/css/...).
      */
     @Parameter( property = "siteOutputDirectory", defaultValue = "${project.reporting.outputDirectory}" )
     protected File outputDirectory;
