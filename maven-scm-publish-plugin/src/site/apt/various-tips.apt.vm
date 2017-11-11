@@ -32,34 +32,34 @@ Various tips for using this plugin
 
   You must use a scm url format:
 
-+----------------
++----------------+
   scm:<scm_provider><delimiter><provider_specific_part>
-+----------------
++----------------+
 
   Example for svn: <<<scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin/>>>
 
   And configure is as it:
 
-+----------------
++----------------+
   <distributionManagement>
     <site>
       <id>site_id</id>
       <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/plugins/maven-scm-publish-plugin/</url>
     </site>
   </distributionManagement>
-+----------------
++----------------+
 
   <<NOTE>>: with svn, if the remote url doesn't exist, it will be created.
 
 * Git branch
 
-  To use git branch (for example: github gh-pages)
+  To use Git branch (for example: {{{https://help.github.com/articles/user-organization-and-project-pages/}GitHub <<<gh-pages>>>}})
 
-+----------------
++----------------+
   <distributionManagement>
     <site>
       <id>site_id</id>
-      <url>scm:git:git@github.com:username/tomcat-foo-artifact.git</url>
+      <url>scm:git:ssh://git@github.com/username/tomcat-foo-artifact.git</url><!-- or ${project.scm.developerConnection} -->
     </site>
   </distributionManagement>
 ...
@@ -71,14 +71,25 @@ Various tips for using this plugin
         <scmBranch>gh-pages</scmBranch>
       </configuration>
     </plugin>
-+----------------
++----------------+
 
+  Initial creation of the branch has to be done manually, as a Git orphan branch:
+
+  * <<<git checkout --orphan gh-pages>>> to create the branch locally,
+
+  * <<<rm .git/index ; git clean -fdx>>> to clean the branch content and let it empy,
+
+  * copy an initial site content,
+
+  * commit and push: <<<git add *>>>, <<<git commit -m "initial site content">>>, <<<git push>>>
+
+  []
 
 * Improving SCM Checkout Performance
 
   By default, a complete checkout is done. You can configure the plugin to try update rather than a full checkout/clone
 
-+----------------
++----------------+
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-scm-publish-plugin</artifactId>
@@ -87,13 +98,13 @@ Various tips for using this plugin
         <tryUpdate>true</tryUpdate>
       </configuration>
     </plugin>
-+----------------
++----------------+
 
   By default, the scm content is checked-out/cloned to <<<$\{project.build.directory}/scmpublish-checkout>>>, so when running <<<mvn clean>>>,
   all the content is deleted. You can configure a path to your machine to avoid full checkout.
   A recommended way is to use a property with a default value that your colleague will be able to override in their settings.
 
-+----------------
++----------------+
     <properties>
       ...
       <!-- override in your settings -->
@@ -111,14 +122,14 @@ Various tips for using this plugin
         <tryUpdate>true</tryUpdate>
       </configuration>
     </plugin>
-+----------------
++----------------+
 
 
 * Using alternate scm provider
 
   You can use svnjava rather than default svn cli if you use a machine without svn cli.
 
-+----------------
++----------------+
     <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-scm-publish-plugin</artifactId>
@@ -141,4 +152,4 @@ Various tips for using this plugin
         </dependency>
       </dependencies>
     </plugin>
-+----------------
++----------------+
