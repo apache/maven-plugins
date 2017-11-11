@@ -44,6 +44,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.codehaus.plexus.util.MatchPatterns;
 
 /**
@@ -253,14 +254,16 @@ public class ScmPublishPublishScmMojo
             logInfo( "Updating checkout directory with actual content in %s", content );
             update( checkoutDirectory, content, ( project == null ) ? null : project.getModel().getModules() );
             String displaySize = org.apache.commons.io.FileUtils.byteCountToDisplaySize( size );
-            logInfo( "Content consists of %d directories and %d files = %s", directories, files, displaySize );
+            logInfo( "Content consists of " + MessageUtils.buffer().strong( "%d directories and %d files = %s" ),
+                     directories, files, displaySize );
         }
         catch ( IOException ioe )
         {
             throw new MojoExecutionException( "Could not copy content to SCM checkout", ioe );
         }
 
-        logInfo( "Publishing content to SCM will result in %d addition(s), %d update(s), %d delete(s)", added.size(),
+        logInfo( "Publishing content to SCM will result in "
+            + MessageUtils.buffer().strong( "%d addition(s), %d update(s), %d delete(s)" ), added.size(),
                  updated.size(), deleted.size() );
 
         if ( isDryRun() )

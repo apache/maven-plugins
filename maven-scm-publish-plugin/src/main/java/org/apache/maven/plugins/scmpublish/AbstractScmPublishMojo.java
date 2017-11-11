@@ -62,6 +62,7 @@ import org.apache.maven.settings.crypto.SettingsDecryptionRequest;
 import org.apache.maven.settings.crypto.SettingsDecryptionResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 
 /**
  * Base class for the scm-publish mojos.
@@ -372,8 +373,8 @@ public abstract class AbstractScmPublishMojo
             checkCreateRemoteSvnPath();
         }
 
-        logInfo( "%s the pub tree from %s into %s", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl,
-                 checkoutDirectory );
+        logInfo( MessageUtils.buffer().strong( "%s" ) + " the pub tree from " + MessageUtils.buffer().strong( "%s" )
+            + " into %s", ( tryUpdate ? "Updating" : "Checking out" ), pubScmUrl, checkoutDirectory );
 
         if ( checkoutDirectory.exists() && !tryUpdate )
 
