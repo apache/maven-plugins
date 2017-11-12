@@ -71,9 +71,9 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.javadoc.options.BootclasspathArtifact;
@@ -358,8 +358,8 @@ public abstract class AbstractJavadocMojo
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
-    @Parameter( defaultValue = "${plugin}", readonly = true )
-    private PluginDescriptor plugin;
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true )
+    private MojoExecution mojo;
 
     /**
      * Specify if the Javadoc should operate in offline mode.
@@ -381,14 +381,13 @@ public abstract class AbstractJavadocMojo
     private File javadocDirectory;
 
     /**
-     * Set an additional parameter(s) on the command line. This value should include quotes as necessary for
+     * Set an additional option(s) on the command line. This value should include quotes as necessary for
      * parameters that include spaces. Useful for a custom doclet.
-     *
-     * @deprecated Does not properly support multiple options at once and has a bad name
+     * 
+     * @since 3.0.0
      */
-    @Parameter( property = "additionalparam" )
-    @Deprecated
-    private String additionalparam;
+    @Parameter
+    private String[] additionalOptions;
 
     /**
      * Set an additional Javadoc option(s) (i.e. JVM options) on the command line.
@@ -1890,15 +1889,16 @@ public abstract class AbstractJavadocMojo
         verifyRemovedParameter( "aggregator" );
         verifyRemovedParameter( "proxyHost" );
         verifyRemovedParameter( "proxyPort" );
+        verifyReplacedParameter( "additionalparam", "additionalOptions" );
 
         doExecute();
     }
 
     abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
-    private void verifyRemovedParameter( String paramName )
+    protected final void verifyRemovedParameter( String paramName )
     {
-        Object pluginConfiguration = plugin.getPlugin().getConfiguration();
+        Object pluginConfiguration = mojo.getConfiguration();
         if ( pluginConfiguration instanceof Xpp3Dom )
         {
             Xpp3Dom configDom = (Xpp3Dom) pluginConfiguration;
@@ -1907,6 +1907,21 @@ public abstract class AbstractJavadocMojo
             {
                 throw new IllegalArgumentException( "parameter '" + paramName
                     + "' has been removed from the plugin, please verify documentation." );
+            }
+        }
+    }
+
+    private void verifyReplacedParameter( String oldParamName, String newParamNew )
+    {
+        Object pluginConfiguration = mojo.getConfiguration();
+        if ( pluginConfiguration instanceof Xpp3Dom )
+        {
+            Xpp3Dom configDom = (Xpp3Dom) pluginConfiguration;
+
+            if ( configDom.getChild( oldParamName ) != null )
+            {
+                throw new IllegalArgumentException( "parameter '" + oldParamName
+                    + "' has been replaced with " + newParamNew + ", please verify documentation." );
             }
         }
     }
@@ -4663,7 +4678,13 @@ public abstract class AbstractJavadocMojo
 
         addArgIf( arguments, verbose, "-verbose" );
 
-        addArgIfNotEmpty( arguments, null, additionalparam );
+        if ( additionalOptions != null && additionalOptions.length > 0 )
+        {
+            for ( String option : additionalOptions )
+            {
+                arguments.add( option );
+            }
+        }
     }
 
     /**
