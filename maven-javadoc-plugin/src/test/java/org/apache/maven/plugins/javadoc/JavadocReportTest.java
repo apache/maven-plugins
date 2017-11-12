@@ -35,8 +35,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.LegacySupport;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.javadoc.JavadocReport;
 import org.apache.maven.plugins.javadoc.JavadocVersion;
@@ -89,10 +89,10 @@ public class JavadocReportTest
     {
         JavadocReport mojo = (JavadocReport) lookupMojo( "javadoc", testPom );
 
-        PluginDescriptor pluginDescriptor = new PluginDescriptor();
-        pluginDescriptor.setPlugin( new Plugin() );
-        
-        setVariableValueToObject( mojo, "plugin", pluginDescriptor );
+        MojoExecution mojoExec = new MojoExecution( new Plugin(), "javadoc", null );
+
+        setVariableValueToObject( mojo, "mojo", mojoExec );
+
         return mojo;
     }
 

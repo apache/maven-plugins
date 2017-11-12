@@ -1,7 +1,5 @@
 package org.apache.maven.plugins.javadoc;
 
-import java.io.BufferedReader;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,13 +19,14 @@ import java.io.BufferedReader;
  * under the License.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.javadoc.JavadocReport;
 import org.codehaus.plexus.util.FileUtils;
@@ -63,10 +62,10 @@ public class AggregatorJavadocReportTest
     {
         JavadocReport mojo = (JavadocReport) lookupMojo( "aggregate", testPom );
 
-        PluginDescriptor pluginDescriptor = new PluginDescriptor();
-        pluginDescriptor.setPlugin( new Plugin() );
+        MojoExecution mojoExec = new MojoExecution( new Plugin(), "aggregate", null );
 
-        setVariableValueToObject( mojo, "plugin", pluginDescriptor );
+        setVariableValueToObject( mojo, "mojo", mojoExec );
+
         return mojo;
     }
 

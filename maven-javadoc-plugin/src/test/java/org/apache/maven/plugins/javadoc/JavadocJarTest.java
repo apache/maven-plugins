@@ -30,7 +30,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.javadoc.AbstractJavadocMojo;
 import org.apache.maven.plugins.javadoc.JavadocJar;
@@ -48,11 +48,11 @@ public class JavadocJarTest
                     throws Exception
     {
         JavadocJar mojo = (JavadocJar) lookupMojo( "jar", testPom );
+
+        MojoExecution mojoExec = new MojoExecution( new Plugin(), "javadoc", null );
+
+        setVariableValueToObject( mojo, "mojo", mojoExec );
         
-        PluginDescriptor pluginDescriptor = new PluginDescriptor();
-        pluginDescriptor.setPlugin( new Plugin() );
-        
-        setVariableValueToObject( mojo, "plugin", pluginDescriptor );
         return mojo;
     }
 
@@ -179,7 +179,7 @@ public class JavadocJarTest
         }
         jar.close();
 
-        List<String> expected = new ArrayList();
+        List<String> expected = new ArrayList<>();
         expected.add( "META-INF/" );
         expected.add( "META-INF/maven/" );
         expected.add( "META-INF/maven/org.apache.maven.plugins.maven-javadoc-plugin.unit/" );
