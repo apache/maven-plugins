@@ -507,6 +507,11 @@ under the License.
               </reportSet>
             </reportSets>
           </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <version>3.5</version>
+          </plugin>
         </plugins>
       </reporting>
     </profile>
