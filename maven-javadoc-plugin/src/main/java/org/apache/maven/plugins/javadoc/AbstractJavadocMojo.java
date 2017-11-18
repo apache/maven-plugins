@@ -4653,9 +4653,11 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_5 );
         }
 
-        File mainDescriptor = new File( "src/main/java/module-info.java" );
-        
-        if ( mainDescriptor.exists() && !isTest() )
+        List<String> roots = getProjectSourceRoots( getProject() );
+
+        File mainDescriptor = findMainDescriptor( roots );
+
+        if ( mainDescriptor != null && !isTest() )
         {
             LocationManager locationManager = new LocationManager();
             ResolvePathsRequest<File> request =
@@ -4737,6 +4739,24 @@ public abstract class AbstractJavadocMojo
                 arguments.add( option );
             }
         }
+    }
+
+    private static File findMainDescriptor( List<String> roots )
+        throws MavenReportException
+    {
+        for ( String root : roots )
+        {
+            File descriptorFile = new File( root, "module-info.java" ).getAbsoluteFile();
+            if ( descriptorFile.exists() )
+            {
+                if ( !descriptorFile.isFile() )
+                {
+                    throw new MavenReportException( descriptorFile + " is not a regular file" );
+                }
+                return descriptorFile;
+            }
+        }
+        return null;
     }
 
     /**
