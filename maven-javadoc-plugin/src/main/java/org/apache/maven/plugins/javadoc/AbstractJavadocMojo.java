@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -1716,6 +1718,18 @@ public abstract class AbstractJavadocMojo
      */
     @Parameter( defaultValue = "true", property = "maven.javadoc.applyJavadocSecurityFix" )
     private boolean applyJavadocSecurityFix = true;
+    
+    /**
+     * <p>
+     * Specify the requirements for this jdk toolchain.
+     * This overrules the toolchain selected by the maven-toolchain-plugin.
+     * </p>
+     * <strong>note:</strong> requires at least Maven 3.3.1
+     * 
+     * @since 3.0.0
+     */
+    @Parameter
+    private Map<String, String> jdkToolchain;
 
     // ----------------------------------------------------------------------
     // static
@@ -2674,20 +2688,58 @@ public abstract class AbstractJavadocMojo
     }
 
 
-    /**
-     * TODO remove the part with ToolchainManager lookup once we depend on
-     * 2.0.9 (have it as prerequisite). Define as regular component field then.
-     *
-     * @return Toolchain instance
-     */
-    private Toolchain getToolchain()
+    //TODO remove the part with ToolchainManager lookup once we depend on
+    //3.0.9 (have it as prerequisite). Define as regular component field then.
+    protected final Toolchain getToolchain()
     {
         Toolchain tc = null;
-        if ( toolchainManager != null )
+        
+        if ( jdkToolchain != null )
+        {
+            // Maven 3.3.1 has plugin execution scoped Toolchain Support
+            try
+            {
+                Method getToolchainsMethod =
+                    toolchainManager.getClass().getMethod( "getToolchains", MavenSession.class, String.class,
+                                                           Map.class );
+
+                @SuppressWarnings( "unchecked" )
+                List<Toolchain> tcs =
+                    (List<Toolchain>) getToolchainsMethod.invoke( toolchainManager, session, "jdk",
+                                                                  jdkToolchain );
+
+                if ( tcs != null && tcs.size() > 0 )
+                {
+                    tc = tcs.get( 0 );
+                }
+            }
+            catch ( NoSuchMethodException e )
+            {
+                // ignore
+            }
+            catch ( SecurityException e )
+            {
+                // ignore
+            }
+            catch ( IllegalAccessException e )
+            {
+                // ignore
+            }
+            catch ( IllegalArgumentException e )
+            {
+                // ignore
+            }
+            catch ( InvocationTargetException e )
+            {
+                // ignore
+            }
+        }
+        
+        if ( tc == null )
         {
             tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
         }
-
+        
         return tc;
     }
 
