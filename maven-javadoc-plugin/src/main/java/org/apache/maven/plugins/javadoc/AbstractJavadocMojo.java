@@ -4742,12 +4742,17 @@ public abstract class AbstractJavadocMojo
     }
 
     private static File findMainDescriptor( List<String> roots )
+        throws MavenReportException
     {
         for ( String root : roots )
         {
             File descriptorFile = new File( root, "module-info.java" ).getAbsoluteFile();
             if ( descriptorFile.exists() )
             {
+                if ( !descriptorFile.isFile() )
+                {
+                    throw new MavenReportException( descriptorFile + " is not a regular file" );
+                }
                 return descriptorFile;
             }
         }
