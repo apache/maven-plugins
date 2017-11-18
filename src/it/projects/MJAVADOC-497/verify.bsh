@@ -1,0 +1,47 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import java.io.*;
+
+try
+{
+    File packageList = new File( basedir, "target/site/apidocs/package-list" );
+    if ( !packageList.exists() )
+    {
+        System.err.println( packageList + " is missing" );
+        return false;
+    }
+
+    FileReader fr = new FileReader( packageList );
+    BufferedReader br = new BufferedReader( fr );
+    String line = br.readLine();
+    if ( !"com.example.foo".equals( line ) || br.readLine() != null )
+    {
+        System.err.println( "package com.example.foo is not the only entry in the package-list" );
+        return false;
+    }
+    br.close();
+}
+catch ( Exception e )
+{
+    e.printStackTrace();
+    return false;
+}
+
+return true;
