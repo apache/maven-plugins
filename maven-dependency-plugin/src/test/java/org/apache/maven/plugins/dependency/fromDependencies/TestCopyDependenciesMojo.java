@@ -551,13 +551,21 @@ public class TestCopyDependenciesMojo
         assertEquals( time, copiedFile.lastModified() );
     }
 
+    /**
+     * Test that the given artifact is copied, and the copy is overwritten if the Mojo is executed again.
+     *
+     * @throws Exception On errors
+     */
+
     public void testOverWriteRelease()
-        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
+        throws Exception
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact release = stubFactory.getReleaseArtifact();
-        assertTrue( release.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
+
+        assertTrue( release.getFile().setLastModified( 1000L ) );
+        assertEquals( 1000L, release.getFile().lastModified() );
 
         artifacts.add( release );
 
@@ -571,19 +579,13 @@ public class TestCopyDependenciesMojo
 
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( release, false ) );
 
-        Thread.sleep( 100 );
-        // round down to the last second
-        long time = System.currentTimeMillis();
-        time = time - ( time % 1000 );
-        assertTrue( copiedFile.setLastModified( time ) );
-        // wait at least a second for filesystems that only record to the
-        // nearest second.
-        Thread.sleep( 1000 );
+        assertTrue( copiedFile.setLastModified( 2000L ) );
+        assertEquals( 2000L, copiedFile.lastModified() );
 
         mojo.execute();
 
-        assertTrue( "time = " + time + " should be < to " + copiedFile.lastModified(),
-                    time < copiedFile.lastModified() );
+        long timeCopyNow = copiedFile.lastModified();
+        assertEquals( 1000L, timeCopyNow );
     }
 
     public void testDontOverWriteSnap()
@@ -619,13 +621,21 @@ public class TestCopyDependenciesMojo
         assertEquals( time, copiedFile.lastModified() );
     }
 
+    /**
+     * Test that the given artifact is copied, and the copy is overwritten if the Mojo is executed again.
+     *
+     * @throws Exception On errors
+     */
+
     public void testOverWriteSnap()
-        throws MojoExecutionException, InterruptedException, IOException, MojoFailureException
+        throws Exception
     {
 
         Set<Artifact> artifacts = new HashSet<Artifact>();
         Artifact snap = stubFactory.getSnapshotArtifact();
-        assertTrue( snap.getFile().setLastModified( System.currentTimeMillis() - 2000 ) );
+
+        assertTrue( snap.getFile().setLastModified( 1000L ) );
+        assertEquals( 1000L, snap.getFile().lastModified() );
 
         artifacts.add( snap );
 
@@ -640,18 +650,13 @@ public class TestCopyDependenciesMojo
 
         File copiedFile = new File( mojo.outputDirectory, DependencyUtil.getFormattedFileName( snap, false ) );
 
-        Thread.sleep( 100 );
-        // round down to the last second
-        long time = System.currentTimeMillis();
-        time = time - ( time % 1000 );
-        assertTrue( copiedFile.setLastModified( time ) );
-        // wait at least a second for filesystems that only record to the
-        // nearest second.
-        Thread.sleep( 1000 );
+        assertTrue( copiedFile.setLastModified( 2000L ) );
+        assertEquals( 2000L, copiedFile.lastModified() );
 
         mojo.execute();
 
-        assertTrue( time < copiedFile.lastModified() );
+        long timeCopyNow = copiedFile.lastModified();
+        assertEquals( 1000L, timeCopyNow );
     }
 
     public void testGetDependencies()
