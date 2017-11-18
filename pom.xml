@@ -102,6 +102,12 @@ under the License.
     <contributor>
       <name>Richard Sand</name>
     </contributor>
+    <contributor>
+      <name>Mark Raynsford</name>
+    </contributor>
+    <contributor>
+      <name>Anton Klarén</name>
+    </contributor>
   </contributors>
 
   <dependencies>
@@ -223,7 +229,7 @@ under the License.
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-java</artifactId>
-      <version>0.9.4</version>
+      <version>0.9.5</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>

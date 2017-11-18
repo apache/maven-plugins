@@ -4653,9 +4653,11 @@ public abstract class AbstractJavadocMojo
             addArgIf( arguments, breakiterator, "-breakiterator", SINCE_JAVADOC_1_5 );
         }
 
-        File mainDescriptor = new File( "src/main/java/module-info.java" );
+        List<String> roots = getProjectSourceRoots( getProject() );
         
-        if ( mainDescriptor.exists() && !isTest() )
+        File mainDescriptor = findMainDescriptor( roots );
+        
+        if ( mainDescriptor != null && !isTest() )
         {
             LocationManager locationManager = new LocationManager();
             ResolvePathsRequest<File> request =
@@ -4697,8 +4699,6 @@ public abstract class AbstractJavadocMojo
         }
         addArgIfNotEmpty( arguments, "-encoding", JavadocUtil.quotedArgument( getEncoding() ) );
 
-        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
-
         addArgIfNotEmpty( arguments, "-extdirs",
                           JavadocUtil.quotedPathArgument( JavadocUtil.unifyPathSeparator( extdirs ) ) );
 
@@ -4727,6 +4727,9 @@ public abstract class AbstractJavadocMojo
         {
             addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_5 );
         }
+        
+        // [MJAVADOC-497] must be after sourcepath is recalculated, since getExcludedPackages() depends on it
+        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
 
         addArgIf( arguments, verbose, "-verbose" );
 
@@ -4737,6 +4740,19 @@ public abstract class AbstractJavadocMojo
                 arguments.add( option );
             }
         }
+    }
+
+    private File findMainDescriptor( List<String> roots )
+    {
+        for ( String root : roots )
+        {
+            File descriptorFile = new File( root, "module-info.java" ).getAbsoluteFile();
+            if ( descriptorFile.exists() )
+            {
+                return descriptorFile;
+            }
+        }
+        return null;
     }
 
     /**
