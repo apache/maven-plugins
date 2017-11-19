@@ -29,7 +29,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * @version $Id$
+ * @version $Id: AbstractDeployMojo.java 1791602 2017-04-16 11:20:59Z khmarbaise $
  */
 public abstract class AbstractDeployMojo
     extends AbstractMojo

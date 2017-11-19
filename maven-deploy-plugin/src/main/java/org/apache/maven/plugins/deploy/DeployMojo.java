@@ -20,12 +20,10 @@ package org.apache.maven.plugins.deploy;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -53,15 +51,6 @@ public class DeployMojo
 {
 
     private static final Pattern ALT_REPO_SYNTAX_PATTERN = Pattern.compile( "(.+)::(.+)" );
-
-    /**
-     * When building with multiple threads, reaching the last project doesn't have to mean that all projects are ready
-     * to be deployed
-     */
-    private static final AtomicInteger READYPROJECTSCOUNTER = new AtomicInteger();
-
-    private static final List<ProjectDeployerRequest> DEPLOYREQUESTS =
-        Collections.synchronizedList( new ArrayList<ProjectDeployerRequest>() );
 
     /**
      */
@@ -131,10 +120,10 @@ public class DeployMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        boolean addedDeployRequest = false;
         if ( skip )
         {
             getLog().info( "Skipping artifact deployment" );
+            queueDeployment( null );
         }
         else
         {
@@ -152,42 +141,93 @@ public class DeployMojo
             // @formatter:on
             // CHECKSTYLE_ON: LineLength
 
-            ArtifactRepository repo = getDeploymentRepository( pdr );
-
             if ( !deployAtEnd )
             {
-                deployProject( getSession().getProjectBuildingRequest(), pdr, repo );
+                queueDeployment( null );
+                deployProject( pdr );
             }
             else
             {
-                DEPLOYREQUESTS.add( pdr );
-                addedDeployRequest = true;
+                queueDeployment( pdr );
             }
         }
+        deployQueuedRequests();
+    }
 
-        boolean projectsReady = READYPROJECTSCOUNTER.incrementAndGet() == reactorProjects.size();
-        if ( projectsReady )
+    /**
+     * Queue a deployment request.  In a reactor, some deployments may be delayed or skipped while others are not
+     * @param pdr The deployment request.  Null indicates that the deployment was not delayed
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
+    private void queueDeployment( ProjectDeployerRequest pdr )
+        throws MojoExecutionException, MojoFailureException
+    {
+        List<ProjectDeployerRequest> deployRequests = getDeployRequests();
+
+        // build may be parallel, protect against multiple threads accessing
+        synchronized ( deployRequests )
         {
-            synchronized ( DEPLOYREQUESTS )
+
+            deployRequests.add( pdr );
+            if ( pdr != null && deployRequests.size() != reactorProjects.size() )
             {
-                while ( !DEPLOYREQUESTS.isEmpty() )
-                {
-                    ArtifactRepository repo = getDeploymentRepository( DEPLOYREQUESTS.get( 0 ) );
-
-                    deployProject( getSession().getProjectBuildingRequest(), DEPLOYREQUESTS.remove( 0 ), repo );
-                }
+                getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + ":"
+                  + project.getVersion() + " at end" );
             }
-        }
-        else if ( addedDeployRequest )
-        {
-            getLog().info( "Deploying " + project.getGroupId() + ":" + project.getArtifactId() + ":"
-                + project.getVersion() + " at end" );
         }
     }
 
-    private void deployProject( ProjectBuildingRequest pbr, ProjectDeployerRequest pir, ArtifactRepository repo )
+    public void deployQueuedRequests() throws MojoExecutionException, MojoFailureException
+    {
+        List deployRequests = getDeployRequests();
+        // build may be parallel, protect against multiple threads accessing
+        synchronized ( deployRequests )
+        {
+            if ( deployRequests.size() != reactorProjects.size() )
+            {
+                return;
+            }
+            for ( Object dr : deployRequests )
+            {
+                if ( dr != null )
+                {
+                    /*
+                     * Cast the instance to a ProjectDeployerRequest.  This specialized casting would
+                     * not be necessary if ProjectDeployerRequest were in core.
+                     */
+                    deployProject( CastHelper.castToSameClassLoader( ProjectDeployerRequest.class, dr ) );
+                }
+            }
+        }
+    }
+
+    private List<ProjectDeployerRequest> getDeployRequests()
+    {
+        Properties projectProperties = getSession().getUserProperties();
+
+        // Plugin instances may be in different Classworlds if they are loaded in different modules
+        // containing different extensions.  The plugin cannot rely on static variables, only injected
+        // or session shared variables
+        synchronized ( projectProperties )
+        {
+            String propertyKey = getClass().getCanonicalName();
+            List<ProjectDeployerRequest> reqs = (List<ProjectDeployerRequest>) projectProperties.get( propertyKey );
+            if ( reqs == null )
+            {
+                reqs = new ArrayList<ProjectDeployerRequest>( reactorProjects.size() );
+                projectProperties.put( propertyKey, reqs );
+            }
+            return reqs;
+        }
+    }
+
+    private void deployProject( ProjectDeployerRequest pir )
         throws MojoFailureException, MojoExecutionException
     {
+        ArtifactRepository repo = getDeploymentRepository( pir );
+        ProjectBuildingRequest pbr = getSession().getProjectBuildingRequest();
+
         try
         {
             projectDeployer.deploy( pbr, pir, repo );
@@ -200,7 +240,6 @@ public class DeployMojo
     }
 
     ArtifactRepository getDeploymentRepository( ProjectDeployerRequest pdr )
-
         throws MojoExecutionException, MojoFailureException
     {
         MavenProject project = pdr.getProject();
@@ -259,5 +298,4 @@ public class DeployMojo
 
         return repo;
     }
-
 }
