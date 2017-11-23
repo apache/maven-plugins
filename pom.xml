@@ -20,12 +20,152 @@ under the License.
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.apache.maven</groupId>
+    <artifactId>maven-parent</artifactId>
+    <version>30</version>
+    <relativePath>../pom/maven/pom.xml</relativePath>
+  </parent>
+
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-plugins-aggregator</artifactId>
   <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <name>Apache Maven Plugins Aggregator</name>
+  <description>Maven Plugins Aggregator</description>
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/plugins/trunk/</url>
+  </scm>
+
   <modules>
+    <module>maven-acr-plugin</module>
+    <!--
+    MANT-86 Retire the plugin
+    <module>maven-ant-plugin</module>
+    -->
+    <module>maven-antrun-plugin</module>
+
+    <!-- HACK: Deliberately put before other plugins that employ maven-antrun-plugin to workaround MNG-1323 -->
+    <!-- 
+    <module>maven-eclipse-plugin</module>
+     -->
+
+    <module>maven-changelog-plugin</module>
+    <module>maven-changes-plugin</module>
+    <!-- Moved to java-7 profile because it requires Java 7
+    <module>maven-checkstyle-plugin</module> -->
+    <module>maven-clean-plugin</module>
     <module>maven-compiler-plugin</module>
+    <module>maven-deploy-plugin</module>
+    <module>maven-docck-plugin</module>
+    <module>maven-ear-plugin</module>
+    <module>maven-ejb-plugin</module>
+    <!-- Moved to non-windows profile, since there's no gpg.exe available by default -->
+    <!-- <module>maven-gpg-plugin</module> -->
+    <module>maven-help-plugin</module>
+    <module>maven-install-plugin</module>
+    <!-- Moved to java-6 profile because it requires Java 6
+    <module>maven-invoker-plugin</module>-->
+    <!-- <module>maven-jar-plugin</module> -->
+    <module>maven-jarsigner-plugin</module>
+    <module>maven-jdeps-plugin</module>
+    <module>maven-linkcheck-plugin</module>
+    <module>maven-patch-plugin</module>
+    <module>maven-pdf-plugin</module>
+    <!-- Moved to java-7 profile because it requires Java 7 -->
+    <!-- <module>maven-pmd-plugin</module> -->
+    <!--Moved to maven-3 profile as a workaround for MNG-3814
+    <module>maven-project-info-reports-plugin</module>-->
+    <module>maven-rar-plugin</module>
+    <!--Moved to maven-3 profile as a workaround for MNG-3814
+    <module>maven-remote-resources-plugin</module-->
+    <module>maven-repository-plugin</module>
+    <module>maven-resources-plugin</module>
+    <module>maven-site-plugin</module>
+    <module>maven-source-plugin</module>
+    <module>maven-stage-plugin</module>
+    <module>maven-toolchains-plugin</module>
+    <module>maven-verifier-plugin</module>
+    <module>maven-war-plugin</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <!-- For plugins that require at least Java 6 to build -->
+      <id>java-6</id>
+      <modules>
+        <module>maven-doap-plugin</module>
+        <module>maven-invoker-plugin</module>
+        <module>maven-jar-plugin</module>
+      </modules>
+      <activation>
+        <jdk>[1.6,)</jdk>
+      </activation>
+    </profile>
+
+    <profile>
+      <!-- For plugins that require at least Java 7 to build -->
+      <id>java-7</id>
+      <modules>
+        <module>maven-assembly-plugin</module>
+        <module>maven-checkstyle-plugin</module>
+		    <module>maven-javadoc-plugin</module>
+        <module>maven-pmd-plugin</module>
+        <module>maven-jlink-plugin</module>
+        <module>maven-jmod-plugin</module>
+      </modules>
+      <activation>
+        <jdk>[1.7,)</jdk>
+      </activation>
+    </profile>
+
+    <profile>
+      <id>maven-3_jdk5</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+        <jdk>[1.5,)</jdk>
+      </activation>
+      <modules>
+        <!--Moved to maven-3 profile as a workaround for MNG-3814 -->
+        <module>maven-project-info-reports-plugin</module>
+        <module>maven-remote-resources-plugin</module>
+        <!--Moved to maven-3 profile as they require Maven 3.0 -->
+        <module>maven-shade-plugin</module>
+        <module>maven-scm-publish-plugin</module>
+      </modules>
+    </profile>
+
+    <profile>
+      <id>maven-3_jdk6</id>
+      <activation>
+        <file>
+          <!--  This employs that the basedir expression is only recognized by Maven 3.x (see MNG-2363) -->
+          <exists>${basedir}</exists>
+        </file>
+        <jdk>[1.6,)</jdk>
+      </activation>
+      <modules>
+        <module>maven-dependency-plugin</module>
+      </modules>
+    </profile>
+    
+    <profile>
+      <id>non-windows</id>
+      <activation>
+        <os>
+          <family>!windows</family>
+        </os>
+      </activation>
+      <modules>
+        <module>maven-gpg-plugin</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

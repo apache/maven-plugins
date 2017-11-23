@@ -1005,7 +1005,10 @@ public abstract class AbstractCompilerMojo
                         
                         if ( descriptor == null )
                         {
-                            getLog().warn( "Can't locate " + file );
+                            if ( ! Files.isDirectory( Paths.get ( file ) ) )
+                            {
+                                getLog().warn( "Can't locate " + file );
+                            }
                         }
                         else if ( !values[0].equals( descriptor.name() ) )
                         {
