@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,11 +40,11 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugins.javadoc.options.JavadocOptions;
-import org.apache.maven.plugins.javadoc.options.io.xpp3.JavadocOptionsXpp3Reader;
 import org.apache.maven.plugins.javadoc.AbstractJavadocMojo;
 import org.apache.maven.plugins.javadoc.JavadocUtil;
 import org.apache.maven.plugins.javadoc.ResourcesBundleMojo;
+import org.apache.maven.plugins.javadoc.options.JavadocOptions;
+import org.apache.maven.plugins.javadoc.options.io.xpp3.JavadocOptionsXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
@@ -439,7 +440,7 @@ public final class ResourceResolver extends AbstractLogEnabled
         return result;
     }
 
-    private static List<String> resolveFromProject( final SourceResolverConfig config,
+    private static Collection<String> resolveFromProject( final SourceResolverConfig config,
                                                     final MavenProject reactorProject, final Artifact artifact )
     {
         final List<String> dirs = new ArrayList<>();

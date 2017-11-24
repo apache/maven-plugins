@@ -25,9 +25,11 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -585,10 +587,10 @@ public class JavadocUtilTest
         list.add( getBasedir() + "/target/classes" );
         list.add( getBasedir() + "/target/classes" );
 
-        List<String> expected = new ArrayList<>();
-        expected.add( getBasedir() + "/target/classes" );
+        String FS = System.getProperty( "file.separator" );
+        Set<String> expected = Collections.singleton( getBasedir() + FS +"target" + FS + "classes" );
 
-        assertTrue( EqualsBuilder.reflectionEquals( expected, JavadocUtil.pruneDirs( null, list ) ) );
+        assertEquals( expected, JavadocUtil.pruneDirs( null, list ) );
     }
 
     /**

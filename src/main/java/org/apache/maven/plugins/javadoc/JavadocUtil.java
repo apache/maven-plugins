@@ -78,10 +78,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -112,12 +114,12 @@ public class JavadocUtil
      * directory <code>String</code> path.
      *
      * @param project the current Maven project not null
-     * @param dirs the list of <code>String</code> directories path that will be validated.
+     * @param dirs the collection of <code>String</code> directories path that will be validated.
      * @return a List of valid <code>String</code> directories absolute paths.
      */
-    public static List<String> pruneDirs( MavenProject project, List<String> dirs )
+    public static Collection<String> pruneDirs( MavenProject project, Collection<String> dirs )
     {
-        List<String> pruned = new ArrayList<>( dirs.size() );
+        Set<String> pruned = new LinkedHashSet<>( dirs.size() );
         for ( String dir : dirs )
         {
             if ( dir == null )
@@ -131,7 +133,7 @@ public class JavadocUtil
                 directory = new File( project.getBasedir(), directory.getPath() );
             }
 
-            if ( directory.isDirectory() && !pruned.contains( directory.getAbsolutePath() ) )
+            if ( directory.isDirectory() )
             {
                 pruned.add( directory.getAbsolutePath() );
             }
@@ -147,7 +149,7 @@ public class JavadocUtil
      * @param files the list of <code>String</code> files paths that will be validated.
      * @return a List of valid <code>File</code> objects.
      */
-    protected static List<String> pruneFiles( List<String> files )
+    protected static List<String> pruneFiles( Collection<String> files )
     {
         List<String> pruned = new ArrayList<>( files.size() );
         for ( String f : files )
@@ -191,7 +193,7 @@ public class JavadocUtil
      * @param excludedPackages the package names to be excluded in the javadoc
      * @return a List of the source files to be excluded in the generated javadoc
      */
-    protected static List<String> getExcludedNames( List<String> sourcePaths, String[] subpackagesList,
+    protected static List<String> getExcludedNames( Collection<String> sourcePaths, String[] subpackagesList,
                                                     String[] excludedPackages )
     {
         List<String> excludedNames = new ArrayList<>();
