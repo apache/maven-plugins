@@ -75,13 +75,16 @@ public class JavadocJarTest
             new File( getBasedir(), "target/test/unit/javadocjar-default/target/javadocjar-default-javadoc.jar" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        //validate contents of jar file
-        ZipFile jar = new ZipFile( generatedFile );
         Set<String> set = new HashSet<>();
-        for( Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
+
+        //validate contents of jar file
+        try ( ZipFile jar = new ZipFile( generatedFile ) )
         {
-            ZipEntry entry = entries.nextElement();
-            set.add( entry.getName() );
+            for( Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
+            {
+                ZipEntry entry = entries.nextElement();
+                set.add( entry.getName() );
+            }
         }
 
         assertTrue( set.contains( "stylesheet.css" ) );

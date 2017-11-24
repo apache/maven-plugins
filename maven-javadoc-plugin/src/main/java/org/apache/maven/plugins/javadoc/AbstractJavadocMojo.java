@@ -1977,7 +1977,7 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Failed to generate javadoc options file: " + e.getMessage(), e );
         }
 
-        List<String> sourcePaths = getSourcePaths();
+        Collection<String> sourcePaths = getSourcePaths();
         List<String> files = getFiles( sourcePaths );
         if ( !canGenerateReport( files ) )
         {
@@ -2180,11 +2180,11 @@ public abstract class AbstractJavadocMojo
     /**
      * Method to get the files on the specified source paths
      *
-     * @param sourcePaths a List that contains the paths to the source files
+     * @param sourcePaths a Collection that contains the paths to the source files
      * @return a List that contains the specific path for every source file
      * @throws MavenReportException {@link MavenReportException}
      */
-    protected List<String> getFiles( List<String> sourcePaths )
+    protected List<String> getFiles( Collection<String> sourcePaths )
         throws MavenReportException
     {
         List<String> files = new ArrayList<>();
@@ -2207,14 +2207,14 @@ public abstract class AbstractJavadocMojo
      * Method to get the source paths. If no source path is specified in the parameter, the compile source roots
      * of the project will be used.
      *
-     * @return a List of the project absolute source paths as <code>String</code>
+     * @return a Collection of the project absolute source paths as <code>String</code>
      * @throws MavenReportException {@link MavenReportException}
      * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
-    protected List<String> getSourcePaths()
+    protected Collection<String> getSourcePaths()
         throws MavenReportException
     {
-        List<String> sourcePaths;
+        Collection<String> sourcePaths;
 
         if ( StringUtils.isEmpty( sourcepath ) )
         {
@@ -2235,7 +2235,7 @@ public abstract class AbstractJavadocMojo
                 File javadocDir = getJavadocDirectory();
                 if ( javadocDir.exists() && javadocDir.isDirectory() )
                 {
-                    List<String> l = JavadocUtil.pruneDirs( project, Collections.singletonList(
+                    Collection<String> l = JavadocUtil.pruneDirs( project, Collections.singletonList(
                         getJavadocDirectory().getAbsolutePath() ) );
                     sourcePaths.addAll( l );
                 }
@@ -2273,7 +2273,7 @@ public abstract class AbstractJavadocMojo
                             File javadocDir = new File( subProject.getBasedir(), javadocDirRelative );
                             if ( javadocDir.exists() && javadocDir.isDirectory() )
                             {
-                                List<String> l = JavadocUtil.pruneDirs( subProject, Collections.singletonList(
+                                Collection<String> l = JavadocUtil.pruneDirs( subProject, Collections.singletonList(
                                         javadocDir.getAbsolutePath() ) );
                                 sourcePaths.addAll( l );
                             }
@@ -2288,7 +2288,7 @@ public abstract class AbstractJavadocMojo
             sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
             if ( getJavadocDirectory() != null )
             {
-                List<String> l = JavadocUtil.pruneDirs( project, Collections.singletonList(
+                Collection<String> l = JavadocUtil.pruneDirs( project, Collections.singletonList(
                     getJavadocDirectory().getAbsolutePath() ) );
                 sourcePaths.addAll( l );
             }
@@ -2436,11 +2436,11 @@ public abstract class AbstractJavadocMojo
      * Method to get the excluded source files from the javadoc and create the argument string
      * that will be included in the javadoc commandline execution.
      *
-     * @param sourcePaths the list of paths to the source files
+     * @param sourcePaths the collection of paths to the source files
      * @return a String that contains the exclude argument that will be used by javadoc
      * @throws MavenReportException
      */
-    private String getExcludedPackages( List<String> sourcePaths )
+    private String getExcludedPackages( Collection<String> sourcePaths )
         throws MavenReportException
     {
         List<String> excludedNames = null;
@@ -2471,7 +2471,7 @@ public abstract class AbstractJavadocMojo
      *         string (colon (<code>:</code>) on Solaris or semi-colon (<code>;</code>) on Windows).
      * @see File#pathSeparator
      */
-    private String getSourcePath( List<String> sourcePaths )
+    private String getSourcePath( Collection<String> sourcePaths )
     {
         String sourcePath = null;
 
@@ -3049,7 +3049,7 @@ public abstract class AbstractJavadocMojo
         throws MavenReportException
     {
         Set<TagletArtifact> tArtifacts = collectTagletArtifacts();
-        List<String> pathParts = new ArrayList<>();
+        Collection<String> pathParts = new ArrayList<>();
 
         for ( TagletArtifact tagletArtifact : tArtifacts )
         {
@@ -4284,7 +4284,7 @@ public abstract class AbstractJavadocMojo
      * @param files       not null
      * @return the list of package names for files in the sourcePaths
      */
-    private List<String> getPackageNames( List<String> sourcePaths, List<String> files )
+    private List<String> getPackageNames( Collection<String> sourcePaths, List<String> files )
     {
         return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, true );
     }
@@ -4294,7 +4294,7 @@ public abstract class AbstractJavadocMojo
      * @param files       not null
      * @return a list files with unnamed package names for files in the sourecPaths
      */
-    private List<String> getFilesWithUnnamedPackages( List<String> sourcePaths, List<String> files )
+    private List<String> getFilesWithUnnamedPackages( Collection<String> sourcePaths, List<String> files )
     {
         return getPackageNamesOrFilesWithUnnamedPackages( sourcePaths, files, false );
     }
@@ -4307,7 +4307,7 @@ public abstract class AbstractJavadocMojo
      * @see #getFiles(List)
      * @see #getSourcePaths()
      */
-    private List<String> getPackageNamesOrFilesWithUnnamedPackages( List<String> sourcePaths, List<String> files,
+    private List<String> getPackageNamesOrFilesWithUnnamedPackages( Collection<String> sourcePaths, List<String> files,
                                                                     boolean onlyPackageName )
     {
         List<String> returnList = new ArrayList<>();
@@ -4624,7 +4624,7 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions">http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions</a>
      */
-    private void addJavadocOptions( List<String> arguments, List<String> sourcePaths )
+    private void addJavadocOptions( List<String> arguments, Collection<String> sourcePaths )
         throws MavenReportException
     {
         validateJavadocOptions();
