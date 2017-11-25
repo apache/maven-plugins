@@ -449,10 +449,7 @@ public class PdfMojo
     private void copyGeneratedPdf()
         throws MojoExecutionException, IOException
     {
-        if ( outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() ) )
-        {
-            return;
-        }
+        boolean requireCopy = !outputDirectory.getCanonicalPath().equals( workingDirectory.getCanonicalPath() );
 
         String outputName = getDocumentModel( getDefaultLocale() ).getOutputName().trim();
         if ( !outputName.endsWith( ".pdf" ) )
@@ -472,8 +469,13 @@ public class PdfMojo
 
             File generatedPdfDest = new File( getLocaleDirectory( outputDirectory, locale ), outputName );
 
-            FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
-            generatedPdfSource.delete();
+            if ( requireCopy )
+            {
+                FileUtils.copyFile( generatedPdfSource, generatedPdfDest );
+                generatedPdfSource.delete();
+            }
+
+            getLog().info( "pdf generated: " + generatedPdfDest );
         }
     }
 
