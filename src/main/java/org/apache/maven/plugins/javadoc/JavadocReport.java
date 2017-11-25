@@ -240,7 +240,7 @@ public class JavadocReport
             List<String> files;
             try
             {
-                sourcePaths = collect( getSourcePaths() );
+                sourcePaths = collect( getSourcePaths().values() );
                 files = getFiles( sourcePaths );
             }
             catch ( MavenReportException e )
