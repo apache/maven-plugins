@@ -22,6 +22,7 @@ package org.apache.maven.plugins.javadoc.stubs;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.model.Build;
@@ -39,9 +40,9 @@ public class AggregateResourcesProject2TestMavenProjectStub
     {
         readModel( new File( getBasedir(), "pom.xml" ) );
 
-        setGroupId( getModel().getGroupId() );
+        setGroupId( Objects.toString( getModel().getGroupId(), getModel().getParent().getGroupId() ) );
         setArtifactId( getModel().getArtifactId() );
-        setVersion( getModel().getVersion() );
+        setVersion( Objects.toString( getModel().getVersion(), getModel().getParent().getVersion() ) );
         setName( getModel().getName() );
         setUrl( getModel().getUrl() );
         setPackaging( getModel().getPackaging() );

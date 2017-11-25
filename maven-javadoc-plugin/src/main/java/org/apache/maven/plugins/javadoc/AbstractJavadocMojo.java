@@ -23,7 +23,6 @@ import static org.apache.maven.plugins.javadoc.JavadocUtil.isEmpty;
 import static org.apache.maven.plugins.javadoc.JavadocUtil.isNotEmpty;
 import static org.apache.maven.plugins.javadoc.JavadocUtil.toList;
 import static org.apache.maven.plugins.javadoc.JavadocUtil.toRelative;
-import static org.codehaus.plexus.util.IOUtil.close;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,6 +45,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,6 +61,7 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -1977,9 +1978,9 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Failed to generate javadoc options file: " + e.getMessage(), e );
         }
 
-        Collection<Collection<String>> sourcePaths = getSourcePaths();
+        Map<String, Collection<String>> sourcePaths = getSourcePaths();
         
-        Collection<String> collectedSourcePaths = collect( sourcePaths );
+        Collection<String> collectedSourcePaths = collect( sourcePaths.values() );
         
         List<String> files = getFiles( collectedSourcePaths );
         if ( !canGenerateReport( files ) )
@@ -2224,10 +2225,10 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException {@link MavenReportException}
      * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
-    protected Collection<Collection<String>> getSourcePaths()
+    protected Map<String, Collection<String>> getSourcePaths()
         throws MavenReportException
     {
-        Collection<Collection<String>> allSourcePaths = new ArrayList<>();
+        Map<String, Collection<String>> mappedSourcePaths = new LinkedHashMap<>();
 
         if ( StringUtils.isEmpty( sourcepath ) )
         {
@@ -2255,11 +2256,13 @@ public abstract class AbstractJavadocMojo
                     sourcePaths.addAll( l );
                 }
             }
+            mappedSourcePaths.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
+                                   sourcePaths );
+            
             if ( includeDependencySources )
             {
-                sourcePaths.addAll( getDependencySourcePaths() );
+                mappedSourcePaths.putAll( getDependencySourcePaths() );
             }
-            allSourcePaths.add( sourcePaths );
 
             if ( isAggregator() && project.isExecutionRoot() )
             {
@@ -2295,7 +2298,9 @@ public abstract class AbstractJavadocMojo
                                 additionalSourcePaths.addAll( l );
                             }
                         }
-                        allSourcePaths.add( additionalSourcePaths );
+                        mappedSourcePaths.put( ArtifactUtils.versionlessKey( subProject.getGroupId(),
+                                                                             subProject.getArtifactId() ),
+                                               additionalSourcePaths );
                     }
                 }
             }
@@ -2310,10 +2315,11 @@ public abstract class AbstractJavadocMojo
                     getJavadocDirectory().getAbsolutePath() ) );
                 sourcePaths.addAll( l );
             }
-            allSourcePaths.add( sourcePaths );
+            mappedSourcePaths.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
+                                   sourcePaths );
         }
 
-        return allSourcePaths;
+        return mappedSourcePaths;
     }
 
     /**
@@ -2333,7 +2339,7 @@ public abstract class AbstractJavadocMojo
      * @return List of source paths.
      * @throws MavenReportException {@link MavenReportException}
      */
-    protected final List<String> getDependencySourcePaths()
+    protected final Map<String, Collection<String>> getDependencySourcePaths()
         throws MavenReportException
     {
         try
@@ -4641,10 +4647,10 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions">http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions</a>
      */
-    private void addJavadocOptions( List<String> arguments, Collection<Collection<String>> allSourcePaths )
+    private void addJavadocOptions( List<String> arguments, Map<String, Collection<String>> allSourcePaths )
         throws MavenReportException
     {
-        Collection<String> sourcePaths = collect( allSourcePaths );
+        Collection<String> sourcePaths = collect( allSourcePaths.values() );
         
         validateJavadocOptions();
 
@@ -6039,15 +6045,10 @@ public abstract class AbstractJavadocMojo
         }
 
         File optionsFile = getJavadocOptionsFile();
-        Writer writer = null;
-        try
+        
+        try ( Writer writer = WriterFactory.newXmlWriter( optionsFile ) )
         {
-            writer = WriterFactory.newXmlWriter( optionsFile );
             new JavadocOptionsXpp3Writer().write( writer, options );
-        }
-        finally
-        {
-            close( writer );
         }
 
         return options;
