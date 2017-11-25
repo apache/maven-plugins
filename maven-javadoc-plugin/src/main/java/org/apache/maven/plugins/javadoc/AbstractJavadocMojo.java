@@ -1977,15 +1977,18 @@ public abstract class AbstractJavadocMojo
             throw new MavenReportException( "Failed to generate javadoc options file: " + e.getMessage(), e );
         }
 
-        Collection<String> sourcePaths = getSourcePaths();
-        List<String> files = getFiles( sourcePaths );
+        Collection<Collection<String>> sourcePaths = getSourcePaths();
+        
+        Collection<String> collectedSourcePaths = collect( sourcePaths );
+        
+        List<String> files = getFiles( collectedSourcePaths );
         if ( !canGenerateReport( files ) )
         {
             return;
         }
 
-        List<String> packageNames = getPackageNames( sourcePaths, files );
-        List<String> filesWithUnnamedPackages = getFilesWithUnnamedPackages( sourcePaths, files );
+        List<String> packageNames = getPackageNames( collectedSourcePaths, files );
+        List<String> filesWithUnnamedPackages = getFilesWithUnnamedPackages( collectedSourcePaths, files );
 
         // ----------------------------------------------------------------------
         // Find the javadoc executable and version
@@ -2177,6 +2180,16 @@ public abstract class AbstractJavadocMojo
         }
     }
 
+    protected final Collection<String> collect( Collection<Collection<String>> sourcePaths )
+    {
+        Collection<String> collectedSourcePaths = new LinkedHashSet<>();
+        for ( Collection<String> sp : sourcePaths )
+        {
+            collectedSourcePaths.addAll( sp );
+        }
+        return collectedSourcePaths;
+    }
+
     /**
      * Method to get the files on the specified source paths
      *
@@ -2211,14 +2224,16 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException {@link MavenReportException}
      * @see JavadocUtil#pruneDirs(MavenProject, List)
      */
-    protected Collection<String> getSourcePaths()
+    protected Collection<Collection<String>> getSourcePaths()
         throws MavenReportException
     {
-        Collection<String> sourcePaths;
+        Collection<Collection<String>> allSourcePaths = new ArrayList<>();
 
         if ( StringUtils.isEmpty( sourcepath ) )
         {
-            sourcePaths = new ArrayList<>( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
+            
+            Collection<String> sourcePaths =
+                new ArrayList<>( JavadocUtil.pruneDirs( project, getProjectSourceRoots( project ) ) );
 
             if ( project.getExecutionProject() != null )
             {
@@ -2240,11 +2255,11 @@ public abstract class AbstractJavadocMojo
                     sourcePaths.addAll( l );
                 }
             }
-
             if ( includeDependencySources )
             {
                 sourcePaths.addAll( getDependencySourcePaths() );
             }
+            allSourcePaths.add( sourcePaths );
 
             if ( isAggregator() && project.isExecutionRoot() )
             {
@@ -2252,6 +2267,8 @@ public abstract class AbstractJavadocMojo
                 {
                     if ( subProject != project )
                     {
+                        Collection<String> additionalSourcePaths = new ArrayList<>();
+
                         List<String> sourceRoots = getProjectSourceRoots( subProject );
 
                         if ( subProject.getExecutionProject() != null )
@@ -2262,7 +2279,7 @@ public abstract class AbstractJavadocMojo
                         ArtifactHandler artifactHandler = subProject.getArtifact().getArtifactHandler();
                         if ( "java".equals( artifactHandler.getLanguage() ) )
                         {
-                            sourcePaths.addAll( JavadocUtil.pruneDirs( subProject, sourceRoots ) );
+                            additionalSourcePaths.addAll( JavadocUtil.pruneDirs( subProject, sourceRoots ) );
                         }
 
                         if ( getJavadocDirectory() != null )
@@ -2275,16 +2292,17 @@ public abstract class AbstractJavadocMojo
                             {
                                 Collection<String> l = JavadocUtil.pruneDirs( subProject, Collections.singletonList(
                                         javadocDir.getAbsolutePath() ) );
-                                sourcePaths.addAll( l );
+                                additionalSourcePaths.addAll( l );
                             }
                         }
+                        allSourcePaths.add( additionalSourcePaths );
                     }
                 }
             }
         }
         else
         {
-            sourcePaths = new ArrayList<>( Arrays.asList( JavadocUtil.splitPath( sourcepath ) ) );
+            Collection<String> sourcePaths = new ArrayList<>( Arrays.asList( JavadocUtil.splitPath( sourcepath ) ) );
             sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
             if ( getJavadocDirectory() != null )
             {
@@ -2292,11 +2310,10 @@ public abstract class AbstractJavadocMojo
                     getJavadocDirectory().getAbsolutePath() ) );
                 sourcePaths.addAll( l );
             }
+            allSourcePaths.add( sourcePaths );
         }
 
-        sourcePaths = JavadocUtil.pruneDirs( project, sourcePaths );
-
-        return sourcePaths;
+        return allSourcePaths;
     }
 
     /**
@@ -4624,9 +4641,11 @@ public abstract class AbstractJavadocMojo
      * @throws MavenReportException if any
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions">http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#javadocoptions</a>
      */
-    private void addJavadocOptions( List<String> arguments, Collection<String> sourcePaths )
+    private void addJavadocOptions( List<String> arguments, Collection<Collection<String>> allSourcePaths )
         throws MavenReportException
     {
+        Collection<String> sourcePaths = collect( allSourcePaths );
+        
         validateJavadocOptions();
 
         // see com.sun.tools.javadoc.Start#parseAndExecute(String argv[])
@@ -4721,6 +4740,7 @@ public abstract class AbstractJavadocMojo
         {
             sourcepath = StringUtils.join( sourcePaths.iterator(), File.pathSeparator );
         }
+        
         addArgIfNotEmpty( arguments, "-sourcepath", JavadocUtil.quotedPathArgument( getSourcePath( sourcePaths ) ) );
 
         if ( StringUtils.isNotEmpty( sourcepath ) && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
