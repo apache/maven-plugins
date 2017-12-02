@@ -631,7 +631,7 @@ public class JavadocReportTest
         assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
 
         JavadocVersion javadocVersion = (JavadocVersion) getVariableValueFromObject( mojo, "javadocRuntimeVersion" );
-        if( javadocVersion.compareTo( JavadocVersion.parse( "1.8" ) ) >= 0  && javadocVersion.compareTo( JavadocVersion.parse( "9" ) ) < 0)
+        if( javadocVersion.compareTo( JavadocVersion.parse( "1.8" ) ) >= 0  && javadocVersion.compareTo( JavadocVersion.parse( "10" ) ) < 0)
         {
             // https://bugs.openjdk.java.net/browse/JDK-8032205
             assertTrue( "This bug appeared in JDK8 and was planned to be fixed in JDK9, see JDK-8032205",
@@ -641,6 +641,7 @@ public class JavadocReportTest
         {
             assertFalse( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
         }
+        assertTrue( new File( apidocs, "resources/test2/doc-files/maven-feather.png" ).exists() );
 
         app2 = new File( apidocs, "resources/test2/App2.html" );
         assertTrue( app2.exists() );
