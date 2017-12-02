@@ -2620,43 +2620,40 @@ public abstract class AbstractJavadocMojo
                 {
                     classpathElements.addAll( getProjectBuildOutputDirs( subProject ) );
 
-                    if ( session != null )
+                    try
                     {
-                        try
+                        StringBuilder sb = new StringBuilder();
+
+                        sb.append( "Compiled artifacts for " );
+                        sb.append( subProject.getGroupId() ).append( ":" );
+                        sb.append( subProject.getArtifactId() ).append( ":" );
+                        sb.append( subProject.getVersion() ).append( '\n' );
+
+                        ProjectBuildingRequest buildingRequest = session.getProjectBuildingRequest();
+                        buildingRequest =
+                            buildingRequest.setRemoteRepositories( subProject.getRemoteArtifactRepositories() );
+                        
+                        for ( ArtifactResult artifactResult
+                                    : dependencyResolver.resolveDependencies( buildingRequest,
+                                                                              subProject.getDependencies(),
+                                                                              null,
+                                                                              dependencyFilter ) )
                         {
-                            StringBuilder sb = new StringBuilder();
-
-                            sb.append( "Compiled artifacts for " );
-                            sb.append( subProject.getGroupId() ).append( ":" );
-                            sb.append( subProject.getArtifactId() ).append( ":" );
-                            sb.append( subProject.getVersion() ).append( '\n' );
-
-                            ProjectBuildingRequest buildingRequest = session.getProjectBuildingRequest();
-                            buildingRequest =
-                                buildingRequest.setRemoteRepositories( subProject.getRemoteArtifactRepositories() );
+                            populateCompileArtifactMap( compileArtifactMap,
+                                                        Collections.singletonList( artifactResult.getArtifact() ) );
                             
-                            for ( ArtifactResult artifactResult
-                                        : dependencyResolver.resolveDependencies( buildingRequest,
-                                                                                  subProject.getDependencies(),
-                                                                                  null,
-                                                                                  dependencyFilter ) )
-                            {
-                                populateCompileArtifactMap( compileArtifactMap,
-                                                            Collections.singletonList( artifactResult.getArtifact() ) );
-                                
-                                sb.append( artifactResult.getArtifact().getFile() ).append( '\n' );
-                            }
-                            
-                            if ( getLog().isDebugEnabled() )
-                            {
-                                getLog().debug( sb.toString() );
-                            }
-
+                            sb.append( artifactResult.getArtifact().getFile() ).append( '\n' );
                         }
-                        catch ( DependencyResolverException e )
+                        
+                        if ( getLog().isDebugEnabled() )
                         {
-                            throw new MavenReportException( e.getMessage(), e );
+                            getLog().debug( sb.toString() );
                         }
+
+                    }
+                    catch ( DependencyResolverException e )
+                    {
+                        throw new MavenReportException( e.getMessage(), e );
                     }
                 }
             }
