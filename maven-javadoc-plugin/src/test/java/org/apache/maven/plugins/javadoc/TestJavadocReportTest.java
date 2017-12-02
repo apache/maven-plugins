@@ -55,5 +55,8 @@ public class TestJavadocReportTest
         File generatedFile =
             new File( getBasedir(), "target/test/unit/test-javadoc-test/target/site/apidocs/maven/AppTest.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        
+        File options = new File( getBasedir(), "target/test/unit/test-javadoc-test/target/site/apidocs/options");
+        FileUtils.fileRead( options ).contains( "junit-3.8.1.jar" );
     }
 }

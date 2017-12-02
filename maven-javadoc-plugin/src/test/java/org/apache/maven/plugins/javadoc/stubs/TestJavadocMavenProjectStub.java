@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -49,12 +50,6 @@ public class TestJavadocMavenProjectStub
         setName( getModel().getName() );
         setUrl( getModel().getUrl() );
         setPackaging( getModel().getPackaging() );
-
-        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
-                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
-                                              false );
-        junit.setFile( new File( getBasedir() + "/junit/junit/3.8.1/junit-3.8.1.jar" ) );
-        setTestArtifacts( Collections.singletonList( junit ) );
 
         Build build = new Build();
         build.setFinalName( getModel().getArtifactId() );
@@ -86,5 +81,15 @@ public class TestJavadocMavenProjectStub
     public MavenProject getExecutionProject()
     {
         return this;
+    }
+    
+    @Override
+    public Set<Artifact> getArtifacts()
+    {
+        Artifact junit = new DefaultArtifact( "junit", "junit", VersionRange.createFromVersion( "3.8.1" ),
+                                              Artifact.SCOPE_TEST, "jar", null, new DefaultArtifactHandler( "jar" ),
+                                              false );
+        junit.setFile( new File( getBasedir() + "/junit/junit/3.8.1/junit-3.8.1.jar" ) );
+        return Collections.singleton( junit );
     }
 }
