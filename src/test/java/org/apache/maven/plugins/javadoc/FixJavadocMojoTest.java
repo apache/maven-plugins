@@ -148,6 +148,13 @@ public class FixJavadocMojoTest
     public void testFixJdk5()
         throws Exception
     {
+        // Should be an assumption, but not supported by TestCase
+        // Java 5 not supported by Java9 anymore
+        if ( JavadocVersion.parse( SystemUtils.JAVA_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) >= 0 )
+        {
+            return;
+        }
+        
         File testPomBasedir = new File( getBasedir(), "target/test/unit/fix-jdk5-test" );
         executeMojoAndTest( testPomBasedir, new String[] { "ClassWithJavadoc.java", "ClassWithNoJavadoc.java",
             "InterfaceWithJavadoc.java", "InterfaceWithNoJavadoc.java", "SubClassWithJavadoc.java" } );
