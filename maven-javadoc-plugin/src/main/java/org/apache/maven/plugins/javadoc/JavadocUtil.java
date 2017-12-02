@@ -1277,14 +1277,22 @@ public class JavadocUtil
      */
     private static File getJavaHome( Log log )
     {
-        File javaHome;
-        if ( SystemUtils.IS_OS_MAC_OSX )
+        File javaHome = null;
+
+        // if maven.home is set, we can assume JAVA_HOME must be used for testing
+        
+        if ( System.getProperty( "maven.home" ) == null )
         {
-            javaHome = SystemUtils.getJavaHome();
-        }
-        else
-        {
-            javaHome = new File( SystemUtils.getJavaHome(), ".." );
+            // JEP220 (Java9) restructured the JRE/JDK runtime image
+            if ( ( SystemUtils.IS_OS_MAC_OSX
+                || JavadocVersion.parse( SystemUtils.JAVA_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) >= 0 ) )
+            {
+                javaHome = SystemUtils.getJavaHome();
+            }
+            else
+            {
+                javaHome = new File( SystemUtils.getJavaHome(), ".." );
+            }            
         }
 
         if ( javaHome == null || !javaHome.exists() )
