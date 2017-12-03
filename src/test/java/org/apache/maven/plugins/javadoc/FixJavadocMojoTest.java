@@ -150,7 +150,7 @@ public class FixJavadocMojoTest
     {
         // Should be an assumption, but not supported by TestCase
         // Java 5 not supported by Java9 anymore
-        if ( JavadocVersion.parse( SystemUtils.JAVA_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) >= 0 )
+        if ( JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) >= 0 )
         {
             return;
         }

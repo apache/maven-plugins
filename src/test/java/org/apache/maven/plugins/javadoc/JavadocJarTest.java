@@ -32,9 +32,11 @@ import java.util.zip.ZipFile;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugins.javadoc.AbstractJavadocMojo;
 import org.apache.maven.plugins.javadoc.JavadocJar;
 import org.apache.maven.plugins.javadoc.JavadocVersion;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -52,6 +54,12 @@ public class JavadocJarTest
         MojoExecution mojoExec = new MojoExecution( new Plugin(), "javadoc", null );
 
         setVariableValueToObject( mojo, "mojo", mojoExec );
+        
+        MavenProject currentProject = new MavenProjectStub();
+        currentProject.setGroupId( "GROUPID" );
+        currentProject.setArtifactId( "ARTIFACTID" );
+        
+        setVariableValueToObject( mojo, "session", newMavenSession( currentProject ) );
         
         return mojo;
     }
