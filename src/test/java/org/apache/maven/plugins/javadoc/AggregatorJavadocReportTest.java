@@ -25,11 +25,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.javadoc.JavadocReport;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.util.DefaultRepositorySystemSession;
 
 public class AggregatorJavadocReportTest
     extends AbstractMojoTestCase
@@ -63,8 +67,16 @@ public class AggregatorJavadocReportTest
         JavadocReport mojo = (JavadocReport) lookupMojo( "aggregate", testPom );
 
         MojoExecution mojoExec = new MojoExecution( new Plugin(), "aggregate", null );
-
         setVariableValueToObject( mojo, "mojo", mojoExec );
+        
+        MavenProject currentProject = new MavenProjectStub();
+        currentProject.setGroupId( "GROUPID" );
+        currentProject.setArtifactId( "ARTIFACTID" );
+        
+        MavenSession session = newMavenSession( currentProject );
+        DefaultRepositorySystemSession repoSysSession = (DefaultRepositorySystemSession) session.getRepositorySession();
+        repoSysSession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepo ) );
+        setVariableValueToObject( mojo, "session", session );
 
         return mojo;
     }

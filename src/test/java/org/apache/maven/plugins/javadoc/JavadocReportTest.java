@@ -38,9 +38,9 @@ import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.javadoc.JavadocReport;
-import org.apache.maven.plugins.javadoc.JavadocVersion;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugins.javadoc.ProxyServer.AuthAsyncProxyServlet;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
@@ -93,6 +93,12 @@ public class JavadocReportTest
 
         setVariableValueToObject( mojo, "mojo", mojoExec );
 
+        MavenProject currentProject = new MavenProjectStub();
+        currentProject.setGroupId( "GROUPID" );
+        currentProject.setArtifactId( "ARTIFACTID" );
+        
+        setVariableValueToObject( mojo, "session", newMavenSession( currentProject ) );
+        
         return mojo;
     }
 
@@ -297,6 +303,13 @@ public class JavadocReportTest
     public void testDocfiles()
         throws Exception
     {
+        // Should be an assumption, but not supported by TestCase
+        // Seems like a bug in Javadoc 9
+        if ( JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) == 0 )
+        {
+            return;
+        }
+        
         File testPom = new File( unit, "docfiles-test/docfiles-test-plugin-config.xml" );
         JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
@@ -553,6 +566,13 @@ public class JavadocReportTest
     public void testJdk5()
         throws Exception
     {
+        // Should be an assumption, but not supported by TestCase
+        // Java 5 not supported by Java9 anymore
+        if ( JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) >= 0 )
+        {
+            return;
+        }
+        
         File testPom = new File( unit, "jdk5-test/jdk5-test-plugin-config.xml" );
         JavadocReport mojo = lookupMojo( testPom );
         mojo.execute();
@@ -631,7 +651,7 @@ public class JavadocReportTest
         assertTrue( content.contains( "<img src=\"doc-files/maven-feather.png\" alt=\"Maven\">" ) );
 
         JavadocVersion javadocVersion = (JavadocVersion) getVariableValueFromObject( mojo, "javadocRuntimeVersion" );
-        if( javadocVersion.compareTo( JavadocVersion.parse( "1.8" ) ) >= 0  && javadocVersion.compareTo( JavadocVersion.parse( "9" ) ) < 0)
+        if( javadocVersion.compareTo( JavadocVersion.parse( "1.8" ) ) >= 0  && javadocVersion.compareTo( JavadocVersion.parse( "10" ) ) < 0)
         {
             // https://bugs.openjdk.java.net/browse/JDK-8032205
             assertTrue( "This bug appeared in JDK8 and was planned to be fixed in JDK9, see JDK-8032205",
@@ -641,6 +661,7 @@ public class JavadocReportTest
         {
             assertFalse( new File( apidocs, "resources/test/doc-files/maven-feather.png" ).exists() );
         }
+        assertTrue( new File( apidocs, "resources/test2/doc-files/maven-feather.png" ).exists() );
 
         app2 = new File( apidocs, "resources/test2/App2.html" );
         assertTrue( app2.exists() );

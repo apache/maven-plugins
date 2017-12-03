@@ -20,6 +20,7 @@ package org.apache.maven.plugins.javadoc;
  */
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -235,11 +236,11 @@ public class JavadocReport
 
         if ( !this.isAggregator() || ( this.isAggregator() && this.project.isExecutionRoot() ) )
         {
-            List<String> sourcePaths;
+            Collection<String> sourcePaths;
             List<String> files;
             try
             {
-                sourcePaths = getSourcePaths();
+                sourcePaths = collect( getSourcePaths().values() );
                 files = getFiles( sourcePaths );
             }
             catch ( MavenReportException e )

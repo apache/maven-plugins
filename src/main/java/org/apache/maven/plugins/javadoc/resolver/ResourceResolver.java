@@ -24,12 +24,17 @@ import static org.codehaus.plexus.util.IOUtil.close;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -39,11 +44,11 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugins.javadoc.options.JavadocOptions;
-import org.apache.maven.plugins.javadoc.options.io.xpp3.JavadocOptionsXpp3Reader;
 import org.apache.maven.plugins.javadoc.AbstractJavadocMojo;
 import org.apache.maven.plugins.javadoc.JavadocUtil;
 import org.apache.maven.plugins.javadoc.ResourcesBundleMojo;
+import org.apache.maven.plugins.javadoc.options.JavadocOptions;
+import org.apache.maven.plugins.javadoc.options.io.xpp3.JavadocOptionsXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.artifact.filter.resolve.transform.ArtifactIncludeFilterTransformer;
 import org.apache.maven.shared.artifact.resolve.ArtifactResolver;
@@ -143,11 +148,11 @@ public final class ResourceResolver extends AbstractLogEnabled
      * @throws ArtifactResolutionException {@link ArtifactResolutionException}
      * @throws ArtifactNotFoundException {@link ArtifactNotFoundException}
      */
-    public List<String> resolveDependencySourcePaths( final SourceResolverConfig config )
+    public Map<String, Collection<String>> resolveDependencySourcePaths( final SourceResolverConfig config )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
-        final List<String> dirs = new ArrayList<>();
-
+        final Map<String, Collection<String>> mappedDirs = new LinkedHashMap<>();
+        
         final Map<String, MavenProject> projectMap = new HashMap<>();
         if ( config.reactorProjects() != null )
         {
@@ -166,7 +171,7 @@ public final class ResourceResolver extends AbstractLogEnabled
             final MavenProject p = projectMap.get( key );
             if ( p != null )
             {
-                dirs.addAll( resolveFromProject( config, p, artifact ) );
+                mappedDirs.put( key, resolveFromProject( config, p, artifact ) );
             }
             else
             {
@@ -174,9 +179,12 @@ public final class ResourceResolver extends AbstractLogEnabled
             }
         }
 
-        dirs.addAll( resolveFromArtifacts( config, forResourceResolution ) );
+        for ( Map.Entry<String, String> entry : resolveFromArtifacts( config, forResourceResolution ) )
+        {
+            mappedDirs.put( entry.getKey(), Collections.singletonList( entry.getValue() ) );
+        }
 
-        return dirs;
+        return mappedDirs;
     }
 
     private static List<JavadocBundle> resolveBundleFromProject( SourceResolverConfig config, MavenProject project,
@@ -262,10 +270,14 @@ public final class ResourceResolver extends AbstractLogEnabled
             }
         }
 
-        List<String> dirs = null;
+        List<String> dirs = new ArrayList<>( toResolve.size() );
         try
         {
-            dirs = resolveAndUnpack( toResolve, config, RESOURCE_VALID_CLASSIFIERS, false );
+            for ( Map.Entry<String, String> entry : resolveAndUnpack( toResolve, config, RESOURCE_VALID_CLASSIFIERS,
+                                                                      false ) )
+            {
+                dirs.add( entry.getValue() );
+            }
         }
         catch ( ArtifactResolutionException e )
         {
@@ -284,44 +296,35 @@ public final class ResourceResolver extends AbstractLogEnabled
         
         List<JavadocBundle> result = new ArrayList<>();
 
-        if ( dirs != null )
+        for ( String d : dirs )
         {
-            for ( String d : dirs )
-            {
-                File dir = new File( d );
-                File resources = new File( dir, ResourcesBundleMojo.RESOURCES_DIR_PATH );
-                JavadocOptions options = null;
+            File dir = new File( d );
+            File resources = new File( dir, ResourcesBundleMojo.RESOURCES_DIR_PATH );
+            JavadocOptions options = null;
 
-                File javadocOptions = new File( dir, ResourcesBundleMojo.BUNDLE_OPTIONS_PATH );
-                if ( javadocOptions.exists() )
+            File javadocOptions = new File( dir, ResourcesBundleMojo.BUNDLE_OPTIONS_PATH );
+            if ( javadocOptions.exists() )
+            {
+                try ( FileInputStream reader = new FileInputStream( javadocOptions )  )
                 {
-                    FileInputStream reader = null;
-                    try
-                    {
-                        reader = new FileInputStream( javadocOptions );
-                        options = new JavadocOptionsXpp3Reader().read( reader );
-                    }
-                    catch ( XmlPullParserException e )
-                    {
-                        IOException error = new IOException( "Failed to parse javadoc options: " + e.getMessage() );
-                        error.initCause( e );
-                        
-                        throw error;
-                    }
-                    finally
-                    {
-                        close( reader );
-                    }
+                    options = new JavadocOptionsXpp3Reader().read( reader );
                 }
-                
-                result.add( new JavadocBundle( options, resources ) );
+                catch ( XmlPullParserException e )
+                {
+                    IOException error = new IOException( "Failed to parse javadoc options: " + e.getMessage() );
+                    error.initCause( e );
+                    
+                    throw error;
+                }
             }
+            
+            result.add( new JavadocBundle( options, resources ) );
         }
         
         return result;
     }
 
-    private List<String> resolveFromArtifacts( final SourceResolverConfig config,
+    private Collection<Entry<String, String>> resolveFromArtifacts( final SourceResolverConfig config,
                                                       final List<Artifact> artifacts )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
@@ -363,8 +366,20 @@ public final class ResourceResolver extends AbstractLogEnabled
         return a;
     }
 
-    private List<String> resolveAndUnpack( final List<Artifact> artifacts, final SourceResolverConfig config,
-                                                  final List<String> validClassifiers, final boolean propagateErrors )
+    /**
+     * 
+     * @param artifacts the artifacts to resolve
+     * @param config the configuration
+     * @param validClassifiers 
+     * @param propagateErrors
+     * @return list of <dependencyConflictId, absolutePath>
+     * @throws ArtifactResolutionException if an exception occurs
+     * @throws ArtifactNotFoundException if an exception occurs
+     */
+    private Collection<Map.Entry<String, String>> resolveAndUnpack( final List<Artifact> artifacts,
+                                                                    final SourceResolverConfig config,
+                                                                    final List<String> validClassifiers,
+                                                                    final boolean propagateErrors )
         throws ArtifactResolutionException, ArtifactNotFoundException
     {
         // NOTE: Since these are '-sources' and '-test-sources' artifacts, they won't actually 
@@ -382,7 +397,7 @@ public final class ResourceResolver extends AbstractLogEnabled
             filter = null;
         }
         
-        final List<String> result = new ArrayList<>( artifacts.size() );
+        final List<Map.Entry<String, String>> result = new ArrayList<>( artifacts.size() );
         for ( final Artifact a : artifactSet )
         {
             if ( !validClassifiers.contains( a.getClassifier() ) || ( filter != null && !filter.include( a ) ) )
@@ -417,7 +432,8 @@ public final class ResourceResolver extends AbstractLogEnabled
 
                 unArchiver.extract();
 
-                result.add( d.getAbsolutePath() );
+                result.add( new AbstractMap.SimpleEntry<String, String>( a.getDependencyConflictId(),
+                                                                         d.getAbsolutePath() ) );
             }
             catch ( final NoSuchArchiverException e )
             {
@@ -439,7 +455,7 @@ public final class ResourceResolver extends AbstractLogEnabled
         return result;
     }
 
-    private static List<String> resolveFromProject( final SourceResolverConfig config,
+    private static Collection<String> resolveFromProject( final SourceResolverConfig config,
                                                     final MavenProject reactorProject, final Artifact artifact )
     {
         final List<String> dirs = new ArrayList<>();

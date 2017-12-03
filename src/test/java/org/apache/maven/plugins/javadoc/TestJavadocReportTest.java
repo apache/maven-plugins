@@ -24,7 +24,8 @@ import java.io.File;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.javadoc.TestJavadocReport;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -49,11 +50,20 @@ public class TestJavadocReportTest
         MojoExecution mojoExec = new MojoExecution( new Plugin(), "test-javadoc", null );
 
         setVariableValueToObject( mojo, "mojo", mojoExec );
+
+        MavenProject currentProject = new MavenProjectStub();
+        currentProject.setGroupId( "GROUPID" );
+        currentProject.setArtifactId( "ARTIFACTID" );
         
+        setVariableValueToObject( mojo, "session", newMavenSession( currentProject ) );
+
         mojo.execute();
 
         File generatedFile =
             new File( getBasedir(), "target/test/unit/test-javadoc-test/target/site/apidocs/maven/AppTest.html" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
+        
+        File options = new File( getBasedir(), "target/test/unit/test-javadoc-test/target/site/apidocs/options");
+        FileUtils.fileRead( options ).contains( "junit-3.8.1.jar" );
     }
 }

@@ -32,9 +32,11 @@ import java.util.zip.ZipFile;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugins.javadoc.AbstractJavadocMojo;
 import org.apache.maven.plugins.javadoc.JavadocJar;
 import org.apache.maven.plugins.javadoc.JavadocVersion;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -52,6 +54,12 @@ public class JavadocJarTest
         MojoExecution mojoExec = new MojoExecution( new Plugin(), "javadoc", null );
 
         setVariableValueToObject( mojo, "mojo", mojoExec );
+        
+        MavenProject currentProject = new MavenProjectStub();
+        currentProject.setGroupId( "GROUPID" );
+        currentProject.setArtifactId( "ARTIFACTID" );
+        
+        setVariableValueToObject( mojo, "session", newMavenSession( currentProject ) );
         
         return mojo;
     }
@@ -75,13 +83,16 @@ public class JavadocJarTest
             new File( getBasedir(), "target/test/unit/javadocjar-default/target/javadocjar-default-javadoc.jar" );
         assertTrue( FileUtils.fileExists( generatedFile.getAbsolutePath() ) );
 
-        //validate contents of jar file
-        ZipFile jar = new ZipFile( generatedFile );
         Set<String> set = new HashSet<>();
-        for( Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
+
+        //validate contents of jar file
+        try ( ZipFile jar = new ZipFile( generatedFile ) )
         {
-            ZipEntry entry = entries.nextElement();
-            set.add( entry.getName() );
+            for( Enumeration<? extends ZipEntry> entries = jar.entries(); entries.hasMoreElements(); )
+            {
+                ZipEntry entry = entries.nextElement();
+                set.add( entry.getName() );
+            }
         }
 
         assertTrue( set.contains( "stylesheet.css" ) );
