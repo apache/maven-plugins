@@ -38,9 +38,9 @@ import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.javadoc.JavadocReport;
-import org.apache.maven.plugins.javadoc.JavadocVersion;
+import org.apache.maven.plugin.testing.stubs.MavenProjectStub;
 import org.apache.maven.plugins.javadoc.ProxyServer.AuthAsyncProxyServlet;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.settings.Proxy;
@@ -93,6 +93,12 @@ public class JavadocReportTest
 
         setVariableValueToObject( mojo, "mojo", mojoExec );
 
+        MavenProject currentProject = new MavenProjectStub();
+        currentProject.setGroupId( "GROUPID" );
+        currentProject.setArtifactId( "ARTIFACTID" );
+        
+        setVariableValueToObject( mojo, "session", newMavenSession( currentProject ) );
+        
         return mojo;
     }
 
@@ -299,7 +305,7 @@ public class JavadocReportTest
     {
         // Should be an assumption, but not supported by TestCase
         // Seems like a bug in Javadoc 9
-        if ( JavadocVersion.parse( SystemUtils.JAVA_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) == 0 )
+        if ( JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) == 0 )
         {
             return;
         }
@@ -562,7 +568,7 @@ public class JavadocReportTest
     {
         // Should be an assumption, but not supported by TestCase
         // Java 5 not supported by Java9 anymore
-        if ( JavadocVersion.parse( SystemUtils.JAVA_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) >= 0 )
+        if ( JavadocVersion.parse( SystemUtils.JAVA_SPECIFICATION_VERSION ).compareTo( JavadocVersion.parse( "9" ) ) >= 0 )
         {
             return;
         }
