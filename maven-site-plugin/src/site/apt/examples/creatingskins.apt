@@ -49,7 +49,7 @@ Creating Skins
     * An optional Velocity template in <<</META-INF/maven/site.vm>>> for an alternate HTML rendering of the site
 
     * Since Maven Site Plugin 3.5, an optional {{{/doxia/doxia-sitetools/doxia-skin-model/index.html}skin descriptor}}
-    in <<</META-INF/maven/skin.vm>>> containing meta-data about the skin
+    in <<</META-INF/maven/skin.xml>>> containing meta-data about the skin
 
 * Building
 
@@ -66,14 +66,14 @@ Creating Skins
 
   If you are interested in constructing your own CSS, it is recommended that
   you copy the file
-  {{{https://svn.apache.org/repos/asf/maven/skins/trunk/maven-default-skin/src/main/resources/css/maven-theme.css}<<<maven-theme.css>>>}}
+  {{{https://github.com/apache/maven-default-skin/tree/master/src/main/resources/css/maven-theme.css}<<<maven-theme.css>>>}}
   from Maven Default Skin and modify it to suit your needs.
 
 * Customizing the HTML Output with a Velocity Template
 
   The format of the Velocity template is currently out of scope for this
   document. To attempt this, start by copying
-  <<<{{{https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk/doxia-site-renderer/src/main/resources/org/apache/maven/doxia/siterenderer/resources/default-site.vm}default-site.vm}}>>>
+  <<<{{{https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/resources/org/apache/maven/doxia/siterenderer/resources/default-site.vm}default-site.vm}}>>>
   to <<<src/main/resources/META-INF/maven/site.vm>>> in your project and then
   modify it to your needs.
 

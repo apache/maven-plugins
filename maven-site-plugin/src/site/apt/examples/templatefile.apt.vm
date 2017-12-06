@@ -91,7 +91,7 @@ mvn site
 +-----+
 
   If you do not want to start from scratch you can start with the
-  {{{https://svn.apache.org/repos/asf/maven/doxia/doxia-sitetools/trunk/doxia-site-renderer/src/main/resources/org/apache/maven/doxia/siterenderer/resources/default-site.vm}default template}}
+  {{{https://github.com/apache/maven-doxia-sitetools/blob/master/doxia-site-renderer/src/main/resources/org/apache/maven/doxia/siterenderer/resources/default-site.vm}default template}}
   that is used by the Site Plugin.
 
   For more information about Velocity, see
