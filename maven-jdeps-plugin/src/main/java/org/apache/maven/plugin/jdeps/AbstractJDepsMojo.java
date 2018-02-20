@@ -77,7 +77,7 @@ public abstract class AbstractJDepsMojo
     /**
      * Indicates whether the build will continue even if there are jdeps warnings.
      */
-    @Parameter( defaultValue = "true" )
+    @Parameter( defaultValue = "true", property = "jdeps.failOnWarning" )
     private boolean failOnWarning;
     
     /**
