@@ -203,6 +203,13 @@ under the License.
       </exclusions>
     </dependency>
 
+    <!-- JSON -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20171018</version>
+    </dependency>
+
     <!-- plexus -->
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
