@@ -5,3 +5,6 @@ http://maven.apache.org/plugins/
 
 Users list: users@maven.apache.org
 Developers list: dev@maven.apache.org
+
+Moved to Git in one separate maven-*-plugin.git repository per plugin: don't use this deprecated maven-plugins.git svn mirror
+
