@@ -94,12 +94,12 @@ public abstract class AbstractCompilerMojo
     protected static final String PS = System.getProperty( "path.separator" );
 
     static final String DEFAULT_SOURCE = "1.5";
-    
+
     static final String DEFAULT_TARGET = "1.5";
-    
+
     // Used to compare with older targets
     static final String MODULE_INFO_TARGET = "1.9";
-    
+
     // ----------------------------------------------------------------------
     // Configurables
     // ----------------------------------------------------------------------
@@ -111,14 +111,14 @@ public abstract class AbstractCompilerMojo
      */
     @Parameter( property = "maven.compiler.failOnError", defaultValue = "true" )
     private boolean failOnError = true;
-    
+
     /**
      * Indicates whether the build will continue even if there are compilation warnings.
      *
      * @since 3.6
      */
     @Parameter( property = "maven.compiler.failOnWarning", defaultValue = "false" )
-    private boolean failOnWarning;  
+    private boolean failOnWarning;
 
     /**
      * Set to <code>true</code> to include debugging information in the compiled class files.
@@ -171,12 +171,12 @@ public abstract class AbstractCompilerMojo
 
     /**
      * The -release argument for the Java compiler, supported since Java9
-     * 
+     *
      * @since 3.6
      */
     @Parameter( property = "maven.compiler.release" )
     protected String release;
-    
+
     /**
      * The -encoding argument for the Java compiler.
      *
@@ -381,7 +381,7 @@ public abstract class AbstractCompilerMojo
      * This overrules the toolchain selected by the maven-toolchain-plugin.
      * </p>
      * <strong>note:</strong> requires at least Maven 3.3.1
-     * 
+     *
      * @since 3.6
      */
     @Parameter
@@ -504,7 +504,7 @@ public abstract class AbstractCompilerMojo
     protected abstract Map<String, JavaModuleDescriptor> getPathElements();
 
     protected abstract List<String> getCompileSourceRoots();
-    
+
     protected abstract void preparePaths( Set<File> sourceFiles );
 
     protected abstract File getOutputDirectory();
@@ -619,7 +619,7 @@ public abstract class AbstractCompilerMojo
         compilerConfiguration.setSourceVersion( getSource() );
 
         compilerConfiguration.setTargetVersion( getTarget() );
-        
+
         compilerConfiguration.setReleaseVersion( getRelease() );
 
         compilerConfiguration.setProc( proc );
@@ -700,6 +700,8 @@ public abstract class AbstractCompilerMojo
             }
         }
 
+        compilerConfiguration.setFailOnWarning( failOnWarning );
+
         compilerConfiguration.setExecutable( executable );
 
         compilerConfiguration.setWorkingDirectory( basedir );
@@ -758,7 +760,7 @@ public abstract class AbstractCompilerMojo
                 canUpdateTarget = compiler.canUpdateTarget( compilerConfiguration );
 
                 sources = getCompileSources( compiler, compilerConfiguration );
-                
+
                 preparePaths( sources );
 
                 incrementalBuildHelperRequest = new IncrementalBuildHelperRequest().inputFiles( sources );
@@ -813,7 +815,7 @@ public abstract class AbstractCompilerMojo
                 {
                     compilerConfiguration.setSourceFiles( staleSources );
                 }
-                
+
                 preparePaths( compilerConfiguration.getSourceFiles() );
             }
             catch ( CompilerException e )
@@ -828,12 +830,12 @@ public abstract class AbstractCompilerMojo
                 return;
             }
         }
-        
+
         // Dividing pathElements of classPath and modulePath is based on sourceFiles
         compilerConfiguration.setClasspathEntries( getClasspathElements() );
 
         compilerConfiguration.setModulepathEntries( getModulepathElements() );
-        
+
         Map<String, String> effectiveCompilerArguments = getCompilerArguments();
 
         String effectiveCompilerArgument = getCompilerArgument();
@@ -1121,7 +1123,8 @@ public abstract class AbstractCompilerMojo
             }
         }
 
-        if ( failOnError && !compilerResult.isSuccess() )
+        if ( ( failOnError && !compilerResult.isSuccess() )
+             || ( failOnWarning && !warnings.isEmpty() ) )
         {
             for ( CompilerMessage message : others )
             {
@@ -1353,7 +1356,7 @@ public abstract class AbstractCompilerMojo
     protected final Toolchain getToolchain()
     {
         Toolchain tc = null;
-        
+
         if ( jdkToolchain != null )
         {
             // Maven 3.3.1 has plugin execution scoped Toolchain Support
@@ -1394,12 +1397,12 @@ public abstract class AbstractCompilerMojo
                 // ignore
             }
         }
-        
+
         if ( tc == null )
         {
             tc = toolchainManager.getToolchainFromBuildContext( "jdk", session );
         }
-        
+
         return tc;
     }
 
@@ -1531,7 +1534,7 @@ public abstract class AbstractCompilerMojo
         List<String> pathElements = new ArrayList<String>();
         pathElements.addAll( getClasspathElements() );
         pathElements.addAll( getModulepathElements() );
-        
+
         for ( String pathElement : pathElements )
         {
             // ProjectArtifacts are artifacts which are available in the local project

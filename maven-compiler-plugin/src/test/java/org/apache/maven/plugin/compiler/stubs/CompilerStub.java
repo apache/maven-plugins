@@ -39,14 +39,17 @@ public class CompilerStub
 {
     private boolean shouldFail;
 
+    private boolean shouldWarn;
+
     public CompilerStub()
     {
-        this( false );
+        this( false, false );
     }
 
-    public CompilerStub( boolean shouldFail )
+    public CompilerStub( boolean shouldFail, boolean shouldWarn )
     {
         this.shouldFail = shouldFail;
+        this.shouldWarn = shouldWarn;
     }
 
     public CompilerOutputStyle getCompilerOutputStyle()
@@ -120,9 +123,23 @@ public class CompilerStub
         {
             throw new CompilerException( "An exception occurred while creating output file", e );
         }
-        
-        return new CompilerResult( !shouldFail,
-            Collections.singletonList( new CompilerMessage( "message 1", CompilerMessage.Kind.OTHER ) ) );
+
+        List<CompilerMessage> compilerMessages;
+
+        if ( shouldFail )
+        {
+            compilerMessages = Collections.singletonList(new CompilerMessage( "message 1", CompilerMessage.Kind.ERROR ));
+        }
+        else  if ( shouldWarn )
+        {
+            compilerMessages = Collections.singletonList(new CompilerMessage( "message 1", CompilerMessage.Kind.WARNING ));
+        }
+        else
+        {
+            compilerMessages = Collections.singletonList(new CompilerMessage( "message 1", CompilerMessage.Kind.OTHER ));
+        }
+
+        return new CompilerResult( !shouldFail, compilerMessages );
     }
 
     public String[] createCommandLine( CompilerConfiguration compilerConfiguration )

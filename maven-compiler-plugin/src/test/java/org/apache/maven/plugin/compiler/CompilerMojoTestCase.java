@@ -293,6 +293,25 @@ public class CompilerMojoTestCase
         }
     }
 
+    public void testCompileFailOnWarning()
+            throws Exception
+    {
+        CompilerMojo compileMojo = getCompilerMojo( "target/test-classes/unit/compiler-failonwarning-test/plugin-config.xml" );
+
+        setVariableValueToObject( compileMojo, "compilerManager", new CompilerManagerStub( false, true ) );
+
+        try
+        {
+            compileMojo.execute();
+
+            fail( "Should throw an exception" );
+        }
+        catch ( CompilationFailureException e )
+        {
+            //expected
+        }
+    }
+
     public void testCompileFailOnError()
         throws Exception
     {
