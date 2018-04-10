@@ -92,8 +92,6 @@ public class DeployMojoTest
         {
             FileUtils.deleteDirectory( remoteRepo );
         }
-        
-        
     }
 
     public void tearDown()
@@ -106,7 +104,20 @@ public class DeployMojoTest
             //FileUtils.deleteDirectory( remoteRepo );
         }
     }
-    
+
+    private void initializeMocksForMojo() {
+        assertNotNull( mojo );
+
+        MockitoAnnotations.initMocks( this );
+
+        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        when( session.getUserProperties() ).thenReturn( new Properties() );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+    }
+
     public void testDeployTestEnvironment()
         throws Exception
     {
@@ -124,17 +135,9 @@ public class DeployMojoTest
         File testPom = new File( getBasedir(), "target/test-classes/unit/basic-deploy-test/plugin-config.xml" );
 
         mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
-        
-        MockitoAnnotations.initMocks( this );
-        
-        assertNotNull( mojo );
-        
-        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
-        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
-        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
-        
+
+        initializeMocksForMojo();
+
         File file = new File( getBasedir(),
                               "target/test-classes/unit/basic-deploy-test/target/" +
                               "deploy-test-file-1.0-SNAPSHOT.jar" );
@@ -239,9 +242,9 @@ public class DeployMojoTest
     {
         File testPom = new File( getBasedir(), "target/test-classes/unit/basic-deploy-test/plugin-config.xml" );
 
-        DeployMojo mojo = (DeployMojo) lookupMojo( "deploy", testPom );
+        mojo = (DeployMojo) lookupMojo( "deploy", testPom );
 
-        assertNotNull( mojo );
+        initializeMocksForMojo();
 
         File file = new File( getBasedir(), "target/test-classes/unit/basic-deploy-test/target/"
             + "deploy-test-file-1.0-SNAPSHOT.jar" );
@@ -295,17 +298,9 @@ public class DeployMojoTest
                         "target/test-classes/unit/basic-deploy-pom/plugin-config.xml" );
         
         mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
-        
-        MockitoAnnotations.initMocks( this );
-        
-        assertNotNull( mojo );
-        
-        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
-        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
-        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
-        
+
+        initializeMocksForMojo();
+
         File pomFile = new File( getBasedir(),
                               "target/test-classes/unit/basic-deploy-pom/target/" +
                               "deploy-test-file-1.0-SNAPSHOT.pom" );
@@ -366,17 +361,9 @@ public class DeployMojoTest
         File testPom = new File( getBasedir(),
                                  "target/test-classes/unit/basic-deploy-pom/plugin-config.xml" );
         mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
-        
-        MockitoAnnotations.initMocks( this );
-        
-        assertNotNull( mojo );
-        
-        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
-        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
-        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
-        
+
+        initializeMocksForMojo();
+
         boolean updateReleaseInfo = (Boolean) getVariableValueFromObject(mojo, "updateReleaseInfo");
         
         assertTrue( updateReleaseInfo );
@@ -404,17 +391,10 @@ public class DeployMojoTest
         File testPom = new File( getBasedir(),
                                  "target/test-classes/unit/basic-deploy-test/plugin-config.xml" );
         
-        DeployMojo mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
+        mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
 
-        MockitoAnnotations.initMocks( this );
+        initializeMocksForMojo();
 
-        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
-        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
-        
-        setVariableValueToObject( mojo, "session", session );
-        
-        assertNotNull( mojo );
-        
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
         setVariableValueToObject( mojo, "reactorProjects", Collections.singletonList( project ) );
@@ -445,16 +425,8 @@ public class DeployMojoTest
                                  "plugin-config.xml" );
 
         mojo = ( DeployMojo ) lookupMojo( "deploy", testPom );
-        
-        MockitoAnnotations.initMocks( this );
-        
-        assertNotNull( mojo );
-        
-        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
-        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
-        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+
+        initializeMocksForMojo();
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
 
@@ -522,7 +494,7 @@ public class DeployMojoTest
 
         assertEquals( 0, getSizeOfExpectedFiles( fileList, expectedFiles ) );               
     }
-    
+
     @Ignore( "SCP is not part of Maven3 distribution. Aether handles transport extensions." )
     public void _testBasicDeployWithScpAsProtocol()
         throws Exception

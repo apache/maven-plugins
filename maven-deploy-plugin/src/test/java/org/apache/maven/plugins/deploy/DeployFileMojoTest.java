@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Properties;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -69,6 +70,19 @@ public class DeployFileMojoTest
         }
     }
 
+    private void initializeMocksForMojo() {
+        assertNotNull( mojo );
+
+        MockitoAnnotations.initMocks( this );
+
+        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
+        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        when( session.getUserProperties() ).thenReturn( new Properties() );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
+        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+    }
+
     public void testDeployTestEnvironment()
         throws Exception
     {
@@ -86,16 +100,8 @@ public class DeployFileMojoTest
 
         mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
-        MockitoAnnotations.initMocks( this );
-        
-        assertNotNull( mojo );
-        
-        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
-        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
-        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
-        
+        initializeMocksForMojo();
+
         String groupId = (String) getVariableValueFromObject( mojo, "groupId" );
 
         String artifactId = (String) getVariableValueFromObject( mojo, "artifactId" );
@@ -187,15 +193,7 @@ public class DeployFileMojoTest
 
         mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
-        MockitoAnnotations.initMocks( this );
-        
-        assertNotNull( mojo );
-        
-        ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
-        when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( LOCAL_REPO ) );
-        when( buildingRequest.getRepositorySession() ).thenReturn( repositorySession );
+        initializeMocksForMojo();
 
         String classifier = ( String ) getVariableValueFromObject( mojo, "classifier" );
 
@@ -235,10 +233,8 @@ public class DeployFileMojoTest
 
         mojo = (DeployFileMojo) lookupMojo( "deploy-file", testPom );
 
-        MockitoAnnotations.initMocks( this );
-        
-        assertNotNull( mojo );
-        
+        initializeMocksForMojo();
+
         ProjectBuildingRequest buildingRequest = mock ( ProjectBuildingRequest.class );
         when( session.getProjectBuildingRequest() ).thenReturn( buildingRequest );
         MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
