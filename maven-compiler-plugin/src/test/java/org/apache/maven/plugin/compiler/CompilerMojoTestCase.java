@@ -96,6 +96,31 @@ public class CompilerMojoTestCase
     }
 
     /**
+     * tests the ability of the plugin to compile a jpms project
+     *
+     * @throws Exception
+     */
+    public void testCompilerJpms()
+        throws Exception
+    {
+        CompilerMojo compileMojo = getCompilerMojo( "target/test-classes/unit/compiler-jpms-test/plugin-config.xml" );
+
+        compileMojo.execute();
+
+        assertTrue( new File( compileMojo.getOutputDirectory(), "module-info.class" ).exists() );
+        assertTrue( new File( compileMojo.getOutputDirectory(), "foo/TestJpms0.class" ).exists() );
+
+        TestCompilerMojo testCompileMojo =
+            getTestCompilerMojo( compileMojo, "target/test-classes/unit/compiler-jpms-test/plugin-config.xml" );
+
+        testCompileMojo.execute();
+
+        assertTrue( new File( testCompileMojo.getOutputDirectory(), "module-info.class" ).exists() );
+        assertTrue( new File( testCompileMojo.getOutputDirectory(), "foo/TestJpms0.class" ).exists() );
+        assertTrue( new File( testCompileMojo.getOutputDirectory(), "foo/TestJpms0Test.class" ).exists() );
+    }
+
+    /**
      * tests the ability of the plugin to respond to empty source
      *
      * @throws Exception
@@ -415,6 +440,8 @@ public class CompilerMojoTestCase
         setVariableValueToObject( mojo, "compileSourceRoots", Collections.singletonList( testSourceRoot ) );
 
         MavenProject project = getMockMavenProject();
+        project.setFile( testPom );
+        project.addCompileSourceRoot("/src/main/java" );
         project.setArtifacts( Collections.singleton( junitArtifact )  );
         project.getBuild().setOutputDirectory( new File( buildDir, "classes" ).getAbsolutePath() );
         setVariableValueToObject( mojo, "project", project );
