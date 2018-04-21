@@ -288,6 +288,7 @@ public class ProcessRemoteResourcesMojo
      * Several properties are automatically added:<br/>
      * project - the current MavenProject <br/>
      * projects - the list of dependency projects<br/>
+     * projectsSortedByOrganization - the list of dependency projects sorted by organization<br/>
      * projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
      * locator - the ResourceManager that can be used to retrieve additional resources<br/>
      * <p/>
@@ -297,6 +298,16 @@ public class ProcessRemoteResourcesMojo
      */
     @Parameter
     private Map<String, Object> properties = new HashMap<String, Object>();
+
+    /**
+     * Whether to exclude the list of dependency projects from the properties passed to velocity.
+     * In case the "projects" and "projectsSortedByOrganization" properties are not needed,
+     * significant processing overhead can be avoided for projects with many dependencies by enabling this parameter.
+     *
+     * @since 1.6
+     */
+    @Parameter( defaultValue = "false", property = "remoteresources.excludeDependencyProjects" )
+    protected boolean excludeDependencyProjects = false;
 
     /**
      * Whether to include properties defined in the project when filtering resources.
@@ -1056,9 +1067,12 @@ public class ProcessRemoteResourcesMojo
             inceptionYear = year;
         }
         context.put( "project", project );
-        List<MavenProject> projects = getProjects();
-        context.put( "projects", projects );
-        context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
+        if ( !excludeDependencyProjects )
+        {
+            List<MavenProject> projects = getProjects();
+            context.put( "projects", projects );
+            context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
+        }
         context.put( "presentYear", year );
         context.put( "locator", locator );
 
