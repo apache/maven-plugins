@@ -323,8 +323,10 @@ public class RemoteResourcesMojoTest
         assertTrue( file.exists() );
 
         String data = FileUtils.fileRead( file );
-        assertTrue(data.contains("2007"));
-        assertTrue(data.contains("default-filterbundles"));
+        assertTrue(data.contains("project.name: Test Project default-filterbundles"));
+        assertTrue(data.contains("projectTimespan: 2007-"));
+        assertTrue(data.contains("projects: ["));
+        assertTrue(data.contains("projectsSortedByOrganization: {"));
     }
 
     public void testFilteredBundlesWithProjectProperties()

@@ -15,5 +15,7 @@
 ## specific language governing permissions and limitations
 ## under the License.
 Some filtered text:
-${project.name}
-${projectTimespan}
+project.name: ${project.name}
+projectTimespan: ${projectTimespan}
+projects: ${projects}
+projectsSortedByOrganization: ${projectsSortedByOrganization}

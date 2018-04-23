@@ -288,6 +288,7 @@ public class ProcessRemoteResourcesMojo
      * Several properties are automatically added:<br/>
      * project - the current MavenProject <br/>
      * projects - the list of dependency projects<br/>
+     * projectsSortedByOrganization - the list of dependency projects sorted by organization<br/>
      * projectTimespan - the timespan of the current project (requires inceptionYear in pom)<br/>
      * locator - the ResourceManager that can be used to retrieve additional resources<br/>
      * <p/>
@@ -514,8 +515,7 @@ public class ProcessRemoteResourcesMojo
             List<File> resourceBundleArtifacts = downloadBundles( resourceBundles );
             supplementModels = loadSupplements( supplementalModels );
 
-            VelocityContext context = new VelocityContext( properties );
-            configureVelocityContext( context );
+            VelocityContext context = buildVelocityContext( properties );
 
             RemoteResourcesClassLoader classLoader = new RemoteResourcesClassLoader( null );
 
@@ -594,7 +594,6 @@ public class ProcessRemoteResourcesMojo
 
     @SuppressWarnings( "unchecked" )
     protected List<MavenProject> getProjects()
-        throws MojoExecutionException
     {
         List<MavenProject> projects = new ArrayList<MavenProject>();
 
@@ -627,7 +626,7 @@ public class ProcessRemoteResourcesMojo
         }
         catch ( ArtifactFilterException e )
         {
-            throw new MojoExecutionException( e.getMessage(), e );
+            throw new IllegalStateException( e.getMessage(), e );
         }
 
         for ( Artifact artifact : artifacts )
@@ -678,7 +677,7 @@ public class ProcessRemoteResourcesMojo
             }
             catch ( ProjectBuildingException e )
             {
-                throw new MojoExecutionException( e.getMessage(), e );
+                throw new IllegalStateException( e.getMessage(), e );
             }
         }
         Collections.sort( projects, new ProjectComparator() );
@@ -686,7 +685,6 @@ public class ProcessRemoteResourcesMojo
     }
 
     private Set<Artifact> resolveProjectArtifacts()
-        throws MojoExecutionException
     {
         // CHECKSTYLE_OFF: LineLength
         try
@@ -703,13 +701,13 @@ public class ProcessRemoteResourcesMojo
         }
         catch ( ArtifactResolutionException e )
         {
-            throw new MojoExecutionException(
+            throw new IllegalStateException(
                                               "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
                                                   + e.getMessage(), e );
         }
         catch ( ArtifactNotFoundException e )
         {
-            throw new MojoExecutionException(
+            throw new IllegalStateException(
                                               "Failed to resolve dependencies for one or more projects in the reactor. Reason: "
                                                   + e.getMessage(), e );
         }
@@ -718,7 +716,6 @@ public class ProcessRemoteResourcesMojo
 
     @SuppressWarnings( "unchecked" )
     private Set<Artifact> aggregateProjectDependencyArtifacts()
-        throws MojoExecutionException
     {
         Set<Artifact> artifacts = new LinkedHashSet<Artifact>();
 
@@ -749,7 +746,7 @@ public class ProcessRemoteResourcesMojo
                 }
                 catch ( InvalidDependencyVersionException e )
                 {
-                    throw new MojoExecutionException( "Failed to create dependency artifacts for: " + p.getId()
+                    throw new IllegalStateException( "Failed to create dependency artifacts for: " + p.getId()
                         + ". Reason: " + e.getMessage(), e );
                 }
             }
@@ -759,7 +756,6 @@ public class ProcessRemoteResourcesMojo
     }
 
     protected Map<Organization, List<MavenProject>> getProjectsSortedByOrganization( List<MavenProject> projects )
-        throws MojoExecutionException
     {
         Map<Organization, List<MavenProject>> organizations =
             new TreeMap<Organization, List<MavenProject>>( new OrganizationComparator() );
@@ -1040,9 +1036,35 @@ public class ProcessRemoteResourcesMojo
 
     }
 
-    protected void configureVelocityContext( VelocityContext context )
+    protected VelocityContext buildVelocityContext( Map<String, Object> properties )
         throws MojoExecutionException
     {
+        // the following properties are expensive to calculate, so we provide them lazily
+        final String keyProjects = "projects";
+        final String keyProjectsSortedByOrganization = keyProjects + "SortedByOrganization";
+
+        VelocityContext context = new VelocityContext( properties ) {
+
+            @Override
+            public Object internalGet( String key )
+            {
+                Object result = super.internalGet( key );
+                if ( result == null && key != null && key.startsWith( keyProjects ) && containsKey( key ) )
+                {
+                    // calculate and put projects* properties
+                    List<MavenProject> projects = getProjects();
+                    put( keyProjects, projects );
+                    put( keyProjectsSortedByOrganization, getProjectsSortedByOrganization( projects ) );
+                    return super.internalGet( key );
+                }
+                return result;
+            }
+        };
+        // to have a consistent getKeys()/containsKey() behaviour, keys must be present from the start
+        context.put( keyProjects, null );
+        context.put( keyProjectsSortedByOrganization, null );
+
+        // the following properties are cheap to calculate, so we provide them eagerly
         String inceptionYear = project.getInceptionYear();
         String year = new SimpleDateFormat( "yyyy" ).format( new Date() );
 
@@ -1056,9 +1078,6 @@ public class ProcessRemoteResourcesMojo
             inceptionYear = year;
         }
         context.put( "project", project );
-        List<MavenProject> projects = getProjects();
-        context.put( "projects", projects );
-        context.put( "projectsSortedByOrganization", getProjectsSortedByOrganization( projects ) );
         context.put( "presentYear", year );
         context.put( "locator", locator );
 
@@ -1070,6 +1089,7 @@ public class ProcessRemoteResourcesMojo
         {
             context.put( "projectTimespan", inceptionYear + "-" + year );
         }
+        return context;
     }
 
     private List<File> downloadBundles( List<String> bundles )
