@@ -78,6 +78,14 @@ under the License.
         </p>
       </answer>
     </faq>
+    <faq id="link-insufficient-rights">
+      <question>Why do I get "You do not have sufficient privilege to perform this operation" when using the link goal?</question>
+      <answer><p>
+        This is a security constraint of the Windows(R) operating system. By default, it prevents anybody to create symbolic links besides administrators in elevated mode.
+        Either execute Maven as an administrator in elevated mode, or as a plain user having explicitly granted the right "Create symbolic links" by an administrator.
+      </p>
+      </answer>
+    </faq>
     <faq id="unused">
       <question>Why does my dependency analysis report <code>Unused declared dependencies</code>?</question>
       <answer><p>

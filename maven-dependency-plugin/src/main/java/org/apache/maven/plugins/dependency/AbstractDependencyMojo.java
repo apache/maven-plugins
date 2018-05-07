@@ -22,6 +22,7 @@ package org.apache.maven.plugins.dependency;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -43,6 +44,7 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.codehaus.plexus.components.io.fileselectors.IncludeExcludeFileSelector;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.NioFiles;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -183,6 +185,39 @@ public abstract class AbstractDependencyMojo
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Error copying artifact from " + artifact + " to " + destFile, e );
+        }
+    }
+
+    /**
+     * Does the actual linking of the file and logging.
+     *
+     * @param artifact represents the file to link to.
+     * @param link file name of link.
+     * @throws MojoExecutionException with a message if an
+     *                                error occurs.
+     */
+    protected void linkFile( File artifact, File link )
+        throws MojoExecutionException
+    {
+        try
+        {
+            getLog().info( "Creating link " + link + " to "
+                + ( this.outputAbsoluteArtifactFilename ? artifact.getAbsolutePath() : artifact.getName() ) );
+
+            if ( artifact.isDirectory() )
+            {
+                // usual case is a future jar packaging, but there are special cases: classifier and other packaging
+                throw new MojoExecutionException( "Artifact has not been packaged yet. When used on reactor artifact, "
+                    + "copy should be executed after packaging: see MDEP-187." );
+            }
+
+            if ( link.getParentFile() != null )
+                Files.createDirectories( link.toPath().getParent() );
+            NioFiles.createSymbolicLink( link, artifact);
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Error creating link " + link + " to " + artifact, e );
         }
     }
 
