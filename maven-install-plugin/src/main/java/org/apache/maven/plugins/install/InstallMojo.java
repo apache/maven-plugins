@@ -19,6 +19,7 @@ package org.apache.maven.plugins.install;
  * under the License.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +42,7 @@ import org.apache.maven.shared.project.install.ProjectInstallerRequest;
 /**
  * Installs the project's main artifact, and any other artifacts attached by other plugins in the lifecycle, to the
  * local repository.
- * 
+ *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
@@ -71,7 +72,7 @@ public class InstallMojo
      * Whether every project should be installed during its own install-phase or at the end of the multimodule build. If
      * set to {@code true} and the build fails, none of the reactor projects is installed.
      * <strong>(experimental)</strong>
-     * 
+     *
      * @since 2.5
      */
     @Parameter( defaultValue = "false", property = "installAtEnd" )
@@ -80,18 +81,39 @@ public class InstallMojo
     /**
      * Set this to <code>true</code> to bypass artifact installation. Use this for artifacts that does not need to be
      * installed in the local repository.
-     * 
+     *
      * @since 2.4
      */
     @Parameter( property = "maven.install.skip", defaultValue = "false" )
     private boolean skip;
 
+    /**
+     * The path for a specific local repository directory. If not specified the local repository path configured in the
+     * Maven settings will be used.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( property = "localRepositoryPath" )
+    private File localRepositoryPath;
+
     @Component
     private ProjectInstaller installer;
 
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        ProjectBuildingRequest buildingRequest = session.getProjectBuildingRequest();
+        // ----------------------------------------------------------------------
+        // Override the default localRepository variable
+        // ----------------------------------------------------------------------
+        if ( localRepositoryPath != null )
+        {
+            buildingRequest = repositoryManager.setLocalRepositoryBasedir( buildingRequest, localRepositoryPath );
+
+            getLog().debug( "localRepoPath: " + repositoryManager.getLocalRepositoryBasedir( buildingRequest ) );
+        }
+
         boolean addedInstallRequest = false;
         if ( skip )
         {
@@ -106,7 +128,7 @@ public class InstallMojo
 
             if ( !installAtEnd )
             {
-                installProject( session.getProjectBuildingRequest(), projectInstallerRequest );
+                installProject( buildingRequest, projectInstallerRequest );
             }
             else
             {
@@ -122,7 +144,7 @@ public class InstallMojo
             {
                 while ( !INSTALLREQUESTS.isEmpty() )
                 {
-                    installProject( session.getProjectBuildingRequest(), INSTALLREQUESTS.remove( 0 ) );
+                    installProject( buildingRequest, INSTALLREQUESTS.remove( 0 ) );
                 }
             }
         }
@@ -138,7 +160,7 @@ public class InstallMojo
     {
         try
         {
-            installer.install( session.getProjectBuildingRequest(), pir );
+            installer.install( pbr, pir );
         }
         catch ( IOException e )
         {
