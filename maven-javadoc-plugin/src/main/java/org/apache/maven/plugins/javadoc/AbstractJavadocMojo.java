@@ -4819,6 +4819,9 @@ public abstract class AbstractJavadocMojo
         }
 
 
+        // [MJAVADOC-497] must be after sourcepath is recalculated, since getExcludedPackages() depends on it
+        addArgIfNotEmpty( arguments, "-exclude", getExcludedPackages( sourcePaths ), SINCE_JAVADOC_1_4 );
+
         if ( StringUtils.isNotEmpty( sourcepath ) && isJavaDocVersionAtLeast( SINCE_JAVADOC_1_5 ) )
         {
             addArgIfNotEmpty( arguments, "-subpackages", subpackages, SINCE_JAVADOC_1_5 );
