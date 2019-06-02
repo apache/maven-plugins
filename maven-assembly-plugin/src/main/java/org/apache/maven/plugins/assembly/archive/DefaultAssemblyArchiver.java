@@ -36,6 +36,7 @@ import org.apache.maven.plugins.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugins.assembly.utils.AssemblyFormatUtils;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
@@ -134,7 +135,11 @@ public class DefaultAssemblyArchiver
     @Override
     public File createArchive( final Assembly assembly, final String fullName, final String format,
                                final AssemblerConfigurationSource configSource, boolean recompressZippedFiles,
-                               String mergeManifestMode )
+                               String mergeManifestMode,
+                               boolean reproducibleBuild, 
+                               ArchiveEntryDateProvider entryDateProvider,
+                               ArchiveEntryDateProvider generatedEntryDateProvider
+                               )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException
     {
         validate( assembly );
@@ -172,7 +177,8 @@ public class DefaultAssemblyArchiver
 
             final Archiver archiver =
                 createArchiver( format, assembly.isIncludeBaseDirectory(), basedir, configSource, containerHandlers,
-                                recompressZippedFiles, mergeManifestMode );
+                                recompressZippedFiles, mergeManifestMode,
+                                reproducibleBuild, entryDateProvider, generatedEntryDateProvider );
 
             archiver.setDestFile( destFile );
 
@@ -282,6 +288,10 @@ public class DefaultAssemblyArchiver
      * @param containerHandlers     The list of {@link ContainerDescriptorHandler}
      * @param recompressZippedFiles recompress zipped files.
      * @param mergeManifestMode     how to handle already existing Manifest files
+     * @param reproducibleBuild     true to use reproducible build
+     * @param entryDateProvider     date provider for filling archive entries date
+     * @param generatedEntryDateProvider date provider for filling generated (manifest,index..) entries date  
+
      * @return archiver Archiver generated
      * @throws org.codehaus.plexus.archiver.ArchiverException
      * @throws org.codehaus.plexus.archiver.manager.NoSuchArchiverException
@@ -289,7 +299,11 @@ public class DefaultAssemblyArchiver
     protected Archiver createArchiver( final String format, final boolean includeBaseDir, final String finalName,
                                        final AssemblerConfigurationSource configSource,
                                        final List<ContainerDescriptorHandler> containerHandlers,
-                                       boolean recompressZippedFiles, String mergeManifestMode )
+                                       boolean recompressZippedFiles, String mergeManifestMode,
+                                       boolean reproducibleBuild, 
+                                       ArchiveEntryDateProvider entryDateProvider,
+                                       ArchiveEntryDateProvider generatedEntryDateProvider
+                                       )
         throws NoSuchArchiverException
     {
         Archiver archiver;
@@ -351,6 +365,13 @@ public class DefaultAssemblyArchiver
         archiver.setIgnorePermissions( configSource.isIgnorePermissions() );
         archiver.setForced( !configSource.isUpdateOnly() );
 
+        if ( reproducibleBuild ) 
+        {
+            archiver.setEntryDateProvider( entryDateProvider );
+            archiver.setGeneratedEntryDateProvider( generatedEntryDateProvider );
+            archiver.setNonExistingEntryDateProvider( generatedEntryDateProvider ); // not used here
+        }
+        
         return archiver;
     }
 

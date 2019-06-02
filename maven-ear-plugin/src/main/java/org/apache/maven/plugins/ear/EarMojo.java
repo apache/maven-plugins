@@ -49,6 +49,7 @@ import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 import org.apache.maven.shared.utils.io.FileUtils;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -208,6 +209,12 @@ public class EarMojo
     @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
 
+    @Parameter( property = "ear.reproducible", defaultValue = "${project.build.reproducible}", required = false)
+    private boolean reproducibleBuild;
+
+    @Parameter( property = "ear.entriesDate", defaultValue = "${env.SOURCE_DATE_EPOCH}", required = false)
+    private String entriesDate;
+
     /**
      * The Zip archiver.
      */
@@ -366,6 +373,17 @@ public class EarMojo
             File earFile = getEarFile( outputDirectory, finalName, classifier );
             final MavenArchiver archiver = new EarMavenArchiver( getModules() );
             final JarArchiver theJarArchiver = getJarArchiver();
+
+            // for reproducible builds, ensure jar does not contain entries with lastModifiedDate
+            // TODO move shared code in maven-core
+            // ... in MavenSession? MavenProject? in a new plexus class component "RepoducibleBuildSupport"
+            if ( reproducibleBuild ) {
+                ArchiveEntryDateProvider dateProvider = ArchiveEntryDateProvider.ofFixedIsoDateTime( entriesDate );
+                theJarArchiver.setEntryDateProvider( dateProvider );
+                theJarArchiver.setGeneratedEntryDateProvider( dateProvider );
+                theJarArchiver.setNonExistingEntryDateProvider( dateProvider );
+            }
+
             getLog().debug( "Jar archiver implementation [" + theJarArchiver.getClass().getName() + "]" );
             archiver.setArchiver( theJarArchiver );
             archiver.setOutputFile( earFile );
@@ -374,6 +392,7 @@ public class EarMojo
             getLog().debug( "Including " + Arrays.asList( getPackagingIncludes() ) + " in the generated EAR." );
 
             archiver.getArchiver().addDirectory( getWorkDirectory(), getPackagingIncludes(), getPackagingExcludes() );
+
             archiver.createArchive( session, getProject(), archive );
 
             if ( classifier != null )
@@ -863,6 +882,17 @@ public class EarMojo
                 }
 
                 getLog().debug( "Zipping module" );
+
+                // for reproducible builds, ensure jar does not contain entries with lastModifiedDate
+                // TODO move shared code in maven-core
+                // ... in MavenSession? MavenProject? in a new plexus class component "RepoducibleBuildSupport"
+                if ( reproducibleBuild ) {
+                    ArchiveEntryDateProvider dateProvider = ArchiveEntryDateProvider.ofFixedIsoDateTime( entriesDate );
+                    zipArchiver.setEntryDateProvider( dateProvider );
+                    zipArchiver.setGeneratedEntryDateProvider( dateProvider );
+                    zipArchiver.setNonExistingEntryDateProvider( dateProvider );
+                }
+
                 zipArchiver.setDestFile( original );
                 zipArchiver.addDirectory( workDirectory );
                 zipArchiver.createArchive();

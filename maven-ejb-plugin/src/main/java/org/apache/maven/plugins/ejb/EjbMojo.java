@@ -21,6 +21,7 @@ package org.apache.maven.plugins.ejb;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,8 +44,10 @@ import org.apache.maven.shared.filtering.MavenFileFilter;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
 import org.apache.maven.shared.utils.io.FileUtils.FilterWrapper;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider.FixedArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 import org.codehaus.plexus.util.FileUtils;
@@ -216,6 +219,12 @@ public class EjbMojo
      */
     @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver clientJarArchiver;
+
+    @Parameter( property = "ejb.reproducible", defaultValue = "${project.build.reproducible}", required = false)
+    private boolean reproducibleBuild;
+
+    @Parameter( property = "ejb.entriesDate", defaultValue = "${env.SOURCE_DATE_EPOCH}", required = false)
+    private String entriesDate;
 
     /**
      * The Maven project's helper.
@@ -429,6 +438,29 @@ public class EjbMojo
         getLog().info( "Building EJB client " + clientJarFile.getPath() );
 
         MavenArchiver clientArchiver = new MavenArchiver();
+
+        // for reproducible builds, ensure jar does not contain entries with lastModifiedDate
+        // TODO move shared code in maven-core
+        // ... in MavenSession? MavenProject? in a new plexus class component "RepoducibleBuildSupport"
+        if ( reproducibleBuild ) {
+            long entriesTimeMillis = 0L;
+            if ( entriesDate != null )
+            {
+                try
+                {
+                    entriesTimeMillis = Instant.parse( entriesDate ).toEpochMilli();
+                }
+                catch( Exception ex )
+                {
+                    getLog().warn("invalid date format for reproducibleBuild .. using EPOCH time");
+                    entriesTimeMillis = 0L;
+                }
+            }
+            ArchiveEntryDateProvider dateProvider = new FixedArchiveEntryDateProvider( entriesTimeMillis );
+            clientJarArchiver.setEntryDateProvider( dateProvider );
+            clientJarArchiver.setGeneratedEntryDateProvider( dateProvider );
+            clientJarArchiver.setNonExistingEntryDateProvider( dateProvider );
+        }
 
         clientArchiver.setArchiver( clientJarArchiver );
 

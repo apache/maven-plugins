@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.reporting.MavenReportException;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -89,6 +90,12 @@ public class JavadocJar
      */
     @Component( role = Archiver.class, hint = "jar" )
     private JarArchiver jarArchiver;
+
+    @Parameter( property = "javadoc.reproducible", defaultValue = "${project.build.reproducible}", required = false)
+    private boolean reproducibleBuild;
+
+    @Parameter( property = "javadoc.entriesDate", defaultValue = "${env.SOURCE_DATE_EPOCH}", required = false)
+    private String entriesDate;
 
     // ----------------------------------------------------------------------
     // Mojo Parameters
@@ -266,6 +273,17 @@ public class JavadocJar
         }
 
         MavenArchiver archiver = new MavenArchiver();
+
+        // for reproducible builds, ensure jar does not contain entries with lastModifiedDate
+        // TODO move shared code in maven-core
+        // ... in MavenSession? MavenProject? in a new plexus class component "RepoducibleBuildSupport"
+        if ( reproducibleBuild ) {
+            ArchiveEntryDateProvider dateProvider = ArchiveEntryDateProvider.ofFixedIsoDateTime( entriesDate );
+            jarArchiver.setEntryDateProvider( dateProvider );
+            jarArchiver.setGeneratedEntryDateProvider( dateProvider );
+            jarArchiver.setNonExistingEntryDateProvider( dateProvider );
+        }
+
         archiver.setArchiver( jarArchiver );
         archiver.setOutputFile( javadocJar );
 

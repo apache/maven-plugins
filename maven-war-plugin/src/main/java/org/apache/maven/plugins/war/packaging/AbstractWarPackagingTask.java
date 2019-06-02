@@ -29,6 +29,7 @@ import org.apache.maven.plugins.war.util.PathSet;
 import org.apache.maven.plugins.war.util.WebappStructure;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.mapping.MappingUtils;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;

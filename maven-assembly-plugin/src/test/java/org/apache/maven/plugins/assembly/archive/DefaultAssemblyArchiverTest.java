@@ -34,6 +34,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.diags.NoOpArchiver;
@@ -126,8 +127,12 @@ public class DefaultAssemblyArchiverTest
 
         mm.replayAll();
 
+        ArchiveEntryDateProvider entryDateProvider = ArchiveEntryDateProvider.DEFAULT_ZIP_ROUND_UP_2SECONDS;
+        ArchiveEntryDateProvider generatedEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_CURRENT_TIME_ZIP_ROUND_UP_2SECONDS;
+
         final DefaultAssemblyArchiver archiver = createSubject( macMgr, null, null );
-        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false, null );
+        archiver.createArchive( new Assembly(), "full-name", "zip", configSource, false, null,
+                                false, entryDateProvider, generatedEntryDateProvider);
 
         mm.verifyAll();
     }
@@ -200,7 +205,11 @@ public class DefaultAssemblyArchiverTest
 
         final DefaultAssemblyArchiver subject = createSubject( macMgr, Collections.singletonList( phase ), null );
 
-        subject.createArchive( assembly, "full-name", "zip", configSource, false, null );
+        ArchiveEntryDateProvider entryDateProvider = ArchiveEntryDateProvider.DEFAULT_ZIP_ROUND_UP_2SECONDS;
+        ArchiveEntryDateProvider generatedEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_CURRENT_TIME_ZIP_ROUND_UP_2SECONDS;
+
+        subject.createArchive( assembly, "full-name", "zip", configSource, false, null,
+                               false, entryDateProvider, generatedEntryDateProvider);
 
         mm.verifyAll();
     }
@@ -249,7 +258,11 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "dummy", false, "finalName", configSource, null, false, null );
+        ArchiveEntryDateProvider entryDateProvider = ArchiveEntryDateProvider.DEFAULT_ZIP_ROUND_UP_2SECONDS;
+        ArchiveEntryDateProvider generatedEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_CURRENT_TIME_ZIP_ROUND_UP_2SECONDS;
+
+        subject.createArchiver( "dummy", false, "finalName", configSource, null, false, null,
+                                false, entryDateProvider, generatedEntryDateProvider);
 
         assertEquals( simpleConfig, archiver.getSimpleConfig() );
 
@@ -277,7 +290,11 @@ public class DefaultAssemblyArchiverTest
 
         final DefaultAssemblyArchiver subject = setupStdExpectations( mm, macArchiverManager, configSource );
 
-        subject.createArchiver( "tar", false, "finalName", configSource, null, false, null );
+        ArchiveEntryDateProvider entryDateProvider = ArchiveEntryDateProvider.DEFAULT;
+        ArchiveEntryDateProvider generatedEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_CURRENT_TIME;
+
+        subject.createArchiver( "tar", false, "finalName", configSource, null, false, null,
+                                false, entryDateProvider, generatedEntryDateProvider);
 
         assertNull( ttArchiver.compressionMethod );
         assertEquals( TarLongFileMode.fail, ttArchiver.longFileMode );
@@ -323,7 +340,11 @@ public class DefaultAssemblyArchiverTest
         expect( configSource.getMavenSession() ).andReturn( null ).anyTimes();
         final DefaultAssemblyArchiver subject = setupStdExpectations( mm, macArchiverManager, configSource );
 
-        subject.createArchiver( "war", false, null, configSource, null, false, null );
+        ArchiveEntryDateProvider entryDateProvider = ArchiveEntryDateProvider.DEFAULT_ZIP_ROUND_UP_2SECONDS;
+        ArchiveEntryDateProvider generatedEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_CURRENT_TIME_ZIP_ROUND_UP_2SECONDS;
+
+        subject.createArchiver( "war", false, null, configSource, null, false, null,
+                                false, entryDateProvider, generatedEntryDateProvider);
 
         assertFalse( twArchiver.ignoreWebxml );
     }
@@ -354,7 +375,11 @@ public class DefaultAssemblyArchiverTest
         final DefaultAssemblyArchiver subject =
             createSubject( macArchiverManager, new ArrayList<AssemblyArchiverPhase>(), null );
 
-        subject.createArchiver( "zip", false, null, configSource, null, false, null );
+        ArchiveEntryDateProvider entryDateProvider = ArchiveEntryDateProvider.DEFAULT_ZIP_ROUND_UP_2SECONDS;
+        ArchiveEntryDateProvider generatedEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_CURRENT_TIME_ZIP_ROUND_UP_2SECONDS;
+
+        subject.createArchiver( "zip", false, null, configSource, null, false, null,
+                                false, entryDateProvider, generatedEntryDateProvider);
     }
 
     @Test

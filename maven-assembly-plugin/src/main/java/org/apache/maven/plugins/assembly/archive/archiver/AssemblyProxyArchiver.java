@@ -21,6 +21,7 @@ package org.apache.maven.plugins.assembly.archive.archiver;
 
 import org.apache.maven.plugins.assembly.filter.ContainerDescriptorHandler;
 import org.codehaus.plexus.archiver.ArchiveEntry;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.ArchiveFinalizer;
 import org.codehaus.plexus.archiver.ArchivedFileSet;
 import org.codehaus.plexus.archiver.Archiver;
@@ -987,6 +988,87 @@ public class AssemblyProxyArchiver
     public void setIgnorePermissions( final boolean ignorePermissions )
     {
         delegate.setIgnorePermissions( ignorePermissions );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ArchiveEntryDateProvider getEntryDateProvider()
+    {
+        return delegate.getEntryDateProvider();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEntryDateProvider( ArchiveEntryDateProvider entryDateProvider )
+    {
+        delegate.setEntryDateProvider( entryDateProvider );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long archiveDateForEntry( PlexusIoResource resource )
+    {
+        return delegate.archiveDateForEntry( resource );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ArchiveEntryDateProvider getNonExistingEntryDateProvider()
+    {
+        return delegate.getNonExistingEntryDateProvider();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setNonExistingEntryDateProvider( ArchiveEntryDateProvider nonExistingEntryDateProvider )
+    {
+        delegate.setNonExistingEntryDateProvider( nonExistingEntryDateProvider );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long archiveDateForNonExistingEntry( PlexusIoResource resource )
+    {
+        return delegate.archiveDateForNonExistingEntry( resource );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ArchiveEntryDateProvider getGeneratedEntryDateProvider()
+    {
+        return delegate.getGeneratedEntryDateProvider();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setGeneratedEntryDateProvider( ArchiveEntryDateProvider generatedEntryDateProvider )
+    {
+        delegate.setGeneratedEntryDateProvider( generatedEntryDateProvider );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long archiveDateForGeneratedEntry( String resourceName )
+    {
+        return delegate.archiveDateForGeneratedEntry( resourceName );
     }
 
     private static final class DefaultFileInfo

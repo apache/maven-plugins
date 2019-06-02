@@ -28,6 +28,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 
@@ -107,6 +108,12 @@ public abstract class AbstractJarMojo
      */
     @Parameter( property = "jar.useDefaultManifestFile", defaultValue = "false" )
     private boolean useDefaultManifestFile;
+
+    @Parameter( property = "jar.reproducible", defaultValue = "${project.build.reproducible}", required = false)
+    private boolean reproducibleBuild;
+
+    @Parameter( property = "jar.entriesDate", defaultValue = "${env.SOURCE_DATE_EPOCH}", required = false)
+    private String entriesDate;
 
     /**
      *
@@ -202,6 +209,16 @@ public abstract class AbstractJarMojo
         File jarFile = getJarFile( outputDirectory, finalName, getClassifier() );
 
         MavenArchiver archiver = new MavenArchiver();
+
+        // for reproducible builds, ensure jar does not contain entries with lastModifiedDate
+        // TODO move shared code in maven-core
+        // ... in MavenSession? MavenProject? in a new plexus class component "RepoducibleBuildSupport"
+        if ( reproducibleBuild ) {
+            ArchiveEntryDateProvider dateProvider = ArchiveEntryDateProvider.ofFixedIsoDateTime( entriesDate );
+            jarArchiver.setEntryDateProvider( dateProvider );
+            jarArchiver.setGeneratedEntryDateProvider( dateProvider );
+            jarArchiver.setNonExistingEntryDateProvider( dateProvider );
+        }
 
         archiver.setArchiver( jarArchiver );
 

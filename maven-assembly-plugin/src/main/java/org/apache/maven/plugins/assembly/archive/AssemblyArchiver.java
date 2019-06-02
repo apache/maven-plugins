@@ -23,6 +23,7 @@ import org.apache.maven.plugins.assembly.AssemblerConfigurationSource;
 import org.apache.maven.plugins.assembly.InvalidAssemblerConfigurationException;
 import org.apache.maven.plugins.assembly.format.AssemblyFormattingException;
 import org.apache.maven.plugins.assembly.model.Assembly;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 
 import java.io.File;
 
@@ -55,12 +56,18 @@ public interface AssemblyArchiver
      * @param configSource          The {@link org.apache.maven.plugins.assembly.AssemblerConfigurationSource}
      * @param recompressZippedFiles recompress zipped files.
      * @param mergeManifestMode     How to handle already existing Manifest files (skip, merge, mergewithoutmain)
+     * @param reproducibleBuild     true to use reproducible builds 
+     * @param entryDateProvider     date provider for entries to add
+     * @param generatedEntryDateProvider date provider for generated entries (manifest, index,..)
      * @return The resulting archive file.
      * @throws ArchiveCreationException                                                 when creation fails
      * @throws org.apache.maven.plugins.assembly.format.AssemblyFormattingException     when formatting fails
      * @throws org.apache.maven.plugins.assembly.InvalidAssemblerConfigurationException when the configurationis bad
      */
     File createArchive( Assembly assembly, String fullName, String format, AssemblerConfigurationSource configSource,
-                        boolean recompressZippedFiles, String mergeManifestMode )
+                        boolean recompressZippedFiles, String mergeManifestMode,
+                        boolean reproducibleBuild, 
+                        ArchiveEntryDateProvider entryDateProvider,
+                        ArchiveEntryDateProvider generatedEntryDateProvider )
         throws ArchiveCreationException, AssemblyFormattingException, InvalidAssemblerConfigurationException;
 }

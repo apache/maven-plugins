@@ -42,6 +42,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.filtering.MavenReaderFilter;
 import org.apache.maven.shared.utils.cli.CommandLineUtils;
+import org.codehaus.plexus.archiver.ArchiveEntryDateProvider;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.interpolation.fixed.FixedStringSearchInterpolator;
 import org.codehaus.plexus.interpolation.fixed.PrefixedPropertiesValueSource;
@@ -395,6 +396,12 @@ public abstract class AbstractAssemblyMojo
     @Parameter
     private List<String> delimiters;
 
+    @Parameter( property = "assembly.reproducible", defaultValue = "${project.build.reproducible}", required = false)
+    private boolean reproducibleBuild;
+
+    @Parameter( property = "assembly.entriesDate", defaultValue = "${env.SOURCE_DATE_EPOCH}", required = false)
+    private String entriesDate;
+
     public static FixedStringSearchInterpolator mainProjectInterpolator( MavenProject mainProject )
     {
         if ( mainProject != null )
@@ -452,6 +459,16 @@ public abstract class AbstractAssemblyMojo
                                             "Mojo configuration is invalid: " + e.getMessage() );
         }
 
+        // for reproducible builds, ensure jar does not contain entries with lastModifiedDate
+        // TODO move shared code in maven-core
+        // ... in MavenSession? MavenProject? in a new plexus class component "RepoducibleBuildSupport"
+        ArchiveEntryDateProvider archiveEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_ZIP_ROUND_UP_2SECONDS;
+        ArchiveEntryDateProvider generatedEntryDateProvider = ArchiveEntryDateProvider.DEFAULT_CURRENT_TIME_ZIP_ROUND_UP_2SECONDS;
+        if ( reproducibleBuild ) {
+            archiveEntryDateProvider = ArchiveEntryDateProvider.ofFixedIsoDateTime( entriesDate );
+            generatedEntryDateProvider = archiveEntryDateProvider;
+        }
+
         // TODO: include dependencies marked for distribution under certain formats
         // TODO: how, might we plug this into an installer, such as NSIS?
 
@@ -477,7 +494,8 @@ public abstract class AbstractAssemblyMojo
                 {
                     final File destFile =
                         assemblyArchiver.createArchive( assembly, fullName, format,
-                            this, isRecompressZippedFiles(), getMergeManifestMode() );
+                            this, isRecompressZippedFiles(), getMergeManifestMode(),
+                            reproducibleBuild, archiveEntryDateProvider, generatedEntryDateProvider);
 
                     final MavenProject project = getProject();
                     final String type = project.getArtifact().getType();
